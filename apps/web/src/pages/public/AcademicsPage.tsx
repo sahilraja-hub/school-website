@@ -1,13 +1,27 @@
 import React, { useState } from 'react';
 import { BookOpen, Microscope, Music, Trophy, ChevronRight, CheckCircle2, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { Breadcrumb } from '../../components/ui';
+import { SEO } from '../../components/common/SEO';
 
 export const AcademicsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'curriculum' | 'stem' | 'arts' | 'athletics'>('curriculum');
 
   return (
-    <div className="min-h-screen bg-slate-50 py-12 sm:py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+    <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8 text-left">
+      <SEO
+        title="Academic Excellence — Curriculum, STEM & Arts"
+        description="Discover Oakridge International Academy's world-class curriculum. From Primary inquiry to AP Capstone and IB Diploma, with state-of-the-art STEM laboratories."
+        keywords="Oakridge academics, IB diploma curriculum, AP capstone courses, STEM education, arts conservatory"
+      />
+
+      <div className="max-w-7xl mx-auto space-y-12">
+        {/* Breadcrumb Navigation */}
+        <Breadcrumb
+          items={[
+            { label: 'Academic Pathways' },
+          ]}
+        />
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto space-y-4">
           <span className="text-xs uppercase font-bold tracking-widest text-crest-600 bg-crest-50 px-3 py-1 rounded-full border border-crest-100">

@@ -4,8 +4,13 @@ import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { HomePage } from './pages/public/HomePage';
 import { AboutPage } from './pages/public/AboutPage';
+import { PrincipalMessagePage } from './pages/public/PrincipalMessagePage';
 import { AcademicsPage } from './pages/public/AcademicsPage';
 import { AdmissionsPage } from './pages/public/AdmissionsPage';
+import { FacultyPage } from './pages/public/FacultyPage';
+import { FacilitiesPage } from './pages/public/FacilitiesPage';
+import { GalleryPage } from './pages/public/GalleryPage';
+import { EventsPage } from './pages/public/EventsPage';
 import { AnnouncementsPage } from './pages/public/AnnouncementsPage';
 import { ContactPage } from './pages/public/ContactPage';
 import { DesignSystemShowcasePage } from './pages/public/DesignSystemShowcasePage';
@@ -34,12 +39,17 @@ export const App: React.FC = () => {
     <ToastProvider>
       <Router>
         <Routes>
-          {/* Public Website Pages */}
+          {/* Public Website Pages (All 11 Requested Modules) */}
           <Route element={<PublicLayout />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<AboutPage />} />
+            <Route path="/principal" element={<PrincipalMessagePage />} />
             <Route path="/academics" element={<AcademicsPage />} />
             <Route path="/admissions" element={<AdmissionsPage />} />
+            <Route path="/faculty" element={<FacultyPage />} />
+            <Route path="/facilities" element={<FacilitiesPage />} />
+            <Route path="/gallery" element={<GalleryPage />} />
+            <Route path="/events" element={<EventsPage />} />
             <Route path="/notices" element={<AnnouncementsPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/design-system" element={<DesignSystemShowcasePage />} />

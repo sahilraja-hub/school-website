@@ -14,6 +14,8 @@ import {
 } from 'lucide-react';
 import { api } from '../../services/api';
 import { GradeLevel, GradeLevelSchema, AdmissionApplicationSchema } from '@school/shared';
+import { Breadcrumb } from '../../components/ui';
+import { SEO } from '../../components/common/SEO';
 
 export const AdmissionsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'apply' | 'track'>('apply');
@@ -177,8 +179,20 @@ export const AdmissionsPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 py-12 sm:py-20">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+    <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8 text-left">
+      <SEO
+        title="Admissions & Online Candidate Application 2026-2027"
+        description="Apply online to Oakridge International Academy for the 2026-2027 academic year or track your admission application status in real-time."
+        keywords="Oakridge admissions, apply online, school application status, tuition fees, scholarships 2026"
+      />
+
+      <div className="max-w-4xl mx-auto space-y-10">
+        {/* Breadcrumb Navigation */}
+        <Breadcrumb
+          items={[
+            { label: 'Admissions & Enrollment' },
+          ]}
+        />
         {/* Header */}
         <div className="text-center space-y-3">
           <span className="text-xs uppercase font-bold tracking-widest text-crest-600 bg-crest-50 px-3 py-1 rounded-full border border-crest-100">

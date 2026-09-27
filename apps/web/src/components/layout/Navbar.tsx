@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   GraduationCap,
@@ -13,6 +13,11 @@ import {
   Calendar,
   PhoneCall,
   Bell,
+  Building2,
+  Users,
+  Camera,
+  Mail,
+  Award,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { UserRole } from '@school/shared';
@@ -20,18 +25,12 @@ import { UserRole } from '@school/shared';
 export const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [demoMenuOpen, setDemoMenuOpen] = useState(false);
+  const [aboutDropdownOpen, setAboutDropdownOpen] = useState(false);
+  const [campusDropdownOpen, setCampusDropdownOpen] = useState(false);
+
   const { user, logout, quickLoginAs } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-
-  const navLinks = [
-    { name: 'Home', path: '/' },
-    { name: 'About', path: '/about' },
-    { name: 'Academics', path: '/academics' },
-    { name: 'Admissions', path: '/admissions' },
-    { name: 'Notices', path: '/notices' },
-    { name: 'Contact', path: '/contact' },
-  ];
 
   const handleRoleSwitch = async (role: UserRole) => {
     await quickLoginAs(role);
@@ -134,22 +133,167 @@ export const Navbar: React.FC = () => {
 
             {/* Desktop Navigation Links */}
             <div className="hidden lg:flex items-center space-x-1">
-              {navLinks.map((link) => {
-                const isActive = location.pathname === link.path;
-                return (
-                  <Link
-                    key={link.name}
-                    to={link.path}
-                    className={`px-3.5 py-2 rounded-lg text-sm font-medium transition-all duration-150 ${
-                      isActive
-                        ? 'text-crest-700 bg-crest-50 font-semibold'
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
-                    }`}
-                  >
-                    {link.name}
-                  </Link>
-                );
-              })}
+              {/* Home */}
+              <Link
+                to="/"
+                className={`px-3.5 py-2 rounded-lg text-sm font-medium transition-all ${
+                  location.pathname === '/' ? 'text-crest-700 bg-crest-50 font-semibold' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
+                }`}
+              >
+                Home
+              </Link>
+
+              {/* About Dropdown */}
+              <div
+                className="relative"
+                onMouseEnter={() => setAboutDropdownOpen(true)}
+                onMouseLeave={() => setAboutDropdownOpen(false)}
+              >
+                <button
+                  className={`flex items-center gap-1 px-3.5 py-2 rounded-lg text-sm font-medium transition-all ${
+                    ['/about', '/principal', '/facilities'].includes(location.pathname)
+                      ? 'text-crest-700 bg-crest-50 font-semibold'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
+                  }`}
+                >
+                  <span>About</span>
+                  <ChevronDown className="w-3.5 h-3.5" />
+                </button>
+
+                {aboutDropdownOpen && (
+                  <div className="absolute left-0 mt-1 w-56 rounded-2xl bg-white shadow-modal border border-slate-200 py-2 z-50 animate-slide-down">
+                    <Link
+                      to="/about"
+                      onClick={() => setAboutDropdownOpen(false)}
+                      className="flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-crest-700"
+                    >
+                      <Building2 className="w-4 h-4 text-crest-600" />
+                      <div>
+                        <span>About Oakridge</span>
+                        <p className="text-[10px] text-slate-400 font-normal">History & Core Values</p>
+                      </div>
+                    </Link>
+                    <Link
+                      to="/principal"
+                      onClick={() => setAboutDropdownOpen(false)}
+                      className="flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-crest-700"
+                    >
+                      <Award className="w-4 h-4 text-gold-500" />
+                      <div>
+                        <span>Principal's Message</span>
+                        <p className="text-[10px] text-slate-400 font-normal">Welcome from Dr. Vance</p>
+                      </div>
+                    </Link>
+                    <Link
+                      to="/facilities"
+                      onClick={() => setAboutDropdownOpen(false)}
+                      className="flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-crest-700"
+                    >
+                      <Sparkles className="w-4 h-4 text-emerald-600" />
+                      <div>
+                        <span>Campus & Facilities</span>
+                        <p className="text-[10px] text-slate-400 font-normal">40-Acre Campus Tour</p>
+                      </div>
+                    </Link>
+                  </div>
+                )}
+              </div>
+
+              {/* Academics */}
+              <Link
+                to="/academics"
+                className={`px-3.5 py-2 rounded-lg text-sm font-medium transition-all ${
+                  location.pathname === '/academics' ? 'text-crest-700 bg-crest-50 font-semibold' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
+                }`}
+              >
+                Academics
+              </Link>
+
+              {/* Admissions */}
+              <Link
+                to="/admissions"
+                className={`px-3.5 py-2 rounded-lg text-sm font-medium transition-all ${
+                  location.pathname === '/admissions' ? 'text-crest-700 bg-crest-50 font-semibold' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
+                }`}
+              >
+                Admissions
+              </Link>
+
+              {/* Faculty */}
+              <Link
+                to="/faculty"
+                className={`px-3.5 py-2 rounded-lg text-sm font-medium transition-all ${
+                  location.pathname === '/faculty' ? 'text-crest-700 bg-crest-50 font-semibold' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
+                }`}
+              >
+                Faculty
+              </Link>
+
+              {/* Campus Life Dropdown */}
+              <div
+                className="relative"
+                onMouseEnter={() => setCampusDropdownOpen(true)}
+                onMouseLeave={() => setCampusDropdownOpen(false)}
+              >
+                <button
+                  className={`flex items-center gap-1 px-3.5 py-2 rounded-lg text-sm font-medium transition-all ${
+                    ['/gallery', '/events', '/notices'].includes(location.pathname)
+                      ? 'text-crest-700 bg-crest-50 font-semibold'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
+                  }`}
+                >
+                  <span>Campus Life</span>
+                  <ChevronDown className="w-3.5 h-3.5" />
+                </button>
+
+                {campusDropdownOpen && (
+                  <div className="absolute left-0 mt-1 w-56 rounded-2xl bg-white shadow-modal border border-slate-200 py-2 z-50 animate-slide-down">
+                    <Link
+                      to="/gallery"
+                      onClick={() => setCampusDropdownOpen(false)}
+                      className="flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-crest-700"
+                    >
+                      <Camera className="w-4 h-4 text-crest-600" />
+                      <div>
+                        <span>Photo Gallery</span>
+                        <p className="text-[10px] text-slate-400 font-normal">Campus Life Showcase</p>
+                      </div>
+                    </Link>
+                    <Link
+                      to="/events"
+                      onClick={() => setCampusDropdownOpen(false)}
+                      className="flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-crest-700"
+                    >
+                      <Calendar className="w-4 h-4 text-gold-500" />
+                      <div>
+                        <span>Upcoming Events</span>
+                        <p className="text-[10px] text-slate-400 font-normal">School Master Calendar</p>
+                      </div>
+                    </Link>
+                    <Link
+                      to="/notices"
+                      onClick={() => setCampusDropdownOpen(false)}
+                      className="flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-crest-700"
+                    >
+                      <Bell className="w-4 h-4 text-emerald-600" />
+                      <div>
+                        <span>Notice Board</span>
+                        <p className="text-[10px] text-slate-400 font-normal">Circulars & Announcements</p>
+                      </div>
+                    </Link>
+                  </div>
+                )}
+              </div>
+
+              {/* Contact */}
+              <Link
+                to="/contact"
+                className={`px-3.5 py-2 rounded-lg text-sm font-medium transition-all ${
+                  location.pathname === '/contact' ? 'text-crest-700 bg-crest-50 font-semibold' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
+                }`}
+              >
+                Contact
+              </Link>
             </div>
 
             {/* Portal Action Buttons */}
@@ -158,7 +302,7 @@ export const Navbar: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <Link
                     to={getPortalPath()}
-                    className="flex items-center gap-2 bg-crest-700 hover:bg-crest-800 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-sm transition-colors"
+                    className="flex items-center gap-2 bg-crest-700 hover:bg-crest-800 text-white px-4 py-2 rounded-xl text-sm font-semibold shadow-subtle transition-colors"
                   >
                     <UserCheck className="w-4 h-4" />
                     <span>{user.role} Portal</span>
@@ -166,7 +310,7 @@ export const Navbar: React.FC = () => {
                   <button
                     onClick={logout}
                     title="Sign Out"
-                    className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    className="p-2 text-slate-500 hover:text-danger-600 hover:bg-danger-50 rounded-xl transition-colors"
                   >
                     <LogOut className="w-4 h-4" />
                   </button>
@@ -175,13 +319,13 @@ export const Navbar: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <Link
                     to="/admissions"
-                    className="bg-gold-500 hover:bg-gold-600 text-slate-950 font-semibold px-4 py-2 rounded-lg text-sm transition-colors shadow-sm"
+                    className="bg-gold-500 hover:bg-gold-600 text-slate-950 font-semibold px-4 py-2 rounded-xl text-sm transition-colors shadow-subtle"
                   >
                     Apply Now
                   </Link>
                   <Link
                     to="/login"
-                    className="bg-slate-900 hover:bg-slate-800 text-white font-medium px-4 py-2 rounded-lg text-sm transition-colors"
+                    className="bg-slate-900 hover:bg-slate-800 text-white font-medium px-4 py-2 rounded-xl text-sm transition-colors"
                   >
                     Portal Login
                   </Link>
@@ -193,7 +337,7 @@ export const Navbar: React.FC = () => {
             <div className="flex lg:hidden items-center gap-2">
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2 rounded-lg text-slate-700 hover:bg-slate-100 transition-colors"
+                className="p-2 rounded-xl text-slate-700 hover:bg-slate-100 transition-colors"
                 aria-label="Toggle Navigation Menu"
               >
                 {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -202,26 +346,103 @@ export const Navbar: React.FC = () => {
           </div>
         </div>
 
-        {/* Mobile Dropdown Menu */}
+        {/* Mobile Dropdown Menu with all 11 pages */}
         {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-slate-200 bg-white/95 backdrop-blur-md px-4 pt-3 pb-6 space-y-2">
-            {navLinks.map((link) => (
+          <div className="lg:hidden border-t border-slate-200 bg-white/95 backdrop-blur-md px-4 pt-3 pb-6 space-y-1.5 max-h-[80vh] overflow-y-auto">
+            <Link
+              to="/"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-crest-50 hover:text-crest-700"
+            >
+              Home
+            </Link>
+            <div className="pt-1 pb-1">
+              <span className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider block">About Oakridge</span>
               <Link
-                key={link.name}
-                to={link.path}
+                to="/about"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block px-3 py-2.5 rounded-lg text-base font-medium text-slate-700 hover:bg-crest-50 hover:text-crest-700"
+                className="block px-3 py-1.5 rounded-lg text-sm text-slate-700 hover:bg-crest-50"
               >
-                {link.name}
+                • About the Academy
               </Link>
-            ))}
+              <Link
+                to="/principal"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-3 py-1.5 rounded-lg text-sm text-slate-700 hover:bg-crest-50"
+              >
+                • Principal's Message
+              </Link>
+              <Link
+                to="/facilities"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-3 py-1.5 rounded-lg text-sm text-slate-700 hover:bg-crest-50"
+              >
+                • Campus & Facilities
+              </Link>
+            </div>
+
+            <Link
+              to="/academics"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-crest-50 hover:text-crest-700"
+            >
+              Academics
+            </Link>
+            <Link
+              to="/admissions"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-crest-50 hover:text-crest-700"
+            >
+              Admissions
+            </Link>
+            <Link
+              to="/faculty"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-crest-50 hover:text-crest-700"
+            >
+              Faculty & Mentors
+            </Link>
+
+            <div className="pt-1 pb-1">
+              <span className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Campus Life</span>
+              <Link
+                to="/gallery"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-3 py-1.5 rounded-lg text-sm text-slate-700 hover:bg-crest-50"
+              >
+                • Photo Gallery
+              </Link>
+              <Link
+                to="/events"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-3 py-1.5 rounded-lg text-sm text-slate-700 hover:bg-crest-50"
+              >
+                • Upcoming Events Calendar
+              </Link>
+              <Link
+                to="/notices"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-3 py-1.5 rounded-lg text-sm text-slate-700 hover:bg-crest-50"
+              >
+                • Notices & Circulars
+              </Link>
+            </div>
+
+            <Link
+              to="/contact"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-crest-50 hover:text-crest-700"
+            >
+              Contact & Directions
+            </Link>
+
             <div className="pt-4 border-t border-slate-100 flex flex-col gap-2">
               {user ? (
                 <>
                   <Link
                     to={getPortalPath()}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="w-full text-center bg-crest-700 text-white py-2.5 rounded-lg font-semibold"
+                    className="w-full text-center bg-crest-700 text-white py-2.5 rounded-xl font-semibold"
                   >
                     Go to {user.role} Dashboard
                   </Link>
@@ -230,7 +451,7 @@ export const Navbar: React.FC = () => {
                       logout();
                       setMobileMenuOpen(false);
                     }}
-                    className="w-full text-center text-slate-600 py-2 rounded-lg border border-slate-200 text-sm"
+                    className="w-full text-center text-slate-600 py-2 rounded-xl border border-slate-200 text-sm"
                   >
                     Sign Out
                   </button>
@@ -240,14 +461,14 @@ export const Navbar: React.FC = () => {
                   <Link
                     to="/admissions"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="w-full text-center bg-gold-500 text-slate-950 font-semibold py-2.5 rounded-lg text-sm"
+                    className="w-full text-center bg-gold-500 text-slate-950 font-semibold py-2.5 rounded-xl text-sm"
                   >
                     Apply for 2026-2027
                   </Link>
                   <Link
                     to="/login"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="w-full text-center bg-slate-900 text-white font-medium py-2.5 rounded-lg text-sm"
+                    className="w-full text-center bg-slate-900 text-white font-medium py-2.5 rounded-xl text-sm"
                   >
                     Portal Login
                   </Link>
@@ -260,3 +481,5 @@ export const Navbar: React.FC = () => {
     </header>
   );
 };
+
+export default Navbar;

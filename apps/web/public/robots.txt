@@ -1,0 +1,19 @@
+# Robots.txt for Oakridge International Academy Platform
+User-agent: *
+Allow: /
+Allow: /about
+Allow: /principal
+Allow: /academics
+Allow: /admissions
+Allow: /faculty
+Allow: /facilities
+Allow: /gallery
+Allow: /events
+Allow: /notices
+Allow: /contact
+
+# Disallow authenticated private portal areas
+Disallow: /portal/
+Disallow: /api/
+
+Sitemap: https://oakridge.edu/sitemap.xml

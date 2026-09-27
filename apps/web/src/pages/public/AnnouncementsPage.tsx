@@ -1,56 +1,162 @@
 import React, { useState, useEffect } from 'react';
-import { Bell, Calendar, Pin, Filter, Search, User } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import {
+  Breadcrumb,
+  Card,
+  CardContent,
+  Badge,
+  Input,
+  Button,
+  Skeleton,
+  EmptyState,
+} from '../../components/ui';
+import { SEO } from '../../components/common/SEO';
+import {
+  Bell,
+  Calendar,
+  Pin,
+  Search,
+  User,
+  FileText,
+  Download,
+  AlertTriangle,
+  Sparkles,
+  ArrowRight,
+  Filter,
+} from 'lucide-react';
 import { api } from '../../services/api';
 import { Announcement } from '@school/shared';
 
-export const AnnouncementsPage: React.FC = () => {
-  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+const initialNotices: Announcement[] = [
+  {
+    id: 'n1',
+    title: 'Admissions Cycle 2026-2027: Early Action Deadlines & Registration',
+    content: 'Prospective families are advised that the deadline for Early Action scholarship consideration is November 1st, 2026. Required documents must be submitted through the admissions portal before 5:00 PM PST.',
+    category: 'URGENT',
+    isPinned: true,
+    authorId: 'admin1',
+    authorName: 'Office of the Registrar',
+    targetRoles: ['ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
+    publishDate: new Date().toISOString(),
+  },
+  {
+    id: 'n2',
+    title: 'Fall Semester Mid-Term Assessment Timetable & Examination Protocol',
+    content: 'The official schedule for mid-term assessments across Grades 6 through 12 is now finalized. Examination venues, proctor assignments, and permitted reference materials are published in scholar portals.',
+    category: 'ACADEMIC',
+    isPinned: true,
+    authorId: 'admin2',
+    authorName: 'Academic Directorate',
+    targetRoles: ['ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
+    publishDate: new Date(Date.now() - 86400000).toISOString(),
+  },
+  {
+    id: 'n3',
+    title: 'Annual STEM & Robotics Innovation Expo 2026 Scheduled',
+    content: 'Over 40 student-led research initiatives, competitive AI models, and autonomous robotics demonstrations will be showcased in the Grand Hall on October 22nd. Parents and alumni welcome.',
+    category: 'EVENT',
+    isPinned: false,
+    authorId: 'teacher1',
+    authorName: 'Sarah Montgomery (Head of Robotics)',
+    targetRoles: ['ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
+    publishDate: new Date(Date.now() - 172800000).toISOString(),
+  },
+  {
+    id: 'n4',
+    title: 'Varsity Football State Championship Quarterfinal Match',
+    content: 'Congratulations to our varsity athletes! The Lions will host the regional quarterfinals at our Championship Stadium under the lights this Friday at 6:30 PM.',
+    category: 'SPORTS',
+    isPinned: false,
+    authorId: 'coach1',
+    authorName: 'Athletics Department',
+    targetRoles: ['ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
+    publishDate: new Date(Date.now() - 259200000).toISOString(),
+  },
+  {
+    id: 'n5',
+    title: 'Alexander Media Library Winter Holiday Extended Reading Privileges',
+    content: 'Beginning next Monday, all scholars in Grades 9-12 may checkout up to 8 circulating monographs and research volumes for independent winter reading and extended essay research.',
+    category: 'GENERAL',
+    isPinned: false,
+    authorId: 'lib1',
+    authorName: 'Head Librarian',
+    targetRoles: ['ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
+    publishDate: new Date(Date.now() - 345600000).toISOString(),
+  },
+];
+
+export const NoticesPage: React.FC = () => {
+  const [announcements, setAnnouncements] = useState<Announcement[]>(initialNotices);
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchAnnouncements = async () => {
       try {
         const res = await api.get('/announcements');
-        if (res.data.success) {
+        if (res.data.success && Array.isArray(res.data.data)) {
           setAnnouncements(res.data.data);
+        } else {
+          throw new Error('Fallback needed');
         }
       } catch (err) {
-        // Fallback demo data
+        // High quality mock notices for public board
         setAnnouncements([
           {
-            id: '1',
-            title: 'Annual STEM & Robotics Innovation Expo 2026',
-            content: 'We are thrilled to announce the 2026 Oakridge STEM Expo on November 14th. Over 40 student-led research initiatives, competitive AI models, and robotics demonstrations will be showcased in the Grand Hall.',
-            category: 'EVENT',
+            id: 'n1',
+            title: 'Admissions Cycle 2026-2027: Early Action Deadlines & Registration',
+            content: 'Prospective families are advised that the deadline for Early Action scholarship consideration is November 1st, 2026. Required documents must be submitted through the admissions portal before 5:00 PM PST.',
+            category: 'URGENT',
             isPinned: true,
-            authorId: 'admin',
-            authorName: 'Principal Harrison',
+            authorId: 'admin1',
+            authorName: 'Office of the Registrar',
             targetRoles: ['ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
             publishDate: new Date().toISOString(),
           },
           {
-            id: '2',
-            title: 'Fall Semester Mid-Term Examination Schedule Released',
-            content: 'The official schedule for mid-term assessments is now published on student and parent portals. Please review examination hall assignments and preparation guidelines.',
+            id: 'n2',
+            title: 'Fall Semester Mid-Term Assessment Timetable & Examination Protocol',
+            content: 'The official schedule for mid-term assessments across Grades 6 through 12 is now finalized. Examination venues, proctor assignments, and permitted reference materials are published in scholar portals.',
             category: 'ACADEMIC',
             isPinned: true,
-            authorId: 'admin',
-            authorName: 'Principal Harrison',
+            authorId: 'admin2',
+            authorName: 'Academic Directorate',
             targetRoles: ['ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
             publishDate: new Date(Date.now() - 86400000).toISOString(),
           },
           {
-            id: '3',
-            title: 'Varsity Soccer Team Advances to State Quarterfinals!',
-            content: 'Congratulations to our varsity soccer team for a thrilling 3-1 victory yesterday! The quarterfinal match will be hosted this Saturday at the West Campus Athletic Complex.',
-            category: 'SPORTS',
+            id: 'n3',
+            title: 'Annual STEM & Robotics Innovation Expo 2026 Scheduled',
+            content: 'Over 40 student-led research initiatives, competitive AI models, and autonomous robotics demonstrations will be showcased in the Grand Hall on October 22nd. Parents and alumni welcome.',
+            category: 'EVENT',
             isPinned: false,
-            authorId: 'teacher2',
-            authorName: 'Sarah Jenkins',
+            authorId: 'teacher1',
+            authorName: 'Sarah Montgomery (Head of Robotics)',
             targetRoles: ['ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
             publishDate: new Date(Date.now() - 172800000).toISOString(),
+          },
+          {
+            id: 'n4',
+            title: 'Varsity Football State Championship Quarterfinal Match',
+            content: 'Congratulations to our varsity athletes! The Lions will host the regional quarterfinals at our Championship Stadium under the lights this Friday at 6:30 PM.',
+            category: 'SPORTS',
+            isPinned: false,
+            authorId: 'coach1',
+            authorName: 'Athletics Department',
+            targetRoles: ['ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
+            publishDate: new Date(Date.now() - 259200000).toISOString(),
+          },
+          {
+            id: 'n5',
+            title: 'Alexander Media Library Winter Holiday Extended Reading Privileges',
+            content: 'Beginning next Monday, all scholars in Grades 9-12 may checkout up to 8 circulating monographs and research volumes for independent winter reading and extended essay research.',
+            category: 'GENERAL',
+            isPinned: false,
+            authorId: 'lib1',
+            authorName: 'Head Librarian',
+            targetRoles: ['ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
+            publishDate: new Date(Date.now() - 345600000).toISOString(),
           },
         ]);
       } finally {
@@ -60,127 +166,196 @@ export const AnnouncementsPage: React.FC = () => {
     fetchAnnouncements();
   }, []);
 
-  const categories = ['ALL', 'ACADEMIC', 'EVENT', 'SPORTS', 'URGENT', 'GENERAL'];
+  const categories = [
+    { id: 'ALL', label: 'All Notices' },
+    { id: 'URGENT', label: 'Important Alerts' },
+    { id: 'ACADEMIC', label: 'Academic & Exams' },
+    { id: 'EVENT', label: 'Events & Expos' },
+    { id: 'SPORTS', label: 'Athletics' },
+    { id: 'GENERAL', label: 'General Circulars' },
+  ];
 
   const filteredAnnouncements = announcements.filter((a) => {
     const matchesCategory = selectedCategory === 'ALL' || a.category === selectedCategory;
     const matchesSearch =
       a.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      a.content.toLowerCase().includes(searchQuery.toLowerCase());
+      a.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      a.authorName.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
   return (
-    <div className="min-h-screen bg-slate-50 py-12 sm:py-20">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-        {/* Header */}
-        <div className="text-center space-y-3">
-          <span className="text-xs uppercase font-bold tracking-widest text-crest-600 bg-crest-50 px-3 py-1 rounded-full border border-crest-100">
-            School Bulletin
-          </span>
-          <h1 className="font-serif text-3xl sm:text-5xl font-bold text-slate-900">
-            Announcements & Circulars
-          </h1>
-          <p className="text-slate-600 text-sm sm:text-base max-w-xl mx-auto">
-            Stay informed on upcoming academic schedules, athletic events, and campus community alerts.
-          </p>
+    <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8 text-left">
+      <SEO
+        title="Official School Notices & Circulars"
+        description="View official notices, academic circulars, examination schedules, and community alerts from Oakridge International Academy."
+        keywords="Oakridge notices, school circulars, exam schedule, academic announcements"
+      />
+
+      <div className="max-w-6xl mx-auto space-y-10">
+        {/* Breadcrumb Navigation */}
+        <Breadcrumb
+          items={[
+            { label: 'Campus Life', href: '/about' },
+            { label: 'Notice Board & Circulars' },
+          ]}
+        />
+
+        {/* Hero Banner */}
+        <div className="relative rounded-3xl overflow-hidden bg-crest-950 text-white p-8 sm:p-12 border border-crest-900 shadow-2xl">
+          <div className="relative z-10 space-y-3 max-w-2xl">
+            <div className="flex items-center gap-2">
+              <Badge variant="gold" size="sm">Official Notice Board</Badge>
+              <Badge variant="outline" size="sm" className="text-crest-200 border-crest-700">
+                Updated Daily
+              </Badge>
+            </div>
+            <h1 className="font-serif text-3xl sm:text-5xl font-bold text-white tracking-tight">
+              Announcements & Circulars
+            </h1>
+            <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+              Timely updates, administrative communications, academic schedules, and institutional announcements for scholars, parents, and faculty.
+            </p>
+          </div>
         </div>
 
         {/* Filter and Search Bar */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-between items-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <div className="flex flex-wrap gap-1.5">
+        <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-card">
+          <div className="flex flex-wrap gap-1.5 w-full md:w-auto">
             {categories.map((cat) => (
               <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                  selectedCategory === cat
-                    ? 'bg-crest-700 text-white shadow-sm'
+                key={cat.id}
+                onClick={() => setSelectedCategory(cat.id)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                  selectedCategory === cat.id
+                    ? 'bg-crest-700 text-white shadow-subtle'
                     : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                 }`}
               >
-                {cat}
+                {cat.label}
               </button>
             ))}
           </div>
 
-          <div className="relative w-full sm:w-64">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
-            <input
-              type="text"
+          <div className="w-full md:w-72">
+            <Input
               placeholder="Search circulars..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-crest-500"
+              leftIcon={<Search className="w-4 h-4" />}
             />
           </div>
         </div>
 
-        {/* Announcements List */}
-        <div className="space-y-4">
-          {filteredAnnouncements.length === 0 ? (
-            <div className="text-center py-16 bg-white rounded-2xl border border-slate-200 p-8">
-              <Bell className="w-10 h-10 text-slate-300 mx-auto mb-2" />
-              <p className="text-slate-500 text-sm">No circulars match your current filter.</p>
-            </div>
-          ) : (
-            filteredAnnouncements.map((item) => (
+        {/* Notices Feed */}
+        {loading ? (
+          <div className="space-y-4">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-white p-6 rounded-2xl border border-slate-200 space-y-3">
+                <Skeleton variant="text" width="30%" height="20px" />
+                <Skeleton variant="text" width="90%" height="16px" />
+                <Skeleton variant="text" width="70%" height="16px" />
+              </div>
+            ))}
+          </div>
+        ) : filteredAnnouncements.length > 0 ? (
+          <div className="space-y-6">
+            {filteredAnnouncements.map((item) => (
               <div
                 key={item.id}
-                className={`bg-white rounded-xl p-6 border transition-all ${
-                  item.isPinned ? 'border-gold-300 shadow-sm bg-gradient-to-r from-gold-50/20 via-white to-white' : 'border-slate-200'
+                className={`bg-white rounded-3xl p-6 sm:p-8 border transition-all duration-200 shadow-card hover:shadow-elevated space-y-4 ${
+                  item.isPinned ? 'border-l-8 border-l-gold-500 border-slate-200' : 'border-slate-200'
                 }`}
               >
-                <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                {/* Meta Header */}
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
                   <div className="flex items-center gap-2">
                     {item.isPinned && (
-                      <span className="flex items-center gap-1 bg-gold-100 text-gold-800 text-[10px] font-bold px-2 py-0.5 rounded-full border border-gold-300">
-                        <Pin className="w-3 h-3 text-gold-600 rotate-45" /> PINNED
+                      <span className="flex items-center gap-1 text-gold-600 font-bold text-xs uppercase tracking-wider">
+                        <Pin className="w-3.5 h-3.5 fill-current" /> Pinned
                       </span>
                     )}
-                    <span
-                      className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
-                        item.category === 'ACADEMIC'
-                          ? 'bg-blue-100 text-blue-800'
+                    <Badge
+                      variant={
+                        item.category === 'URGENT'
+                          ? 'danger'
+                          : item.category === 'ACADEMIC'
+                          ? 'primary'
                           : item.category === 'EVENT'
-                          ? 'bg-purple-100 text-purple-800'
+                          ? 'gold'
                           : item.category === 'SPORTS'
-                          ? 'bg-emerald-100 text-emerald-800'
-                          : 'bg-slate-100 text-slate-800'
-                      }`}
+                          ? 'success'
+                          : 'secondary'
+                      }
+                      size="sm"
                     >
                       {item.category}
-                    </span>
+                    </Badge>
                   </div>
 
                   <div className="flex items-center gap-4 text-xs text-slate-400">
                     <span className="flex items-center gap-1">
-                      <User className="w-3.5 h-3.5" />
-                      {item.authorName}
+                      <User className="w-3.5 h-3.5 text-crest-600" />
+                      <strong className="text-slate-700">{item.authorName}</strong>
                     </span>
                     <span className="flex items-center gap-1">
                       <Calendar className="w-3.5 h-3.5" />
-                      {new Date(item.publishDate).toLocaleDateString()}
+                      {new Date(item.publishDate).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                      })}
                     </span>
                   </div>
                 </div>
 
-                <h3 className="font-serif text-lg font-bold text-slate-900 mb-2">{item.title}</h3>
-                <p className="text-slate-600 text-sm leading-relaxed">{item.content}</p>
+                {/* Content */}
+                <div className="space-y-2">
+                  <h3 className="font-serif text-lg sm:text-xl font-bold text-slate-900 leading-snug">
+                    {item.title}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                    {item.content}
+                  </p>
+                </div>
 
-                <div className="mt-4 pt-3 border-t border-slate-100 flex items-center gap-2 text-[11px] text-slate-400">
-                  <span>Audience:</span>
-                  {item.targetRoles?.map((r) => (
-                    <span key={r} className="bg-slate-100 px-2 py-0.5 rounded text-slate-600 font-medium">
-                      {r}
-                    </span>
-                  ))}
+                {/* Action footer */}
+                <div className="pt-2 flex items-center justify-between text-xs">
+                  <span className="inline-flex items-center gap-1.5 text-crest-700 bg-crest-50 px-2.5 py-1 rounded-lg font-medium border border-crest-100">
+                    <FileText className="w-3.5 h-3.5 text-crest-600" /> Official Circular Reference
+                  </span>
+                  <button
+                    onClick={() => window.print()}
+                    className="flex items-center gap-1 text-slate-500 hover:text-slate-900 transition-colors"
+                  >
+                    <Download className="w-3.5 h-3.5" /> Print / Save PDF
+                  </button>
                 </div>
               </div>
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <EmptyState
+            title="No Circulars Found"
+            description="No notices matched your current search parameters or category filter."
+            action={
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setSelectedCategory('ALL');
+                  setSearchQuery('');
+                }}
+              >
+                Reset Filter
+              </Button>
+            }
+          />
+        )}
       </div>
     </div>
   );
 };
+
+export const AnnouncementsPage = NoticesPage;
+export default NoticesPage;
