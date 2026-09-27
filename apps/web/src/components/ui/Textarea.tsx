@@ -25,6 +25,8 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
             ref={ref}
             id={inputId}
             rows={rows}
+            aria-invalid={error ? 'true' : 'false'}
+            aria-describedby={error && inputId ? `${inputId}-error` : helperText && inputId ? `${inputId}-helper` : undefined}
             className={`w-full rounded-xl border bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 transition-all duration-150 focus:outline-none focus:ring-2 disabled:bg-slate-50 disabled:text-slate-500 disabled:cursor-not-allowed resize-y ${
               error
                 ? 'border-danger-400 focus:border-danger-500 focus:ring-danger-200'
@@ -34,16 +36,20 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           />
 
           {error && (
-            <div className="absolute right-3 top-3 text-danger-500 pointer-events-none flex items-center">
+            <div className="absolute right-3 top-3 text-danger-500 pointer-events-none flex items-center" aria-hidden="true">
               <AlertCircle className="w-4 h-4" />
             </div>
           )}
         </div>
 
         {error ? (
-          <p className="text-xs text-danger-600 font-medium">{error}</p>
+          <p id={inputId ? `${inputId}-error` : undefined} role="alert" className="text-xs text-danger-600 font-medium">
+            {error}
+          </p>
         ) : helperText ? (
-          <p className="text-xs text-slate-500">{helperText}</p>
+          <p id={inputId ? `${inputId}-helper` : undefined} className="text-xs text-slate-500">
+            {helperText}
+          </p>
         ) : null}
       </div>
     );

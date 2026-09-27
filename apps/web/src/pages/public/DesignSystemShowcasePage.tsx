@@ -39,6 +39,7 @@ import {
   EmptyState,
   ErrorState,
   ConfirmationDialog,
+  Avatar,
 } from '../../components/ui';
 import {
   Sparkles,
@@ -50,6 +51,10 @@ import {
   Layers,
   Palette,
   CheckCircle2,
+  ShieldCheck,
+  Code2,
+  BookOpen,
+  Filter,
 } from 'lucide-react';
 
 export const DesignSystemShowcasePage: React.FC = () => {
@@ -66,161 +71,238 @@ export const DesignSystemShowcasePage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchValue, setSearchValue] = useState('');
 
+  // Interactive Story & States Playground controls
+  const [demoLoading, setDemoLoading] = useState(false);
+  const [demoDisabled, setDemoDisabled] = useState(false);
+  const [demoError, setDemoError] = useState(false);
+
   return (
     <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8 text-left">
       <div className="max-w-7xl mx-auto space-y-16">
         {/* Header */}
         <div className="border-b border-slate-200 pb-8 space-y-3">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <span className="bg-crest-100 text-crest-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1.5">
               <Palette className="w-3.5 h-3.5" /> Oakridge UI Architecture
             </span>
-            <Badge variant="gold" size="sm">Phase 1 Complete</Badge>
+            <Badge variant="gold" size="sm">Phase 3 — UI Component System</Badge>
+            <Badge variant="success" size="sm" dot>WCAG 2.1 AA Compliant</Badge>
           </div>
           <h1 className="font-serif text-3xl sm:text-5xl font-bold text-slate-900">
             UI / UX Design System & Component Library
           </h1>
-          <p className="text-slate-600 text-sm sm:text-base max-w-3xl">
-            A comprehensive, battle-tested design system engineered for Oakridge International Academy. Enforces visual hierarchy, WCAG 2.1 AA accessibility, and consistent responsive behavior across mobile, tablet, and desktop viewports.
+          <p className="text-slate-600 text-sm sm:text-base max-w-3xl leading-relaxed">
+            A complete suite of 26+ reusable, fully typed React TypeScript components. Engineered with strict focus rings, keyboard accessibility, ARIA standards, loading/disabled/error states, and responsive styling.
           </p>
-        </div>
 
-        {/* 1. COLOR FOUNDATIONS */}
-        <section className="space-y-6">
-          <h2 className="font-serif text-2xl font-bold text-slate-900 border-b border-slate-200 pb-2">
-            1. Color Foundations & Semantic Swatches
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Primary Crest Navy */}
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-3 shadow-card">
-              <h3 className="font-serif text-base font-bold text-slate-900">Regal Crest Navy (Primary)</h3>
-              <div className="grid grid-cols-5 gap-2">
-                <div className="h-14 rounded-lg bg-crest-50 flex items-end p-1 text-[9px] font-mono text-crest-900">50</div>
-                <div className="h-14 rounded-lg bg-crest-200 flex items-end p-1 text-[9px] font-mono text-crest-900">200</div>
-                <div className="h-14 rounded-lg bg-crest-500 flex items-end p-1 text-[9px] font-mono text-white">500</div>
-                <div className="h-14 rounded-lg bg-crest-700 flex items-end p-1 text-[9px] font-mono text-white font-bold">700</div>
-                <div className="h-14 rounded-lg bg-crest-950 flex items-end p-1 text-[9px] font-mono text-white font-bold">950</div>
-              </div>
-              <p className="text-xs text-slate-500">Core brand token used for headers, primary actions, and institutional crest branding.</p>
+          {/* Interactive States Controller Bar */}
+          <div className="mt-4 p-4 bg-white rounded-2xl border border-slate-200 shadow-subtle flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <Code2 className="w-4 h-4 text-crest-600" />
+              <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                Live State Playground Switcher:
+              </span>
             </div>
-
-            {/* Heritage Gold */}
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-3 shadow-card">
-              <h3 className="font-serif text-base font-bold text-slate-900">Heritage Gold (Accent)</h3>
-              <div className="grid grid-cols-5 gap-2">
-                <div className="h-14 rounded-lg bg-gold-50 flex items-end p-1 text-[9px] font-mono text-gold-900">50</div>
-                <div className="h-14 rounded-lg bg-gold-200 flex items-end p-1 text-[9px] font-mono text-gold-900">200</div>
-                <div className="h-14 rounded-lg bg-gold-400 flex items-end p-1 text-[9px] font-mono text-slate-950">400</div>
-                <div className="h-14 rounded-lg bg-gold-500 flex items-end p-1 text-[9px] font-mono text-slate-950 font-bold">500</div>
-                <div className="h-14 rounded-lg bg-gold-700 flex items-end p-1 text-[9px] font-mono text-white font-bold">700</div>
-              </div>
-              <p className="text-xs text-slate-500">Used for admissions highlights, academic honors, badges, and prestige markers.</p>
-            </div>
-
-            {/* Semantic Feedback */}
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-3 shadow-card">
-              <h3 className="font-serif text-base font-bold text-slate-900">Semantic Feedback Palette</h3>
-              <div className="grid grid-cols-4 gap-2">
-                <div className="h-14 rounded-lg bg-success-500 flex items-end p-1 text-[9px] font-mono text-white">Success</div>
-                <div className="h-14 rounded-lg bg-warning-500 flex items-end p-1 text-[9px] font-mono text-white">Warning</div>
-                <div className="h-14 rounded-lg bg-danger-600 flex items-end p-1 text-[9px] font-mono text-white">Danger</div>
-                <div className="h-14 rounded-lg bg-info-500 flex items-end p-1 text-[9px] font-mono text-white">Info</div>
-              </div>
-              <p className="text-xs text-slate-500">Adheres strictly to WCAG 2.1 AA 4.5:1 minimum contrast ratios.</p>
-            </div>
-          </div>
-        </section>
-
-        {/* 2. BUTTONS & ICON BUTTONS */}
-        <section className="space-y-6">
-          <h2 className="font-serif text-2xl font-bold text-slate-900 border-b border-slate-200 pb-2">
-            2. Buttons & IconButtons
-          </h2>
-
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 space-y-6 shadow-card">
-            <div className="space-y-2">
-              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Button Variants</h4>
-              <div className="flex flex-wrap gap-3 items-center">
-                <Button variant="primary">Primary Button</Button>
-                <Button variant="gold" leftIcon={<Sparkles className="w-4 h-4" />}>Gold Prestige</Button>
-                <Button variant="secondary">Secondary Button</Button>
-                <Button variant="outline">Outline Button</Button>
-                <Button variant="ghost">Ghost Button</Button>
-                <Button variant="danger" leftIcon={<Trash2 className="w-4 h-4" />}>Danger Button</Button>
-                <Button variant="primary" isLoading>Loading State</Button>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Button Sizes & IconButtons</h4>
-              <div className="flex flex-wrap gap-3 items-center">
-                <Button size="sm">Small (sm)</Button>
-                <Button size="md">Medium (md)</Button>
-                <Button size="lg">Large (lg)</Button>
-                <IconButton aria-label="Notifications" variant="primary" size="md">
-                  <Bell className="w-4 h-4" />
-                </IconButton>
-                <IconButton aria-label="Favorites" variant="secondary" size="md">
-                  <Heart className="w-4 h-4 text-danger-500" />
-                </IconButton>
-                <IconButton aria-label="Download" variant="outline" size="md">
-                  <Download className="w-4 h-4" />
-                </IconButton>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* 3. FORM CONTROLS */}
-        <section className="space-y-6">
-          <h2 className="font-serif text-2xl font-bold text-slate-900 border-b border-slate-200 pb-2">
-            3. Form Inputs & Selection Controls
-          </h2>
-
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-card grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Input label="Student Name" placeholder="e.g. Liam Vance" required helperText="Enter full institutional registered name." />
-            <Input label="Email with Error State" value="invalid-email" error="Please enter a valid academic email address." />
-            <Select
-              label="Academic Grade Cohort"
-              options={[
-                { label: 'Grade 9 (Freshman)', value: 'G9' },
-                { label: 'Grade 10 (Sophomore)', value: 'G10' },
-                { label: 'Grade 11 (Junior)', value: 'G11' },
-                { label: 'Grade 12 (Senior)', value: 'G12' },
-              ]}
-            />
-            <DatePicker label="Date of Assessment" defaultValue="2026-10-15" />
-            <div className="md:col-span-2">
-              <Search
-                placeholder="Search students, faculty rosters, or academic subjects..."
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-                onClear={() => setSearchValue('')}
+            <div className="flex flex-wrap items-center gap-6">
+              <Switch
+                label="Simulate Loading"
+                checked={demoLoading}
+                onChange={setDemoLoading}
+              />
+              <Switch
+                label="Simulate Disabled"
+                checked={demoDisabled}
+                onChange={setDemoDisabled}
+              />
+              <Switch
+                label="Simulate Error"
+                checked={demoError}
+                onChange={setDemoError}
               />
             </div>
-            <div className="md:col-span-2">
-              <Textarea label="Academic Observation Notes" placeholder="Enter teacher feedback or administrative remarks..." rows={3} />
+          </div>
+        </div>
+
+        {/* 1. BUTTONS & ACTIONS */}
+        <section className="space-y-6">
+          <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+            <h2 className="font-serif text-2xl font-bold text-slate-900">
+              1. Buttons & Interactive Triggers
+            </h2>
+            <span className="text-xs text-slate-400 font-mono">apps/web/src/components/ui/Button.tsx</span>
+          </div>
+
+          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-card space-y-6">
+            <div>
+              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Variants</h4>
+              <div className="flex flex-wrap gap-3 items-center">
+                <Button variant="primary" isLoading={demoLoading} disabled={demoDisabled} leftIcon={<Sparkles className="w-4 h-4" />}>
+                  Primary Crest
+                </Button>
+                <Button variant="secondary" isLoading={demoLoading} disabled={demoDisabled}>
+                  Secondary Action
+                </Button>
+                <Button variant="outline" isLoading={demoLoading} disabled={demoDisabled} leftIcon={<Download className="w-4 h-4" />}>
+                  Outline Button
+                </Button>
+                <Button variant="ghost" isLoading={demoLoading} disabled={demoDisabled}>
+                  Ghost Action
+                </Button>
+                <Button variant="danger" isLoading={demoLoading} disabled={demoDisabled} leftIcon={<Trash2 className="w-4 h-4" />}>
+                  Destructive Action
+                </Button>
+                <Button variant="gold" isLoading={demoLoading} disabled={demoDisabled}>
+                  Gold Accent
+                </Button>
+              </div>
             </div>
+
+            <div>
+              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Sizes</h4>
+              <div className="flex flex-wrap items-center gap-3">
+                <Button size="sm" variant="primary">Small (sm)</Button>
+                <Button size="md" variant="primary">Medium Default (md)</Button>
+                <Button size="lg" variant="primary">Large Hero (lg)</Button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 2. AVATAR COMPONENT SUITE */}
+        <section className="space-y-6">
+          <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+            <h2 className="font-serif text-2xl font-bold text-slate-900">
+              2. Avatar & Identity Indicators
+            </h2>
+            <span className="text-xs text-slate-400 font-mono">apps/web/src/components/ui/Avatar.tsx</span>
+          </div>
+
+          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-card space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Sizes */}
+              <div className="space-y-3">
+                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Sizes (xs to xl)</h4>
+                <div className="flex items-center gap-3">
+                  <Avatar name="Liam Vance" size="xs" />
+                  <Avatar name="Liam Vance" size="sm" />
+                  <Avatar name="Liam Vance" size="md" />
+                  <Avatar name="Liam Vance" size="lg" />
+                  <Avatar name="Liam Vance" size="xl" />
+                </div>
+              </div>
+
+              {/* Status Indicators */}
+              <div className="space-y-3">
+                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Presence Status Indicators</h4>
+                <div className="flex items-center gap-3">
+                  <Tooltip content="Online">
+                    <Avatar name="Emma Watson" status="online" size="lg" />
+                  </Tooltip>
+                  <Tooltip content="Busy in Class">
+                    <Avatar name="Noah Clark" status="busy" size="lg" />
+                  </Tooltip>
+                  <Tooltip content="Away / Recess">
+                    <Avatar name="Sophia Miller" status="away" size="lg" />
+                  </Tooltip>
+                  <Tooltip content="Offline">
+                    <Avatar name="James Lee" status="offline" size="lg" />
+                  </Tooltip>
+                </div>
+              </div>
+
+              {/* Shapes & Stack */}
+              <div className="space-y-3">
+                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Shapes & Stacked Group</h4>
+                <div className="flex items-center gap-4">
+                  <Avatar name="Principal Davis" shape="rounded" size="lg" status="online" />
+                  {/* Avatar Stack */}
+                  <div className="flex -space-x-3 overflow-hidden p-1">
+                    <Avatar name="Liam Vance" size="md" className="ring-2 ring-white" />
+                    <Avatar name="Emma Watson" size="md" className="ring-2 ring-white" />
+                    <Avatar name="Noah Clark" size="md" className="ring-2 ring-white" />
+                    <div className="w-10 h-10 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center text-xs font-bold text-slate-700">
+                      +18
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 3. FORM INPUTS & SELECTION CONTROLS */}
+        <section className="space-y-6">
+          <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+            <h2 className="font-serif text-2xl font-bold text-slate-900">
+              3. Form Inputs & Selection Controls
+            </h2>
+            <span className="text-xs text-slate-400 font-mono">Input, Textarea, Select, Checkbox, Radio, Switch, FileUpload</span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-6 rounded-2xl border border-slate-200 shadow-card">
+            <div>
+              <Input
+                label="Student Full Name"
+                placeholder="e.g. Liam Christopher Vance"
+                disabled={demoDisabled}
+                error={demoError ? 'A legal student name is mandatory for enrollment registration.' : undefined}
+                helperText="Must match passport or official birth certificate"
+                required
+              />
+            </div>
+
+            <div>
+              <Select
+                label="Academic Grade & Stream"
+                options={[
+                  { label: 'Grade 9 - Freshman Honors', value: 'g9' },
+                  { label: 'Grade 10 - Sophomore Scholars', value: 'g10' },
+                  { label: 'Grade 11 - International Baccalaureate', value: 'g11' },
+                  { label: 'Grade 12 - Senior AP Cohort', value: 'g12' },
+                ]}
+                disabled={demoDisabled}
+                error={demoError ? 'Please designate an academic level.' : undefined}
+                helperText="Determines core course prerequisites"
+                required
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <Textarea
+                label="Academic Observation Notes"
+                placeholder="Enter teacher feedback or administrative remarks..."
+                rows={3}
+                disabled={demoDisabled}
+                error={demoError ? 'Notes cannot exceed maximum character limit.' : undefined}
+                helperText="Visible only to authorized faculty and academic counselors"
+              />
+            </div>
+
             <div className="space-y-4">
               <Checkbox
                 label="Notify Guardian via SMS & Email"
                 description="Dispatches instant notification to parents upon grade publication."
                 checked={checkboxChecked}
+                disabled={demoDisabled}
+                error={demoError ? 'Parent authorization flag required' : undefined}
                 onChange={(e) => setCheckboxChecked(e.target.checked)}
               />
               <Switch
                 label="Allow Self-Submission Dropbox"
                 description="Permit scholars to upload PDF submissions after deadline."
                 checked={switchChecked}
+                disabled={demoDisabled}
                 onChange={setSwitchChecked}
               />
             </div>
+
             <div>
               <RadioGroup
                 name="deliveryMode"
                 label="Instructional Delivery Format"
                 selectedValue={radioSelected}
+                disabled={demoDisabled}
+                error={demoError ? 'Select an instructional modality' : undefined}
                 onChange={setRadioSelected}
                 options={[
                   { label: 'Standard On-Campus Lecture', value: 'opt1', description: 'In-person classroom session.' },
@@ -228,17 +310,24 @@ export const DesignSystemShowcasePage: React.FC = () => {
                 ]}
               />
             </div>
+
             <div className="md:col-span-2">
-              <FileUpload label="Attach Student Portfolio Documents" helperText="Transcripts, recommendation letters (Max 10MB)" />
+              <FileUpload
+                label="Attach Student Portfolio Documents"
+                helperText="Transcripts, recommendation letters (Max 10MB each)"
+              />
             </div>
           </div>
         </section>
 
-        {/* 4. OVERLAYS, MODALS & DIALOGS */}
+        {/* 4. OVERLAYS, MODALS, DRAWERS & DIALOGS */}
         <section className="space-y-6">
-          <h2 className="font-serif text-2xl font-bold text-slate-900 border-b border-slate-200 pb-2">
-            4. Overlays, Modals, Drawers & Dialogs
-          </h2>
+          <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+            <h2 className="font-serif text-2xl font-bold text-slate-900">
+              4. Overlays, Modals, Drawers & Dialogs
+            </h2>
+            <span className="text-xs text-slate-400 font-mono">Modal, Drawer, Dropdown, ConfirmationDialog, Toast</span>
+          </div>
 
           <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-card flex flex-wrap gap-4 items-center">
             <Button variant="primary" onClick={() => setModalOpen(true)}>
@@ -262,6 +351,19 @@ export const DesignSystemShowcasePage: React.FC = () => {
             >
               Trigger Success Toast
             </Button>
+            <Dropdown
+              trigger={
+                <Button variant="outline" rightIcon={<Filter className="w-3.5 h-3.5" />}>
+                  Export Menu
+                </Button>
+              }
+              items={[
+                { label: 'Export as PDF Dossier', icon: <Download className="w-4 h-4" /> },
+                { label: 'Export CSV Spreadsheet', icon: <Download className="w-4 h-4" /> },
+                { divider: true, label: '' },
+                { label: 'Archive Record', danger: true, icon: <Trash2 className="w-4 h-4" /> },
+              ]}
+            />
             <Tooltip content="Academic year 2026-2027 verified">
               <Badge variant="gold">Hover for Tooltip</Badge>
             </Tooltip>
@@ -291,10 +393,16 @@ export const DesignSystemShowcasePage: React.FC = () => {
             onClose={() => setDrawerOpen(false)}
             title="Student Dossier Quick View"
           >
-            <div className="space-y-3 text-xs text-slate-600">
-              <p className="font-bold text-sm text-slate-900">Liam Vance (Grade 11)</p>
-              <p>ID: OAK-882190 • Weighted GPA: 3.96</p>
-              <p>Attendance: 98% (Exemplary Record)</p>
+            <div className="space-y-4 text-xs text-slate-600">
+              <div className="flex items-center gap-3">
+                <Avatar name="Liam Vance" size="lg" status="online" />
+                <div>
+                  <h4 className="font-bold text-sm text-slate-900">Liam Vance</h4>
+                  <p className="text-slate-500">ID: OAK-882190 • Grade 11</p>
+                </div>
+              </div>
+              <p>Weighted Cumulative GPA: <strong className="text-slate-900">3.96</strong></p>
+              <p>Attendance Record: <strong className="text-emerald-700">98% (Exemplary)</strong></p>
               <div className="pt-4">
                 <Button size="sm" variant="outline" onClick={() => setDrawerOpen(false)}>Close Drawer</Button>
               </div>
@@ -315,11 +423,14 @@ export const DesignSystemShowcasePage: React.FC = () => {
           />
         </section>
 
-        {/* 5. DATA TABLES & PRESENTATION */}
+        {/* 5. DATA TABLES, BADGES & PAGINATION */}
         <section className="space-y-6">
-          <h2 className="font-serif text-2xl font-bold text-slate-900 border-b border-slate-200 pb-2">
-            5. Data Tables, Badges & Pagination
-          </h2>
+          <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+            <h2 className="font-serif text-2xl font-bold text-slate-900">
+              5. Data Tables, Badges & Pagination
+            </h2>
+            <span className="text-xs text-slate-400 font-mono">Table, Badge, Pagination</span>
+          </div>
 
           <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-card space-y-4">
             <div className="flex flex-wrap gap-2 items-center">
@@ -343,21 +454,36 @@ export const DesignSystemShowcasePage: React.FC = () => {
               </TableHeader>
               <TableBody>
                 <TableRow>
-                  <TableCell className="font-bold text-slate-900">Liam Vance</TableCell>
+                  <TableCell className="font-bold text-slate-900">
+                    <div className="flex items-center gap-2.5">
+                      <Avatar name="Liam Vance" size="sm" />
+                      <span>Liam Vance</span>
+                    </div>
+                  </TableCell>
                   <TableCell>PHY-401 • AP Physics</TableCell>
                   <TableCell>96 / 100</TableCell>
                   <TableCell><Badge variant="success">Grade A</Badge></TableCell>
                   <TableCell className="text-right"><Button variant="ghost" size="sm">Inspect</Button></TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell className="font-bold text-slate-900">Emma Watson</TableCell>
+                  <TableCell className="font-bold text-slate-900">
+                    <div className="flex items-center gap-2.5">
+                      <Avatar name="Emma Watson" size="sm" />
+                      <span>Emma Watson</span>
+                    </div>
+                  </TableCell>
                   <TableCell>MTH-402 • AP Calculus</TableCell>
                   <TableCell>91 / 100</TableCell>
                   <TableCell><Badge variant="primary">Grade A-</Badge></TableCell>
                   <TableCell className="text-right"><Button variant="ghost" size="sm">Inspect</Button></TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell className="font-bold text-slate-900">Noah Clark</TableCell>
+                  <TableCell className="font-bold text-slate-900">
+                    <div className="flex items-center gap-2.5">
+                      <Avatar name="Noah Clark" size="sm" />
+                      <span>Noah Clark</span>
+                    </div>
+                  </TableCell>
                   <TableCell>ENG-301 • World Literature</TableCell>
                   <TableCell>85 / 100</TableCell>
                   <TableCell><Badge variant="gold">Grade B</Badge></TableCell>
@@ -376,11 +502,14 @@ export const DesignSystemShowcasePage: React.FC = () => {
           </div>
         </section>
 
-        {/* 6. ALERTS, ACCORDIONS, TABS & SKELETONS */}
+        {/* 6. ALERTS, TABS, ACCORDIONS, FEEDBACK & SKELETONS */}
         <section className="space-y-6">
-          <h2 className="font-serif text-2xl font-bold text-slate-900 border-b border-slate-200 pb-2">
-            6. Structural Elements & Loading Skeletons
-          </h2>
+          <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+            <h2 className="font-serif text-2xl font-bold text-slate-900">
+              6. Feedback Alerts, Accordions, Tabs, Empty & Error States
+            </h2>
+            <span className="text-xs text-slate-400 font-mono">Alert, Tabs, Accordion, EmptyState, ErrorState, Skeleton, Spinner</span>
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-3">
@@ -421,9 +550,12 @@ export const DesignSystemShowcasePage: React.FC = () => {
               />
             </div>
 
-            {/* Skeleton & Empty States */}
+            {/* Skeleton & Spinner States */}
             <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-card space-y-4">
-              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Shimmer Loading Skeletons</h4>
+              <div className="flex items-center justify-between">
+                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Shimmer Loading Skeletons</h4>
+                <Spinner size="sm" />
+              </div>
               <div className="space-y-2">
                 <Skeleton variant="text" width="60%" height="24px" />
                 <Skeleton variant="text" width="100%" height="16px" />
@@ -438,12 +570,22 @@ export const DesignSystemShowcasePage: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-card">
-              <EmptyState
-                title="No Pending Examination Submissions"
-                description="All submitted student lab reports and essays have been evaluated by faculty."
-                action={<Button size="sm" variant="outline">Refresh Queue</Button>}
-              />
+            {/* Empty and Error States */}
+            <div className="space-y-4">
+              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-card">
+                <EmptyState
+                  title="No Pending Examination Submissions"
+                  description="All submitted student lab reports and essays have been evaluated by faculty."
+                  action={<Button size="sm" variant="outline">Refresh Queue</Button>}
+                />
+              </div>
+              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-card">
+                <ErrorState
+                  title="Failed to Synchronize Rosters"
+                  description="A temporary network timeout occurred with the school database replica."
+                  onRetry={() => toast({ type: 'info', message: 'Retrying database synchronization...' })}
+                />
+              </div>
             </div>
           </div>
         </section>
@@ -451,3 +593,5 @@ export const DesignSystemShowcasePage: React.FC = () => {
     </div>
   );
 };
+
+export default DesignSystemShowcasePage;

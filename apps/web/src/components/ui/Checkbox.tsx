@@ -20,30 +20,27 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
             type="checkbox"
             checked={checked}
             onChange={onChange}
+            aria-invalid={error ? 'true' : 'false'}
             className="peer sr-only"
             {...props}
           />
-          <div
-            onClick={(e) => {
-              // Trigger input change
-              const input = (e.currentTarget.previousSibling as HTMLInputElement);
-              input?.click();
-            }}
-            className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all cursor-pointer ${
+          <label
+            htmlFor={checkboxId}
+            className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all cursor-pointer peer-focus-visible:ring-2 peer-focus-visible:ring-crest-600 peer-focus-visible:ring-offset-2 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed ${
               checked
                 ? 'bg-crest-700 border-crest-700 text-white'
                 : 'bg-white border-slate-300 hover:border-slate-400'
             } ${error ? 'border-danger-500' : ''}`}
           >
             {checked && <Check className="w-3.5 h-3.5 stroke-[3]" />}
-          </div>
+          </label>
         </div>
 
         {(label || description) && (
-          <label htmlFor={checkboxId} className="cursor-pointer text-xs sm:text-sm">
+          <label htmlFor={checkboxId} className={`cursor-pointer text-xs sm:text-sm ${props.disabled ? 'opacity-50 cursor-not-allowed' : ''}`}>
             {label && <span className="font-medium text-slate-800 block">{label}</span>}
             {description && <span className="text-slate-500 text-xs block">{description}</span>}
-            {error && <span className="text-danger-600 text-xs block font-medium mt-0.5">{error}</span>}
+            {error && <span role="alert" className="text-danger-600 text-xs block font-medium mt-0.5">{error}</span>}
           </label>
         )}
       </div>

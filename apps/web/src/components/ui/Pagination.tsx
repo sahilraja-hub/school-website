@@ -23,7 +23,10 @@ export const Pagination: React.FC<PaginationProps> = ({
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
-    <div className={`flex flex-col sm:flex-row items-center justify-between gap-4 py-3 text-xs text-slate-600 ${className}`}>
+    <nav
+      aria-label="Pagination"
+      className={`flex flex-col sm:flex-row items-center justify-between gap-4 py-3 text-xs text-slate-600 ${className}`}
+    >
       {totalRecords !== undefined && pageSize !== undefined && (
         <div>
           Showing{' '}
@@ -43,7 +46,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           type="button"
           disabled={currentPage === 1}
           onClick={() => onPageChange(currentPage - 1)}
-          className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-crest-600"
           aria-label="Previous page"
         >
           <ChevronLeft className="w-4 h-4" />
@@ -56,7 +59,9 @@ export const Pagination: React.FC<PaginationProps> = ({
               key={p}
               type="button"
               onClick={() => onPageChange(p)}
-              className={`w-8 h-8 rounded-lg font-semibold transition-all ${
+              aria-current={isCurrent ? 'page' : undefined}
+              aria-label={`Page ${p}`}
+              className={`w-8 h-8 rounded-lg font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-crest-600 ${
                 isCurrent
                   ? 'bg-crest-700 text-white shadow-subtle'
                   : 'text-slate-700 hover:bg-slate-100'
@@ -77,6 +82,8 @@ export const Pagination: React.FC<PaginationProps> = ({
           <ChevronRight className="w-4 h-4" />
         </button>
       </div>
-    </div>
+    </nav>
   );
 };
+
+Pagination.displayName = 'Pagination';

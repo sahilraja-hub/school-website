@@ -1,9 +1,10 @@
-import React, { forwardRef } from 'react';
+import React from 'react';
 
 export interface RadioOption {
   label: string;
   value: string | number;
   description?: string;
+  disabled?: boolean;
 }
 
 export interface RadioGroupProps {
@@ -13,6 +14,7 @@ export interface RadioGroupProps {
   selectedValue?: string | number;
   onChange: (value: any) => void;
   error?: string;
+  disabled?: boolean;
   className?: string;
 }
 
@@ -23,14 +25,22 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
   selectedValue,
   onChange,
   error,
+  disabled = false,
   className = '',
 }) => {
   return (
-    <div className={`space-y-2 text-left ${className}`}>
+    <div
+      role="radiogroup"
+      aria-label={label}
+      aria-invalid={error ? 'true' : 'false'}
+      className={`space-y-2 text-left ${className}`}
+    >
       {label && <span className="block text-xs font-semibold text-slate-700">{label}</span>}
       <div className="space-y-2">
         {options.map((opt) => {
           const isSelected = selectedValue === opt.value;
+          const isOptDisabled = disabled || opt.disabled;
+
           return (
             <label
               key={opt.value}
@@ -38,18 +48,19 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
                 isSelected
                   ? 'border-crest-600 bg-crest-50/50 shadow-subtle'
                   : 'border-slate-200 hover:border-slate-300 bg-white'
-              }`}
+              } ${isOptDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               <input
                 type="radio"
                 name={name}
                 value={opt.value}
                 checked={isSelected}
-                onChange={() => onChange(opt.value)}
-                className="sr-only"
+                disabled={isOptDisabled}
+                onChange={() => !isOptDisabled && onChange(opt.value)}
+                className="peer sr-only"
               />
               <div
-                className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 mt-0.5 ${
+                className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 mt-0.5 peer-focus-visible:ring-2 peer-focus-visible:ring-crest-600 peer-focus-visible:ring-offset-2 ${
                   isSelected ? 'border-crest-700' : 'border-slate-300'
                 }`}
               >
@@ -63,7 +74,13 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
           );
         })}
       </div>
-      {error && <p className="text-xs text-danger-600 font-medium">{error}</p>}
+      {error && (
+        <p role="alert" className="text-xs text-danger-600 font-medium">
+          {error}
+        </p>
+      )}
     </div>
   );
 };
+
+export const Radio = RadioGroup;

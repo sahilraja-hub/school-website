@@ -59,8 +59,17 @@ export const FileUpload: React.FC<FileUploadProps> = ({
           setIsDragging(false);
           handleFileChange(e.dataTransfer.files);
         }}
+        role="button"
+        tabIndex={0}
+        aria-label="Upload files dropzone"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            fileInputRef.current?.click();
+          }
+        }}
         onClick={() => fileInputRef.current?.click()}
-        className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition-all duration-150 ${
+        className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-crest-600 ${
           isDragging
             ? 'border-crest-600 bg-crest-50/50 scale-[1.01]'
             : 'border-slate-300 hover:border-crest-500 hover:bg-slate-50/80 bg-white'
