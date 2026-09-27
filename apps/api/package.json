@@ -1,5 +1,5 @@
 {
-  "name": "@school/server",
+  "name": "@school/api",
   "version": "1.0.0",
   "private": true,
   "main": "dist/server.js",
@@ -9,7 +9,8 @@
     "start": "node dist/server.js",
     "seed": "ts-node-dev --transpile-only src/utils/seed.ts",
     "test": "vitest run",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@school/shared": "*",

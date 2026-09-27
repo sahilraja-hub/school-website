@@ -14,7 +14,7 @@ export const createApp = (): express.Application => {
   // Security Headers
   app.use(
     helmet({
-      contentSecurityPolicy: false, // Allows flexible integration in dev
+      contentSecurityPolicy: false, // Configured per environment in production proxy
       crossOriginEmbedderPolicy: false,
     })
   );
@@ -29,7 +29,7 @@ export const createApp = (): express.Application => {
     })
   );
 
-  // Rate Limiting (100 requests per 15 mins for general endpoints, skips in testing)
+  // Rate Limiting (skips during automated testing)
   if (config.nodeEnv !== 'test') {
     const limiter = rateLimit({
       windowMs: 15 * 60 * 1000,
@@ -46,13 +46,16 @@ export const createApp = (): express.Application => {
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
   app.use(cookieParser());
 
-  // Logging
+  // Request Logging Foundation
   if (config.nodeEnv !== 'test') {
-    app.use(morgan('dev'));
+    app.use(morgan(config.nodeEnv === 'production' ? 'combined' : 'dev'));
   }
 
-  // API Routes
-  app.use('/api', apiRoutes);
+  // API Version Prefix: /api/v1 (and backwards compatible /api alias)
+  app.use(config.apiPrefix, apiRoutes);
+  if (config.apiPrefix !== '/api') {
+    app.use('/api', apiRoutes);
+  }
 
   // 404 Handler
   app.use((req, res) => {
