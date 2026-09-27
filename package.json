@@ -1,0 +1,26 @@
+{
+  "name": "school-website-platform",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Comprehensive School Website and Role-Based Management System",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev --parallel",
+    "dev:client": "npm run dev --workspace=@school/client",
+    "dev:server": "npm run dev --workspace=@school/server",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "seed": "npm run seed --workspace=@school/server",
+    "lint": "turbo run lint"
+  },
+  "devDependencies": {
+    "turbo": "^2.4.4"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
