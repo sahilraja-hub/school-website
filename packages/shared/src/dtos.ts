@@ -263,3 +263,72 @@ export interface PaymentDto {
   paidAt: string;
   notes?: string | null;
 }
+
+export interface FeeStructureDto {
+  id: string;
+  name: string;
+  academicYear: string;
+  term: string;
+  amount: number;
+  category: string;
+  description?: string | null;
+}
+
+export interface AuditLogDto {
+  id: string;
+  userId?: string | null;
+  userName?: string | null;
+  userRole?: string | null;
+  action: string;
+  resource: string;
+  resourceId?: string | null;
+  details?: Record<string, any> | null;
+  ipAddress?: string | null;
+  status: string;
+  timestamp: string;
+}
+
+export interface SettingDto {
+  key: string;
+  value: string;
+  category: string;
+  description?: string | null;
+  isPublic: boolean;
+  updatedAt: string;
+}
+
+export interface DocumentDto {
+  id: string;
+  title: string;
+  category: string;
+  fileUrl: string;
+  fileSize?: number;
+  mimeType?: string;
+  uploadedBy?: string;
+  uploadedAt: string;
+}
+
+export interface GalleryDto {
+  id: string;
+  title: string;
+  description?: string | null;
+  category: string;
+  academicYear: string;
+  coverImage?: string;
+  mediaCount?: number;
+  createdAt: string;
+}
+
+export interface HomeworkSubmissionDto {
+  id: string;
+  homeworkId: string;
+  studentId: string;
+  studentName?: string;
+  content: string;
+  attachmentUrl?: string | null;
+  submittedAt: string;
+  marksObtained?: number | null;
+  remarks?: string | null;
+  status: string;
+}
+

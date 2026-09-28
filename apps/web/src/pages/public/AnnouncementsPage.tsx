@@ -92,78 +92,86 @@ export const NoticesPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
     const fetchAnnouncements = async () => {
       try {
         const res = await api.get('/announcements');
-        if (res.data.success && Array.isArray(res.data.data)) {
+        if (isMounted && res.data.success && Array.isArray(res.data.data)) {
           setAnnouncements(res.data.data);
-        } else {
+        } else if (isMounted) {
           throw new Error('Fallback needed');
         }
       } catch (err) {
-        // High quality mock notices for public board
-        setAnnouncements([
-          {
-            id: 'n1',
-            title: 'Admissions Cycle 2026-2027: Early Action Deadlines & Registration',
-            content: 'Prospective families are advised that the deadline for Early Action scholarship consideration is November 1st, 2026. Required documents must be submitted through the admissions portal before 5:00 PM PST.',
-            category: 'URGENT',
-            isPinned: true,
-            authorId: 'admin1',
-            authorName: 'Office of the Registrar',
-            targetRoles: ['ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
-            publishDate: new Date().toISOString(),
-          },
-          {
-            id: 'n2',
-            title: 'Fall Semester Mid-Term Assessment Timetable & Examination Protocol',
-            content: 'The official schedule for mid-term assessments across Grades 6 through 12 is now finalized. Examination venues, proctor assignments, and permitted reference materials are published in scholar portals.',
-            category: 'ACADEMIC',
-            isPinned: true,
-            authorId: 'admin2',
-            authorName: 'Academic Directorate',
-            targetRoles: ['ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
-            publishDate: new Date(Date.now() - 86400000).toISOString(),
-          },
-          {
-            id: 'n3',
-            title: 'Annual STEM & Robotics Innovation Expo 2026 Scheduled',
-            content: 'Over 40 student-led research initiatives, competitive AI models, and autonomous robotics demonstrations will be showcased in the Grand Hall on October 22nd. Parents and alumni welcome.',
-            category: 'EVENT',
-            isPinned: false,
-            authorId: 'teacher1',
-            authorName: 'Sarah Montgomery (Head of Robotics)',
-            targetRoles: ['ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
-            publishDate: new Date(Date.now() - 172800000).toISOString(),
-          },
-          {
-            id: 'n4',
-            title: 'Varsity Football State Championship Quarterfinal Match',
-            content: 'Congratulations to our varsity athletes! The Lions will host the regional quarterfinals at our Championship Stadium under the lights this Friday at 6:30 PM.',
-            category: 'SPORTS',
-            isPinned: false,
-            authorId: 'coach1',
-            authorName: 'Athletics Department',
-            targetRoles: ['ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
-            publishDate: new Date(Date.now() - 259200000).toISOString(),
-          },
-          {
-            id: 'n5',
-            title: 'Alexander Media Library Winter Holiday Extended Reading Privileges',
-            content: 'Beginning next Monday, all scholars in Grades 9-12 may checkout up to 8 circulating monographs and research volumes for independent winter reading and extended essay research.',
-            category: 'GENERAL',
-            isPinned: false,
-            authorId: 'lib1',
-            authorName: 'Head Librarian',
-            targetRoles: ['ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
-            publishDate: new Date(Date.now() - 345600000).toISOString(),
-          },
-        ]);
+        if (isMounted) {
+          // High quality mock notices for public board
+          setAnnouncements([
+            {
+              id: 'n1',
+              title: 'Admissions Cycle 2026-2027: Early Action Deadlines & Registration',
+              content: 'Prospective families are advised that the deadline for Early Action scholarship consideration is November 1st, 2026. Required documents must be submitted through the admissions portal before 5:00 PM PST.',
+              category: 'URGENT',
+              isPinned: true,
+              authorId: 'admin1',
+              authorName: 'Office of the Registrar',
+              targetRoles: ['ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
+              publishDate: new Date().toISOString(),
+            },
+            {
+              id: 'n2',
+              title: 'Fall Semester Mid-Term Assessment Timetable & Examination Protocol',
+              content: 'The official schedule for mid-term assessments across Grades 6 through 12 is now finalized. Examination venues, proctor assignments, and permitted reference materials are published in scholar portals.',
+              category: 'ACADEMIC',
+              isPinned: true,
+              authorId: 'admin2',
+              authorName: 'Academic Directorate',
+              targetRoles: ['ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
+              publishDate: new Date(Date.now() - 86400000).toISOString(),
+            },
+            {
+              id: 'n3',
+              title: 'Annual STEM & Robotics Innovation Expo 2026 Scheduled',
+              content: 'Over 40 student-led research initiatives, competitive AI models, and autonomous robotics demonstrations will be showcased in the Grand Hall on October 22nd. Parents and alumni welcome.',
+              category: 'EVENT',
+              isPinned: false,
+              authorId: 'teacher1',
+              authorName: 'Sarah Montgomery (Head of Robotics)',
+              targetRoles: ['ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
+              publishDate: new Date(Date.now() - 172800000).toISOString(),
+            },
+            {
+              id: 'n4',
+              title: 'Varsity Football State Championship Quarterfinal Match',
+              content: 'Congratulations to our varsity athletes! The Lions will host the regional quarterfinals at our Championship Stadium under the lights this Friday at 6:30 PM.',
+              category: 'SPORTS',
+              isPinned: false,
+              authorId: 'coach1',
+              authorName: 'Athletics Department',
+              targetRoles: ['ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
+              publishDate: new Date(Date.now() - 259200000).toISOString(),
+            },
+            {
+              id: 'n5',
+              title: 'Alexander Media Library Winter Holiday Extended Reading Privileges',
+              content: 'Beginning next Monday, all scholars in Grades 9-12 may checkout up to 8 circulating monographs and research volumes for independent winter reading and extended essay research.',
+              category: 'GENERAL',
+              isPinned: false,
+              authorId: 'lib1',
+              authorName: 'Head Librarian',
+              targetRoles: ['ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
+              publishDate: new Date(Date.now() - 345600000).toISOString(),
+            },
+          ]);
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
     fetchAnnouncements();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const categories = [
