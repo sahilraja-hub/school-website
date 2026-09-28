@@ -6,20 +6,15 @@ import attendanceRoutes from './attendanceRoutes';
 import gradeRoutes from './gradeRoutes';
 import announcementRoutes from './announcementRoutes';
 import statsRoutes from './statsRoutes';
+import { getHealth, getReadiness } from '../controllers/healthController';
 
 const router = Router();
 
-// Health check endpoint (for monitoring, Docker, K8s, load balancers)
-router.get('/health', (req, res) => {
-  res.json({
-    status: 'ok',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-    version: '1.0.0',
-    service: 'Oakridge School API',
-  });
-});
+// Health & Readiness Endpoints
+router.get('/health', getHealth);
+router.get('/ready', getReadiness);
 
+// Subsystem Modules
 router.use('/auth', authRoutes);
 router.use('/admissions', admissionRoutes);
 router.use('/classes', classRoutes);

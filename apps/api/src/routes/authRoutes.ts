@@ -11,24 +11,25 @@ import {
 } from '../controllers/authController';
 import { authenticate, authorize } from '../middleware/auth';
 import { validate } from '../middleware/validate';
+import { asyncHandler } from '../middleware/asyncHandler';
 import { LoginSchema, RegisterSchema, ChangePasswordSchema } from '@school/shared';
 import { authRateLimiter, refreshRateLimiter } from '../middleware/rateLimiter';
 
 const router = Router();
 
 // Public Authentication Endpoints
-router.post('/login', authRateLimiter, validate(LoginSchema), login);
-router.post('/register', authRateLimiter, validate(RegisterSchema), register);
-router.post('/refresh', refreshRateLimiter, refreshToken);
-router.post('/logout', logout);
+router.post('/login', authRateLimiter, validate(LoginSchema), asyncHandler(login));
+router.post('/register', authRateLimiter, validate(RegisterSchema), asyncHandler(register));
+router.post('/refresh', refreshRateLimiter, asyncHandler(refreshToken));
+router.post('/logout', asyncHandler(logout));
 
 // Authenticated Endpoints
-router.get('/me', authenticate, getCurrentUser);
-router.post('/logout-all', authenticate, logoutAll);
-router.post('/change-password', authenticate, validate(ChangePasswordSchema), changePassword);
+router.get('/me', authenticate, asyncHandler(getCurrentUser));
+router.post('/logout-all', authenticate, asyncHandler(logoutAll));
+router.post('/change-password', authenticate, validate(ChangePasswordSchema), asyncHandler(changePassword));
 
 // Security & Audit Endpoints (Restricted to SUPER_ADMIN)
-router.get('/security-logs', authenticate, authorize('SUPER_ADMIN'), getSecurityLogs);
+router.get('/security-logs', authenticate, authorize('SUPER_ADMIN'), asyncHandler(getSecurityLogs));
 
 // Role-Based Access Control Verification Endpoints
 router.get('/rbac-test/super-admin', authenticate, authorize('SUPER_ADMIN'), (req, res) => {
