@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
 import { attendanceRepository } from '../repositories/attendanceRepository';
 import { dtos } from '../types/dtos';
+import { AuthorizationError } from '../errors';
+import { schoolActorsRepository } from '../repositories/schoolActorsRepository';
+import { academicRepository } from '../repositories/academicRepository';
 
 export const listAttendance = async (req: Request, res: Response): Promise<void> => {
   const { page, limit, sectionId, studentId, date, status } = req.query as any;
@@ -38,8 +41,25 @@ export const listAttendance = async (req: Request, res: Response): Promise<void>
 
 export const recordAttendanceBatch = async (req: Request, res: Response): Promise<void> => {
   const { classId, sectionId, date, records } = req.body;
+  const targetSectionOrClass = sectionId || classId;
+
+  // Authorization check: If user is TEACHER, verify they are assigned to this section/class
+  if (req.user?.role === 'TEACHER') {
+    if (!req.user?.id) {
+      throw new AuthorizationError('Authentication required');
+    }
+    const teacher = await schoolActorsRepository.getTeacherByUserId(req.user.id);
+    if (!teacher) {
+      throw new AuthorizationError('Teacher profile not found for current user');
+    }
+    const isAssigned = academicRepository.isTeacherAssignedToSection(teacher.id, targetSectionOrClass);
+    if (!isAssigned) {
+      throw new AuthorizationError('You are not authorized to record attendance for this class or section');
+    }
+  }
+
   const recorded = await attendanceRepository.recordBatch({
-    sectionId: sectionId || classId,
+    sectionId: targetSectionOrClass,
     date,
     recordedById: req.user?.id,
     records,

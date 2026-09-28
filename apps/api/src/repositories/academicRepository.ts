@@ -42,11 +42,23 @@ export interface ITimetableRecord {
   updatedAt: Date;
 }
 
+export interface ITeacherAssignmentRecord {
+  id: string;
+  teacherId: string;
+  sectionId: string;
+  subjectId: string;
+  academicYear: string;
+  isPrimaryTeacher?: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 class AcademicRepository {
   private classes: Map<string, IClassRecord> = new Map();
   private sections: Map<string, ISectionRecord> = new Map();
   private subjects: Map<string, ISubjectRecord> = new Map();
   private timetables: Map<string, ITimetableRecord> = new Map();
+  private teacherAssignments: Map<string, ITeacherAssignmentRecord> = new Map();
 
   constructor() {
     this.seedDefaults();
@@ -135,6 +147,41 @@ class AcademicRepository {
       updatedAt: new Date(),
     };
     this.timetables.set(tt1.id, tt1);
+
+    // Teacher Assignments
+    const ta1: ITeacherAssignmentRecord = {
+      id: 'ta-1',
+      teacherId: 'teach-001',
+      sectionId: s10a.id,
+      subjectId: sub1.id,
+      academicYear: '2026-2027',
+      isPrimaryTeacher: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    const ta2: ITeacherAssignmentRecord = {
+      id: 'ta-2',
+      teacherId: 'teach-001',
+      sectionId: s10b.id,
+      subjectId: sub1.id,
+      academicYear: '2026-2027',
+      isPrimaryTeacher: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    const ta3: ITeacherAssignmentRecord = {
+      id: 'ta-3',
+      teacherId: 'teach-002',
+      sectionId: s10a.id,
+      subjectId: sub2.id,
+      academicYear: '2026-2027',
+      isPrimaryTeacher: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    this.teacherAssignments.set(ta1.id, ta1);
+    this.teacherAssignments.set(ta2.id, ta2);
+    this.teacherAssignments.set(ta3.id, ta3);
   }
 
   // --- Classes ---
@@ -321,6 +368,69 @@ class AcademicRepository {
 
   public async deleteTimetable(id: string) {
     return this.timetables.delete(id);
+  }
+
+  // --- Teacher Assignments & Authorization Checks ---
+  public async listTeacherAssignments(query: { teacherId?: string; sectionId?: string; subjectId?: string; academicYear?: string }) {
+    let items = Array.from(this.teacherAssignments.values());
+    if (query.teacherId) items = items.filter((a) => a.teacherId === query.teacherId);
+    if (query.sectionId) items = items.filter((a) => a.sectionId === query.sectionId);
+    if (query.subjectId) items = items.filter((a) => a.subjectId === query.subjectId);
+    if (query.academicYear) items = items.filter((a) => a.academicYear === query.academicYear);
+
+    return items.map((a) => {
+      const sec = this.sections.get(a.sectionId);
+      const cls = sec ? this.classes.get(sec.classId) : undefined;
+      const sub = this.subjects.get(a.subjectId);
+      return {
+        ...a,
+        sectionName: sec?.name,
+        roomNumber: sec?.roomNumber,
+        classId: sec?.classId,
+        className: cls?.name,
+        gradeLevel: cls?.gradeLevel,
+        subjectName: sub?.name || 'Subject',
+        subjectCode: sub?.code || '',
+      };
+    });
+  }
+
+  public isTeacherAssignedToSection(teacherId: string, sectionIdOrClassId: string): boolean {
+    for (const a of this.teacherAssignments.values()) {
+      if (a.teacherId === teacherId) {
+        if (a.sectionId === sectionIdOrClassId) return true;
+        const sec = this.sections.get(a.sectionId);
+        if (sec && sec.classId === sectionIdOrClassId) return true;
+      }
+    }
+    return false;
+  }
+
+  public isTeacherAssignedToSubject(teacherId: string, subjectId: string, sectionId?: string): boolean {
+    for (const a of this.teacherAssignments.values()) {
+      if (a.teacherId === teacherId && a.subjectId === subjectId) {
+        if (!sectionId || a.sectionId === sectionId) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  public async assignTeacher(data: Omit<ITeacherAssignmentRecord, 'id' | 'createdAt' | 'updatedAt'>) {
+    const id = `ta-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 6)}`;
+    const record: ITeacherAssignmentRecord = {
+      ...data,
+      id,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    this.teacherAssignments.set(id, record);
+    return record;
+  }
+
+  public async removeTeacherAssignment(id: string) {
+    return this.teacherAssignments.delete(id);
   }
 }
 

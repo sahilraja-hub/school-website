@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { examRepository } from '../repositories/examRepository';
-import { NotFoundError } from '../errors';
+import { NotFoundError, AuthorizationError } from '../errors';
+import { schoolActorsRepository } from '../repositories/schoolActorsRepository';
+import { academicRepository } from '../repositories/academicRepository';
 
 // ==========================================
 // EXAMS
@@ -111,6 +113,31 @@ export const listResults = async (req: Request, res: Response): Promise<void> =>
 };
 
 export const recordResult = async (req: Request, res: Response): Promise<void> => {
+  const { examSubjectId } = req.body;
+
+  // Authorization check: If user is TEACHER, verify they are assigned to this subject/section
+  if (req.user?.role === 'TEACHER') {
+    if (!req.user?.id) {
+      throw new AuthorizationError('Authentication required');
+    }
+    const teacher = await schoolActorsRepository.getTeacherByUserId(req.user.id);
+    if (!teacher) {
+      throw new AuthorizationError('Teacher profile not found for current user');
+    }
+    const examSubject = await examRepository.getExamSubjectById(examSubjectId);
+    if (!examSubject) {
+      throw new NotFoundError('Exam subject not found');
+    }
+    const isAssigned = academicRepository.isTeacherAssignedToSubject(
+      teacher.id,
+      examSubject.subjectId,
+      examSubject.sectionId
+    );
+    if (!isAssigned) {
+      throw new AuthorizationError('You are not authorized to grade results for this subject/section');
+    }
+  }
+
   const result = await examRepository.recordResult(req.body);
   res.status(201).json({
     success: true,

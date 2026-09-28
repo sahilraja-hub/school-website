@@ -82,6 +82,7 @@ export const MarkAttendanceItemSchema = z.object({
 
 export const MarkAttendanceBatchSchema = z.object({
   classId: z.string().min(1, 'Class ID is required'),
+  sectionId: z.string().optional(),
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD'),
   records: z.array(MarkAttendanceItemSchema).min(1, 'At least one student record is required'),
 });
@@ -309,7 +310,10 @@ export const CreateHomeworkSchema = z.object({
   dueDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   totalMarks: z.number().positive().default(20),
   attachmentUrl: z.string().url().optional(),
+  isPublished: z.boolean().optional().default(true),
 });
+
+export const UpdateHomeworkSchema = CreateHomeworkSchema.partial();
 
 export const SubmitHomeworkSchema = z.object({
   homeworkId: z.string().min(1).optional(),
@@ -462,5 +466,7 @@ export type CreateAssignmentInput = z.infer<typeof CreateAssignmentSchema>;
 export type SubmitGradeInput = z.infer<typeof SubmitGradeSchema>;
 export type CreateAnnouncementInput = z.infer<typeof CreateAnnouncementSchema>;
 export type ContactInquiryInput = z.infer<typeof ContactInquirySchema>;
+export type CreateHomeworkInput = z.infer<typeof CreateHomeworkSchema>;
+export type UpdateHomeworkInput = z.infer<typeof UpdateHomeworkSchema>;
 export type QueryFilterInput = z.infer<typeof QueryFilterSchema>;
 

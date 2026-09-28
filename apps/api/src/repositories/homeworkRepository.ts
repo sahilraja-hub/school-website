@@ -11,6 +11,7 @@ export interface IHomeworkRecord {
   dueDate: string;
   totalMarks: number;
   attachmentUrl?: string;
+  isPublished?: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -115,9 +116,27 @@ class HomeworkRepository {
 
   public async createHomework(data: Omit<IHomeworkRecord, 'id' | 'createdAt' | 'updatedAt'>) {
     const id = `hw-${Date.now().toString(36)}`;
-    const record: IHomeworkRecord = { ...data, id, createdAt: new Date(), updatedAt: new Date() };
+    const record: IHomeworkRecord = {
+      ...data,
+      id,
+      isPublished: data.isPublished !== undefined ? data.isPublished : true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
     this.homeworks.set(id, record);
     return this.getHomeworkById(id);
+  }
+
+  public async updateHomework(id: string, data: Partial<IHomeworkRecord>) {
+    const hw = this.homeworks.get(id);
+    if (!hw) return null;
+    Object.assign(hw, data, { updatedAt: new Date() });
+    this.homeworks.set(id, hw);
+    return this.getHomeworkById(id);
+  }
+
+  public async deleteHomework(id: string) {
+    return this.homeworks.delete(id);
   }
 
   public async submitHomework(data: { homeworkId: string; studentId: string; content: string; attachmentUrl?: string }) {

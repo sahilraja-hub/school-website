@@ -31,3 +31,9 @@ export const GradeFilterSchema = PaginationQuerySchema.extend({
   examId: z.string().optional(),
   classId: z.string().optional(),
 });
+
+export const StudentFilterSchema = PaginationQuerySchema.extend({
+  classId: z.string().optional(),
+  sectionId: z.string().optional(),
+  department: z.string().optional(),
+});

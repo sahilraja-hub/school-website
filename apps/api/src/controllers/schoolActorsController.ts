@@ -3,7 +3,8 @@ import bcrypt from 'bcryptjs';
 import { schoolActorsRepository } from '../repositories/schoolActorsRepository';
 import { userRepository } from '../repositories/userRepository';
 import { dtos } from '../types/dtos';
-import { NotFoundError, BadRequestError } from '../errors';
+import { NotFoundError, BadRequestError, AuthenticationError } from '../errors';
+import { academicRepository } from '../repositories/academicRepository';
 
 // ==========================================
 // STUDENTS
@@ -248,6 +249,28 @@ export const listTeachers = async (req: Request, res: Response): Promise<void> =
         totalPages: result.totalPages,
       },
     },
+  });
+};
+
+export const getCurrentTeacherProfile = async (req: Request, res: Response): Promise<void> => {
+  if (!req.user?.id) {
+    throw new AuthenticationError('Authentication required');
+  }
+
+  const teacher = await schoolActorsRepository.getTeacherByUserId(req.user.id);
+  if (!teacher) {
+    throw new NotFoundError('Teacher profile not found for current user');
+  }
+
+  const assignments = await academicRepository.listTeacherAssignments({ teacherId: teacher.id });
+
+  res.json({
+    success: true,
+    data: {
+      ...dtos.toTeacherResponseDto(teacher),
+      assignments,
+    },
+    meta: { requestId: req.id, timestamp: new Date().toISOString() },
   });
 };
 

@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { homeworkRepository } from '../repositories/homeworkRepository';
-import { NotFoundError } from '../errors';
+import { NotFoundError, AuthorizationError } from '../errors';
+import { schoolActorsRepository } from '../repositories/schoolActorsRepository';
+import { academicRepository } from '../repositories/academicRepository';
 
 export const listHomework = async (req: Request, res: Response): Promise<void> => {
   const { page, limit, sectionId, subjectId, search } = req.query as any;
@@ -40,15 +42,88 @@ export const getHomeworkById = async (req: Request, res: Response): Promise<void
 };
 
 export const createHomework = async (req: Request, res: Response): Promise<void> => {
+  let teacherId = req.user?.id;
+  if (req.user?.role === 'TEACHER') {
+    if (!req.user?.id) {
+      throw new AuthorizationError('Authentication required');
+    }
+    const teacher = await schoolActorsRepository.getTeacherByUserId(req.user.id);
+    if (teacher) {
+      teacherId = teacher.id;
+      // Verify teacher is assigned to section or subject
+      const isAssigned = academicRepository.isTeacherAssignedToSection(teacher.id, req.body.sectionId);
+      if (!isAssigned) {
+        throw new AuthorizationError('You are not authorized to assign homework for this section');
+      }
+    }
+  }
+
   const created = await homeworkRepository.createHomework({
     ...req.body,
-    teacherId: req.user?.id,
+    teacherId,
   });
 
   res.status(201).json({
     success: true,
     message: 'Homework assigned',
     data: created,
+    meta: { requestId: req.id, timestamp: new Date().toISOString() },
+  });
+};
+
+export const updateHomework = async (req: Request, res: Response): Promise<void> => {
+  const existing = await homeworkRepository.getHomeworkById(req.params.id);
+  if (!existing) throw new NotFoundError('Homework not found');
+
+  if (req.user?.role === 'TEACHER') {
+    if (!req.user?.id) {
+      throw new AuthorizationError('Authentication required');
+    }
+    const teacher = await schoolActorsRepository.getTeacherByUserId(req.user.id);
+    if (!teacher) {
+      throw new AuthorizationError('Teacher profile not found for current user');
+    }
+    const isOwner = existing.teacherId === teacher.id || existing.teacherId === req.user.id;
+    const isAssigned = academicRepository.isTeacherAssignedToSection(teacher.id, existing.sectionId);
+    if (!isOwner && !isAssigned) {
+      throw new AuthorizationError('You are not authorized to modify homework for this section');
+    }
+  }
+
+  const updated = await homeworkRepository.updateHomework(req.params.id, req.body);
+  res.json({
+    success: true,
+    message: 'Homework assignment updated',
+    data: updated,
+    meta: { requestId: req.id, timestamp: new Date().toISOString() },
+  });
+};
+
+export const deleteHomework = async (req: Request, res: Response): Promise<void> => {
+  const existing = await homeworkRepository.getHomeworkById(req.params.id);
+  if (!existing) throw new NotFoundError('Homework not found');
+
+  if (req.user?.role === 'TEACHER') {
+    if (!req.user?.id) {
+      throw new AuthorizationError('Authentication required');
+    }
+    const teacher = await schoolActorsRepository.getTeacherByUserId(req.user.id);
+    if (!teacher) {
+      throw new AuthorizationError('Teacher profile not found for current user');
+    }
+    const isOwner = existing.teacherId === teacher.id || existing.teacherId === req.user.id;
+    const isAssigned = academicRepository.isTeacherAssignedToSection(teacher.id, existing.sectionId);
+    if (!isOwner && !isAssigned) {
+      throw new AuthorizationError('You are not authorized to delete homework for this section');
+    }
+  }
+
+  const deleted = await homeworkRepository.deleteHomework(req.params.id);
+  if (!deleted) throw new NotFoundError('Homework not found');
+
+  res.json({
+    success: true,
+    message: 'Homework assignment removed',
     meta: { requestId: req.id, timestamp: new Date().toISOString() },
   });
 };

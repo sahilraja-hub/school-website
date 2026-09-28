@@ -10,14 +10,14 @@ import { authenticate, authorize } from '../middleware/auth';
 import { validate, validateRequest } from '../middleware/validate';
 import { asyncHandler } from '../middleware/asyncHandler';
 import { CreateStudentSchema, UpdateStudentSchema } from '@school/shared';
-import { IdParamSchema, PaginationQuerySchema } from '../validators';
+import { IdParamSchema, StudentFilterSchema } from '../validators';
 
 const router = Router();
 
 router.use(authenticate);
 
 // Faculty & Admins can list students (with query validation)
-router.get('/', authorize('ADMIN', 'SUPER_ADMIN', 'TEACHER'), validateRequest({ query: PaginationQuerySchema }), asyncHandler(listStudents));
+router.get('/', authorize('ADMIN', 'SUPER_ADMIN', 'TEACHER'), validateRequest({ query: StudentFilterSchema }), asyncHandler(listStudents));
 
 // Individual student profile lookup (with param validation)
 router.get('/:id', validateRequest({ params: IdParamSchema }), asyncHandler(getStudentById));

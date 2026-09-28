@@ -133,6 +133,19 @@ class ExamRepository {
     return this.exams.delete(id);
   }
 
+  // --- Exam Subjects ---
+  public async getExamSubjectById(id: string) {
+    return this.examSubjects.get(id) || null;
+  }
+
+  public async listExamSubjects(query: { examId?: string; sectionId?: string; subjectId?: string }) {
+    let items = Array.from(this.examSubjects.values());
+    if (query.examId) items = items.filter((es) => es.examId === query.examId);
+    if (query.sectionId) items = items.filter((es) => es.sectionId === query.sectionId);
+    if (query.subjectId) items = items.filter((es) => es.subjectId === query.subjectId);
+    return items;
+  }
+
   // --- Results ---
   public async listResults(query: { page?: number; limit?: number; examSubjectId?: string; studentId?: string }) {
     const page = Math.max(1, query.page || 1);

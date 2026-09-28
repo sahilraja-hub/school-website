@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import {
   listTeachers,
+  getCurrentTeacherProfile,
   getTeacherById,
   createTeacher,
   updateTeacher,
@@ -16,6 +17,9 @@ router.use(authenticate);
 
 // All authenticated roles can browse teacher directory
 router.get('/', asyncHandler(listTeachers));
+
+// Current authenticated teacher profile and assignments
+router.get('/me', authorize('TEACHER', 'ADMIN', 'SUPER_ADMIN'), asyncHandler(getCurrentTeacherProfile));
 
 // Get teacher details
 router.get('/:id', asyncHandler(getTeacherById));

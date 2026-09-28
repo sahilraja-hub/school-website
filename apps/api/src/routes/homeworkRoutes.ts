@@ -3,6 +3,8 @@ import {
   listHomework,
   getHomeworkById,
   createHomework,
+  updateHomework,
+  deleteHomework,
   submitHomework,
   gradeSubmission,
 } from '../controllers/homeworkController';
@@ -11,6 +13,7 @@ import { validate } from '../middleware/validate';
 import { asyncHandler } from '../middleware/asyncHandler';
 import {
   CreateHomeworkSchema,
+  UpdateHomeworkSchema,
   SubmitHomeworkSchema,
   GradeSubmissionSchema,
 } from '@school/shared';
@@ -23,8 +26,10 @@ router.use(authenticate);
 router.get('/', asyncHandler(listHomework));
 router.get('/:id', asyncHandler(getHomeworkById));
 
-// Teachers create assignments
+// Teachers and admins manage assignments
 router.post('/', authorize('ADMIN', 'SUPER_ADMIN', 'TEACHER'), validate(CreateHomeworkSchema), asyncHandler(createHomework));
+router.patch('/:id', authorize('ADMIN', 'SUPER_ADMIN', 'TEACHER'), validate(UpdateHomeworkSchema), asyncHandler(updateHomework));
+router.delete('/:id', authorize('ADMIN', 'SUPER_ADMIN', 'TEACHER'), asyncHandler(deleteHomework));
 
 // Students submit homework
 router.post('/:id/submit', authorize('STUDENT'), validate(SubmitHomeworkSchema), asyncHandler(submitHomework));

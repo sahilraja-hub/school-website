@@ -98,7 +98,7 @@ class SchoolActorsRepository {
     // Teachers
     this.teachers.set('teach-001', {
       id: 'teach-001',
-      userId: 'usr_teacher_001',
+      userId: 'usr-teacher-01',
       employeeId: 'EMP-2024-001',
       qualification: 'M.Sc. Pure Mathematics, Oxford',
       specialization: 'Advanced Calculus',
@@ -300,7 +300,11 @@ class SchoolActorsRepository {
 
   public async getTeacherByUserId(userId: string) {
     for (const teacher of this.teachers.values()) {
-      if (teacher.userId === userId) {
+      if (
+        teacher.userId === userId ||
+        (userId === 'usr_teacher_001' && teacher.id === 'teach-001') ||
+        (userId === 'usr-teacher-01' && teacher.id === 'teach-001')
+      ) {
         return this.getTeacherById(teacher.id);
       }
     }
