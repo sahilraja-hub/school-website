@@ -38,3 +38,5 @@ export interface PaginatedResult<T> {
   limit: number;
   totalPages: number;
 }
+
+export * from './dtos';

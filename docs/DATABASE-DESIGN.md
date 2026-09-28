@@ -1,7 +1,7 @@
 # Database Design & Data Modeling Specification
-## School Management & Information Platform (MongoDB + Mongoose)
+## School Management & Information Platform (PostgreSQL + Prisma ORM)
 
----
+> **Production Database Specification**: See comprehensive PostgreSQL & Prisma schema documentation in [`docs/DATABASE-ARCHITECTURE.md`](./DATABASE-ARCHITECTURE.md).
 
 ## 1. Entity Relationship Diagram (ERD)
 
