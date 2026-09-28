@@ -1,404 +1,372 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Users,
-  GraduationCap,
-  BookOpen,
-  ClipboardList,
-  CheckCircle,
-  XCircle,
-  Clock,
-  PlusCircle,
-  ShieldCheck,
-  Send,
-  AlertCircle,
-  Calendar,
+  Menu,
+  X,
+  Bell,
+  Search,
+  ExternalLink,
+  ChevronRight,
+  Shield,
+  User as UserIcon,
+  LogOut,
+  Sparkles,
 } from 'lucide-react';
-import { api } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
-import { AdmissionApplication, AdmissionStatus } from '@school/shared';
+import { api } from '../../services/api';
+import { AdminSection } from './admin/types';
+import { AdminSidebar } from './admin/AdminSidebar';
+
+// Section Components
+import { OverviewSection } from './admin/sections/OverviewSection';
+import { StudentsSection } from './admin/sections/StudentsSection';
+import { ParentsSection } from './admin/sections/ParentsSection';
+import { TeachersSection } from './admin/sections/TeachersSection';
+import { ClassesSection } from './admin/sections/ClassesSection';
+import { SectionsSection } from './admin/sections/SectionsSection';
+import { SubjectsSection } from './admin/sections/SubjectsSection';
+import { AttendanceSection } from './admin/sections/AttendanceSection';
+import { ExamsSection } from './admin/sections/ExamsSection';
+import { ResultsSection } from './admin/sections/ResultsSection';
+import { HomeworkSection } from './admin/sections/HomeworkSection';
+import { TimetableSection } from './admin/sections/TimetableSection';
+import { AdmissionsSection } from './admin/sections/AdmissionsSection';
+import { NoticesSection } from './admin/sections/NoticesSection';
+import { EventsSection } from './admin/sections/EventsSection';
+import { GallerySection } from './admin/sections/GallerySection';
+import { DocumentsSection } from './admin/sections/DocumentsSection';
+import { FeesSection } from './admin/sections/FeesSection';
+import { UsersSection } from './admin/sections/UsersSection';
+import { SettingsSection } from './admin/sections/SettingsSection';
+import { AuditLogsSection } from './admin/sections/AuditLogsSection';
+
+const SECTION_TITLES: Record<AdminSection, string> = {
+  dashboard: 'Executive Dashboard',
+  admissions: 'Admissions Pipeline',
+  students: 'Scholar Registry',
+  parents: 'Guardian Relations',
+  teachers: 'Faculty & Instructors',
+  users: 'Users & Roles',
+  classes: 'Academic Classes',
+  sections: 'Classroom Sections',
+  subjects: 'Course Curriculum',
+  timetable: 'Master Timetable',
+  attendance: 'Attendance Matrix',
+  exams: 'Examinations',
+  results: 'Gradebook & Results',
+  homework: 'Assignments & Homework',
+  notices: 'Institutional Bulletins',
+  events: 'Events & Symposia',
+  gallery: 'Media & Gallery',
+  documents: 'Document Vault',
+  fees: 'Bursar & Fees',
+  settings: 'Institutional Settings',
+  'audit-logs': 'Security Audit Trail',
+};
 
 export const AdminDashboard: React.FC = () => {
-  const { user } = useAuth();
-  const [stats, setStats] = useState<any>({
+  const { user, logout } = useAuth();
+  const [activeSection, setActiveSection] = useState<AdminSection>('dashboard');
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+
+  // Overview Data States
+  const [stats, setStats] = useState({
     totalStudents: 420,
     totalTeachers: 48,
     totalParents: 380,
     totalClasses: 28,
     pendingAdmissions: 2,
+    attendanceRate: 96.4,
+    totalRevenue: 345000,
     systemStatus: 'Optimal',
     currentTerm: 'Fall 2026',
   });
-  const [admissions, setAdmissions] = useState<AdmissionApplication[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [statusUpdating, setStatusUpdating] = useState<string | null>(null);
 
-  // New Announcement Modal state
-  const [announcementModalOpen, setAnnouncementModalOpen] = useState(false);
-  const [newAnnouncement, setNewAnnouncement] = useState({
-    title: '',
-    content: '',
-    category: 'GENERAL' as any,
-    isPinned: false,
-    targetRoles: ['ADMIN', 'TEACHER', 'STUDENT', 'PARENT'] as any[],
-  });
-  const [announcementSuccess, setAnnouncementSuccess] = useState('');
+  const [recentAdmissions, setRecentAdmissions] = useState<any[]>([
+    {
+      id: 'adm-1',
+      applicationNumber: 'ADM-2026-1042',
+      applicantFullName: 'Alexander Hayes',
+      gradeApplyingFor: 'GRADE_9',
+      parentName: 'Robert Hayes',
+      status: 'UNDER_REVIEW',
+      submittedAt: '2026-09-18T10:30:00Z',
+    },
+    {
+      id: 'adm-2',
+      applicationNumber: 'ADM-2026-1088',
+      applicantFullName: 'Sophia Patel',
+      gradeApplyingFor: 'KINDERGARTEN',
+      parentName: 'Priya & Vikram Patel',
+      status: 'ACCEPTED',
+      submittedAt: '2026-09-10T09:00:00Z',
+    },
+    {
+      id: 'adm-3',
+      applicationNumber: 'ADM-2026-1150',
+      applicantFullName: 'Marcus Vance',
+      gradeApplyingFor: 'GRADE_6',
+      parentName: 'Eleanor Vance',
+      status: 'INTERVIEW_SCHEDULED',
+      submittedAt: '2026-09-22T14:45:00Z',
+    },
+  ]);
 
+  const [recentNotices, setRecentNotices] = useState<any[]>([
+    {
+      id: 'not-1',
+      title: 'Campus Safety & Health Advisory Protocol 2026',
+      category: 'ADMINISTRATIVE',
+      publishedAt: '2026-09-24T08:00:00Z',
+      isPinned: true,
+    },
+    {
+      id: 'not-2',
+      title: 'Fall Term Mid-Term Examination Schedule Released',
+      category: 'EXAMINATION',
+      publishedAt: '2026-09-22T10:30:00Z',
+      isPinned: true,
+    },
+    {
+      id: 'not-3',
+      title: 'Annual Founders Day Gala & Scholar Showcase',
+      category: 'GENERAL',
+      publishedAt: '2026-09-18T14:15:00Z',
+      isPinned: false,
+    },
+  ]);
+
+  const [upcomingEvents, setUpcomingEvents] = useState<any[]>([
+    {
+      id: 'evt-1',
+      title: 'Annual Science & Innovation Symposium 2026',
+      location: 'Grand Exhibition Hall',
+      startDate: '2026-10-18T09:00:00Z',
+      isPublic: true,
+    },
+    {
+      id: 'evt-2',
+      title: 'Parent-Teacher Academic Progress Conference',
+      location: 'Main Academic Quad',
+      startDate: '2026-10-24T13:00:00Z',
+      isPublic: false,
+    },
+    {
+      id: 'evt-3',
+      title: 'Oakridge Varsity Cross-Country Invitational',
+      location: 'Athletics Complex',
+      startDate: '2026-11-04T08:30:00Z',
+      isPublic: true,
+    },
+  ]);
+
+  const [recentActivities, setRecentActivities] = useState<any[]>([
+    {
+      id: 'act-1',
+      actor: 'Dr. Margaret Holloway',
+      action: 'Updated system security and portal session timeouts',
+      timestamp: '25 mins ago',
+    },
+    {
+      id: 'act-2',
+      actor: 'Arthur Pendleton',
+      action: 'Approved admission dossier for Sophia Patel (Kindergarten)',
+      timestamp: '1 hour ago',
+    },
+    {
+      id: 'act-3',
+      actor: 'Dr. Sarah Jenkins',
+      action: 'Submitted attendance roll for Class 9-A (28 present, 2 absent)',
+      timestamp: '2 hours ago',
+    },
+    {
+      id: 'act-4',
+      actor: 'Bursar Office',
+      action: 'Generated 42 tuition invoices for Fall Term 2026',
+      timestamp: '4 hours ago',
+    },
+  ]);
+
+  // Fetch initial summary stats
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchOverviewData = async () => {
       try {
-        const [statsRes, admissionsRes] = await Promise.allSettled([
+        const [statsRes, admRes, notRes, evtRes] = await Promise.allSettled([
           api.get('/stats/dashboard'),
           api.get('/admissions'),
+          api.get('/notices'),
+          api.get('/events'),
         ]);
 
         if (statsRes.status === 'fulfilled' && statsRes.value.data.success) {
-          setStats(statsRes.value.data.data);
+          setStats((prev) => ({ ...prev, ...statsRes.value.data.data }));
         }
-
-        if (admissionsRes.status === 'fulfilled' && admissionsRes.value.data.success) {
-          setAdmissions(admissionsRes.value.data.data);
+        if (admRes.status === 'fulfilled' && admRes.value.data.success) {
+          setRecentAdmissions(admRes.value.data.data.slice(0, 5));
+        }
+        if (notRes.status === 'fulfilled' && notRes.value.data.success) {
+          setRecentNotices(notRes.value.data.data.slice(0, 5));
+        }
+        if (evtRes.status === 'fulfilled' && evtRes.value.data.success) {
+          setUpcomingEvents(evtRes.value.data.data.slice(0, 5));
         }
       } catch (err) {
-        console.warn('Using local fallback for demo');
-      } finally {
-        if (admissions.length === 0) {
-          setAdmissions([
-            {
-              id: '1',
-              applicationNumber: 'ADM-2026-1042',
-              studentFirstName: 'Alexander',
-              studentLastName: 'Hayes',
-              dateOfBirth: '2011-04-18',
-              gradeApplyingFor: 'GRADE_9',
-              parentName: 'Robert Hayes',
-              parentEmail: 'robert.hayes@example.com',
-              parentPhone: '+1 (555) 782-9901',
-              address: '742 Evergreen Terrace',
-              status: 'UNDER_REVIEW',
-              notes: 'Strong mathematics recommendation. Robotics club captain.',
-              submittedAt: '2026-09-18T10:30:00Z',
-              updatedAt: '2026-09-20T14:15:00Z',
-            },
-            {
-              id: '2',
-              applicationNumber: 'ADM-2026-1088',
-              studentFirstName: 'Sophia',
-              studentLastName: 'Patel',
-              dateOfBirth: '2021-08-22',
-              gradeApplyingFor: 'KINDERGARTEN',
-              parentName: 'Priya & Vikram Patel',
-              parentEmail: 'priya.patel@example.com',
-              parentPhone: '+1 (555) 349-1120',
-              address: '12 Harbor View Road',
-              status: 'ACCEPTED',
-              notes: 'Accepted for Fall 2026 cohort. Welcome packet sent.',
-              submittedAt: '2026-09-10T09:00:00Z',
-              updatedAt: '2026-09-22T16:00:00Z',
-            },
-            {
-              id: '3',
-              applicationNumber: 'ADM-2026-1150',
-              studentFirstName: 'Lucas',
-              studentLastName: 'Ramirez',
-              dateOfBirth: '2009-12-05',
-              gradeApplyingFor: 'GRADE_11',
-              parentName: 'Elena Ramirez',
-              parentEmail: 'elena.ramirez@example.com',
-              parentPhone: '+1 (555) 998-4431',
-              address: '88 Oakwood Blvd',
-              status: 'INTERVIEW_SCHEDULED',
-              notes: 'Virtual interview scheduled for Thursday at 2:00 PM PST.',
-              submittedAt: '2026-09-24T11:00:00Z',
-              updatedAt: '2026-09-25T11:00:00Z',
-            },
-          ]);
-        }
-        setLoading(false);
+        console.warn('Dashboard using fallback data for demo.');
       }
     };
-    fetchData();
+
+    fetchOverviewData();
   }, []);
 
-  const handleUpdateStatus = async (id: string, newStatus: AdmissionStatus) => {
-    setStatusUpdating(id);
-    try {
-      await api.patch(`/admissions/${id}/status`, { status: newStatus });
-      setAdmissions((prev) =>
-        prev.map((app) => (app.id === id ? { ...app, status: newStatus } : app))
-      );
-    } catch {
-      // Local fallback
-      setAdmissions((prev) =>
-        prev.map((app) => (app.id === id ? { ...app, status: newStatus } : app))
-      );
-    } finally {
-      setStatusUpdating(null);
-    }
-  };
-
-  const handlePublishAnnouncement = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await api.post('/announcements', newAnnouncement);
-      setAnnouncementSuccess('Announcement broadcasted successfully to targeted roles!');
-      setTimeout(() => {
-        setAnnouncementSuccess('');
-        setAnnouncementModalOpen(false);
-        setNewAnnouncement({
-          title: '',
-          content: '',
-          category: 'GENERAL',
-          isPinned: false,
-          targetRoles: ['ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
-        });
-      }, 1500);
-    } catch {
-      setAnnouncementSuccess('Announcement broadcasted locally for session preview!');
-      setTimeout(() => {
-        setAnnouncementSuccess('');
-        setAnnouncementModalOpen(false);
-      }, 1500);
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-slate-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        {/* Top Welcome Header */}
-        <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="bg-crest-100 text-crest-800 text-xs font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1">
-                <ShieldCheck className="w-3.5 h-3.5" /> Administrator Console
+    <div className="flex h-screen bg-[#060D1A] text-slate-100 overflow-hidden font-sans">
+      {/* Sidebar Navigation */}
+      <AdminSidebar
+        activeSection={activeSection}
+        onSelectSection={(section) => {
+          setActiveSection(section);
+          setMobileSidebarOpen(false);
+        }}
+        pendingAdmissionsCount={stats.pendingAdmissions}
+        mobileOpen={mobileSidebarOpen}
+        onCloseMobile={() => setMobileSidebarOpen(false)}
+      />
+
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        {/* Top Header */}
+        <header className="h-16 bg-[#0B1528] border-b border-slate-800 flex items-center justify-between px-4 sm:px-6 z-20 flex-shrink-0">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setMobileSidebarOpen(true)}
+              className="md:hidden p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 focus:outline-none"
+              aria-label="Open sidebar menu"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+
+            {/* Breadcrumb */}
+            <div className="flex items-center gap-2 text-xs sm:text-sm">
+              <span className="text-slate-400 hidden sm:inline">Admin Portal</span>
+              <ChevronRight className="w-3.5 h-3.5 text-slate-600 hidden sm:inline" />
+              <span className="font-semibold text-white">
+                {SECTION_TITLES[activeSection] || activeSection}
               </span>
-              <span className="text-xs text-slate-400">Term: {stats.currentTerm || 'Fall 2026'}</span>
             </div>
-            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-slate-900">
-              Welcome, {user?.firstName} {user?.lastName}
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-500">
-              Institution Overview & System Controls | Oakridge International Academy
-            </p>
           </div>
 
-          <button
-            onClick={() => setAnnouncementModalOpen(true)}
-            className="flex items-center gap-2 bg-crest-700 hover:bg-crest-800 text-white font-semibold px-4 py-2.5 rounded-xl text-sm transition-colors shadow-sm"
-          >
-            <PlusCircle className="w-4 h-4" />
-            <span>Broadcast Circular</span>
-          </button>
-        </div>
+          <div className="flex items-center gap-3">
+            {/* View Public Website */}
+            <a
+              href="/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white bg-slate-900 border border-slate-700/80 hover:bg-slate-800 transition-colors"
+            >
+              <ExternalLink className="w-3.5 h-3.5 text-amber-400" />
+              <span>Public Website</span>
+            </a>
 
-        {/* Telemetry KPI Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-            <div className="flex items-center justify-between text-slate-500 mb-2">
-              <span className="text-xs font-semibold uppercase tracking-wider">Enrolled Scholars</span>
-              <GraduationCap className="w-5 h-5 text-crest-600" />
-            </div>
-            <span className="text-2xl sm:text-3xl font-bold text-slate-900">{stats.totalStudents || 420}</span>
-            <span className="text-[11px] text-emerald-600 font-medium block mt-1">+12% vs last term</span>
-          </div>
+            {/* Notification Bell */}
+            <button
+              onClick={() => setActiveSection('notices')}
+              className="relative p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+              title="Notices & Bulletins"
+            >
+              <Bell className="w-4 h-4" />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-amber-400 ring-2 ring-[#0B1528]" />
+            </button>
 
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-            <div className="flex items-center justify-between text-slate-500 mb-2">
-              <span className="text-xs font-semibold uppercase tracking-wider">Faculty & Staff</span>
-              <Users className="w-5 h-5 text-gold-600" />
-            </div>
-            <span className="text-2xl sm:text-3xl font-bold text-slate-900">{stats.totalTeachers || 48}</span>
-            <span className="text-[11px] text-slate-400 block mt-1">1:8 Student Ratio</span>
-          </div>
-
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-            <div className="flex items-center justify-between text-slate-500 mb-2">
-              <span className="text-xs font-semibold uppercase tracking-wider">Active Sections</span>
-              <BookOpen className="w-5 h-5 text-purple-600" />
-            </div>
-            <span className="text-2xl sm:text-3xl font-bold text-slate-900">{stats.totalClasses || 28}</span>
-            <span className="text-[11px] text-slate-400 block mt-1">AP & Honors</span>
-          </div>
-
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-            <div className="flex items-center justify-between text-slate-500 mb-2">
-              <span className="text-xs font-semibold uppercase tracking-wider">Admissions In Queue</span>
-              <ClipboardList className="w-5 h-5 text-emerald-600" />
-            </div>
-            <span className="text-2xl sm:text-3xl font-bold text-slate-900">{admissions.filter(a => a.status === 'UNDER_REVIEW' || a.status === 'SUBMITTED').length}</span>
-            <span className="text-[11px] text-amber-600 font-medium block mt-1">Requires review</span>
-          </div>
-        </div>
-
-        {/* Admissions Review Management Pipeline */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-          <div className="p-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-            <div>
-              <h2 className="font-serif text-lg font-bold text-slate-900">Admissions Pipeline Manager</h2>
-              <p className="text-xs text-slate-500">Review prospective applicants, examine credentials, and update decision statuses.</p>
-            </div>
-            <span className="text-xs font-mono bg-slate-100 px-3 py-1 rounded text-slate-600">
-              {admissions.length} Total Applications
-            </span>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 text-slate-500 uppercase tracking-wider font-semibold border-b border-slate-100">
-                <tr>
-                  <th className="py-3 px-4">Ref Code</th>
-                  <th className="py-3 px-4">Applicant Name</th>
-                  <th className="py-3 px-4">Grade</th>
-                  <th className="py-3 px-4">Guardian Contact</th>
-                  <th className="py-3 px-4">Current Status</th>
-                  <th className="py-3 px-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 text-slate-700">
-                {admissions.map((app) => (
-                  <tr key={app.id} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="py-3 px-4 font-mono font-semibold text-crest-800">{app.applicationNumber}</td>
-                    <td className="py-3 px-4 font-bold text-slate-900">
-                      {app.studentFirstName} {app.studentLastName}
-                    </td>
-                    <td className="py-3 px-4">{app.gradeApplyingFor}</td>
-                    <td className="py-3 px-4">
-                      <div>{app.parentName}</div>
-                      <div className="text-slate-400 text-[11px]">{app.parentEmail}</div>
-                    </td>
-                    <td className="py-3 px-4">
-                      <span
-                        className={`inline-block px-2.5 py-1 rounded-full font-bold text-[10px] uppercase ${
-                          app.status === 'ACCEPTED'
-                            ? 'bg-emerald-100 text-emerald-800'
-                            : app.status === 'UNDER_REVIEW'
-                            ? 'bg-blue-100 text-blue-800'
-                            : app.status === 'INTERVIEW_SCHEDULED'
-                            ? 'bg-purple-100 text-purple-800'
-                            : app.status === 'WAITLISTED'
-                            ? 'bg-amber-100 text-amber-800'
-                            : 'bg-red-100 text-red-800'
-                        }`}
-                      >
-                        {app.status.replace('_', ' ')}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4 text-right space-x-1">
-                      <select
-                        value={app.status}
-                        onChange={(e) => handleUpdateStatus(app.id, e.target.value as AdmissionStatus)}
-                        disabled={statusUpdating === app.id}
-                        className="text-xs border border-slate-300 rounded px-2 py-1 bg-white focus:outline-none focus:ring-1 focus:ring-crest-500"
-                      >
-                        <option value="SUBMITTED">Submitted</option>
-                        <option value="UNDER_REVIEW">Under Review</option>
-                        <option value="INTERVIEW_SCHEDULED">Interview</option>
-                        <option value="ACCEPTED">Accept</option>
-                        <option value="WAITLISTED">Waitlist</option>
-                        <option value="REJECTED">Reject</option>
-                      </select>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* Broadcast Announcement Modal */}
-        {announcementModalOpen && (
-          <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
-              <div className="flex justify-between items-center border-b border-slate-100 pb-3">
-                <h3 className="font-serif text-lg font-bold text-slate-900">Broadcast Circular</h3>
-                <button
-                  onClick={() => setAnnouncementModalOpen(false)}
-                  className="text-slate-400 hover:text-slate-700 text-sm font-bold"
-                >
-                  ✕
-                </button>
-              </div>
-
-              {announcementSuccess ? (
-                <div className="p-4 bg-emerald-50 text-emerald-800 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-emerald-600" />
-                  <span>{announcementSuccess}</span>
+            {/* User Profile Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                className="flex items-center gap-2.5 p-1.5 pl-2.5 rounded-xl border border-slate-700/80 hover:border-slate-600 bg-slate-900/60 transition-colors"
+              >
+                <div className="text-right hidden sm:block">
+                  <div className="text-xs font-semibold text-slate-200">
+                    {user ? `${user.firstName} ${user.lastName}` : 'Staff'}
+                  </div>
+                  <div className="text-[10px] text-amber-400 font-mono">
+                    {user?.role || 'ADMIN'}
+                  </div>
                 </div>
-              ) : (
-                <form onSubmit={handlePublishAnnouncement} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-700 mb-1">Circular Title</label>
-                    <input
-                      type="text"
-                      required
-                      value={newAnnouncement.title}
-                      onChange={(e) => setNewAnnouncement({ ...newAnnouncement, title: e.target.value })}
-                      placeholder="e.g. Schedule for Academic Honor Roll Assembly"
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-crest-500 focus:outline-none"
-                    />
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-slate-950 font-bold text-xs shadow-inner">
+                  {user?.firstName ? user.firstName[0] : 'A'}
+                </div>
+              </button>
+
+              {userDropdownOpen && (
+                <div
+                  className="absolute right-0 mt-2 w-56 bg-[#0B1528] border border-slate-700 rounded-xl shadow-2xl py-2 z-50 animate-fade-in"
+                  onClick={() => setUserDropdownOpen(false)}
+                >
+                  <div className="px-4 py-2 border-b border-slate-800">
+                    <p className="text-xs font-medium text-white">
+                      {user ? `${user.firstName} ${user.lastName}` : 'Staff'}
+                    </p>
+                    <p className="text-[11px] text-slate-400 truncate">{user?.email}</p>
+                    <span className="inline-block mt-1 text-[10px] px-2 py-0.5 rounded-full font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                      {user?.role}
+                    </span>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-semibold text-slate-700 mb-1">Category</label>
-                      <select
-                        value={newAnnouncement.category}
-                        onChange={(e) => setNewAnnouncement({ ...newAnnouncement, category: e.target.value as any })}
-                        className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs bg-white focus:outline-none"
-                      >
-                        <option value="GENERAL">General</option>
-                        <option value="ACADEMIC">Academic</option>
-                        <option value="EVENT">Event</option>
-                        <option value="SPORTS">Sports</option>
-                        <option value="URGENT">Urgent</option>
-                      </select>
-                    </div>
+                  <button
+                    onClick={() => setActiveSection('settings')}
+                    className="w-full text-left px-4 py-2 text-xs text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-2"
+                  >
+                    <Shield className="w-3.5 h-3.5 text-slate-400" />
+                    Security & Settings
+                  </button>
 
-                    <div className="flex items-center pt-5">
-                      <label className="flex items-center gap-2 text-xs font-semibold text-slate-700 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={newAnnouncement.isPinned}
-                          onChange={(e) => setNewAnnouncement({ ...newAnnouncement, isPinned: e.target.checked })}
-                          className="rounded text-crest-600 focus:ring-crest-500"
-                        />
-                        <span>Pin to Top of Bulletin</span>
-                      </label>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-700 mb-1">Announcement Body</label>
-                    <textarea
-                      rows={4}
-                      required
-                      value={newAnnouncement.content}
-                      onChange={(e) => setNewAnnouncement({ ...newAnnouncement, content: e.target.value })}
-                      placeholder="Detailed circular content..."
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-crest-500 focus:outline-none"
-                    />
-                  </div>
-
-                  <div className="flex justify-end gap-2 pt-2">
-                    <button
-                      type="button"
-                      onClick={() => setAnnouncementModalOpen(false)}
-                      className="px-4 py-2 border border-slate-200 rounded-lg text-xs font-semibold text-slate-600"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="px-5 py-2 bg-crest-700 hover:bg-crest-800 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5"
-                    >
-                      <Send className="w-3.5 h-3.5" />
-                      <span>Broadcast to Portal</span>
-                    </button>
-                  </div>
-                </form>
+                  <button
+                    onClick={logout}
+                    className="w-full text-left px-4 py-2 text-xs text-rose-400 hover:bg-rose-500/10 flex items-center gap-2 border-t border-slate-800 mt-1"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                    Sign Out
+                  </button>
+                </div>
               )}
             </div>
           </div>
-        )}
+        </header>
+
+        {/* Dynamic Section Container */}
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+          <div className="max-w-7xl mx-auto">
+            {activeSection === 'dashboard' && (
+              <OverviewSection
+                stats={stats}
+                recentAdmissions={recentAdmissions}
+                recentNotices={recentNotices}
+                upcomingEvents={upcomingEvents}
+                recentActivities={recentActivities}
+                onNavigateSection={setActiveSection}
+              />
+            )}
+            {activeSection === 'students' && <StudentsSection />}
+            {activeSection === 'parents' && <ParentsSection />}
+            {activeSection === 'teachers' && <TeachersSection />}
+            {activeSection === 'classes' && <ClassesSection />}
+            {activeSection === 'sections' && <SectionsSection />}
+            {activeSection === 'subjects' && <SubjectsSection />}
+            {activeSection === 'attendance' && <AttendanceSection />}
+            {activeSection === 'exams' && <ExamsSection />}
+            {activeSection === 'results' && <ResultsSection />}
+            {activeSection === 'homework' && <HomeworkSection />}
+            {activeSection === 'timetable' && <TimetableSection />}
+            {activeSection === 'admissions' && <AdmissionsSection />}
+            {activeSection === 'notices' && <NoticesSection />}
+            {activeSection === 'events' && <EventsSection />}
+            {activeSection === 'gallery' && <GallerySection />}
+            {activeSection === 'documents' && <DocumentsSection />}
+            {activeSection === 'fees' && <FeesSection />}
+            {activeSection === 'users' && <UsersSection />}
+            {activeSection === 'settings' && <SettingsSection />}
+            {activeSection === 'audit-logs' && <AuditLogsSection />}
+          </div>
+        </main>
       </div>
     </div>
   );
