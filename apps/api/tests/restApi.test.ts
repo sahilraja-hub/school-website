@@ -360,7 +360,8 @@ describe('Phase 8 — Complete REST API Integration Suite', () => {
         });
 
       expect(res.status).toBe(400);
-      expect(res.body.error).toContain('already has a class scheduled');
+      const errorMsg = typeof res.body.error === 'object' ? res.body.error.message : res.body.error;
+      expect(errorMsg).toContain('already has a class scheduled');
     });
   });
 

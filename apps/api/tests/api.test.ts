@@ -36,7 +36,8 @@ describe('Oakridge Academy API Server Test Suite', () => {
     });
     expect(res.status).toBe(400);
     expect(res.body.success).toBe(false);
-    expect(res.body.error).toBe('Validation failed');
+    const errorMsg = typeof res.body.error === 'object' ? res.body.error.message : res.body.error;
+    expect(errorMsg).toBe('Validation failed');
     expect(res.body.errors).toHaveProperty('email');
     expect(res.body.errors).toHaveProperty('password');
   });
@@ -45,7 +46,8 @@ describe('Oakridge Academy API Server Test Suite', () => {
     const res = await request(app).get('/api/classes');
     expect(res.status).toBe(401);
     expect(res.body.success).toBe(false);
-    expect(res.body.error).toContain('Authentication required');
+    const errorMsg = typeof res.body.error === 'object' ? res.body.error.message : res.body.error;
+    expect(errorMsg).toContain('Authentication required');
   });
 
   it('POST /api/admissions/apply rejects invalid application data with 400', async () => {

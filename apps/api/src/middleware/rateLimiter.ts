@@ -1,4 +1,5 @@
 import rateLimit from 'express-rate-limit';
+import { RateLimitError } from '../errors';
 
 // Rate limiter for login & registration endpoints to mitigate brute force & credential stuffing
 export const authRateLimiter = rateLimit({
@@ -7,10 +8,8 @@ export const authRateLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   skip: () => process.env.NODE_ENV === 'test',
-  message: {
-    success: false,
-    error: 'Too many authentication attempts. Please try again after 15 minutes.',
-    code: 'RATE_LIMIT_EXCEEDED',
+  handler: (req, res, next) => {
+    next(new RateLimitError('Too many authentication attempts. Please try again after 15 minutes.'));
   },
 });
 
@@ -21,9 +20,7 @@ export const refreshRateLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   skip: () => process.env.NODE_ENV === 'test',
-  message: {
-    success: false,
-    error: 'Too many token refresh requests. Please slow down.',
-    code: 'RATE_LIMIT_EXCEEDED',
+  handler: (req, res, next) => {
+    next(new RateLimitError('Too many token refresh requests. Please slow down.'));
   },
 });

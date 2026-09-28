@@ -1,4 +1,6 @@
 export * from '@school/shared';
+export * from './fileValidators';
+export * from './authValidators';
 
 import { z } from 'zod';
 
@@ -12,7 +14,7 @@ export const PaginationQuerySchema = z.object({
 });
 
 export const IdParamSchema = z.object({
-  id: z.string().min(1, 'ID parameter is required'),
+  id: z.string().trim().min(1, 'ID parameter is required'),
 });
 
 export const AttendanceFilterSchema = PaginationQuerySchema.extend({

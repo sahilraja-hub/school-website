@@ -102,6 +102,10 @@ router.use('/settings', settingsRoutes);
 // 22. /audit-logs
 router.use('/audit-logs', auditLogRoutes);
 
+// Test Error & Validation Endpoints (Phase 9)
+import testErrorRoutes from './testErrorRoutes';
+router.use('/test-errors', testErrorRoutes);
+
 // Backward Compatibility Aliases
 router.use('/grades', gradeRoutes);
 router.use('/announcements', announcementRoutes);

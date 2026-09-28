@@ -79,7 +79,8 @@ describe('Phase 6 — Production Express Backend Architecture Test Suite', () =>
       expect(res.status).toBe(404);
       expect(res.body.success).toBe(false);
       expect(res.body.code).toBe('NOT_FOUND');
-      expect(res.body.error).toContain('Endpoint not found');
+      const errorMsg = typeof res.body.error === 'object' ? res.body.error.message : res.body.error;
+      expect(errorMsg).toContain('Endpoint not found');
       expect(res.body).toHaveProperty('meta');
       expect(res.body.meta).toHaveProperty('requestId');
       expect(res.body.meta).toHaveProperty('timestamp');

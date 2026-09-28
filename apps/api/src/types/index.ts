@@ -12,11 +12,17 @@ declare global {
   }
 }
 
+export interface ErrorResponseObject {
+  code: string;
+  message: string;
+  details?: any[];
+}
+
 export interface ApiResponse<T = any> {
   success: boolean;
   message?: string;
   data?: T;
-  error?: string;
+  error?: ErrorResponseObject | string;
   code?: string;
   errors?: Record<string, string[]>;
   meta?: {

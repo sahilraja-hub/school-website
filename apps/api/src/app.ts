@@ -8,7 +8,7 @@ import apiRoutes from './routes';
 import { requestId } from './middleware/requestId';
 import { requestLogger } from './logger';
 import { errorHandler } from './middleware/errorHandler';
-import { NotFoundError } from './errors';
+import { NotFoundError, RateLimitError } from './errors';
 import { getHealth, getReadiness } from './controllers/healthController';
 
 export const createApp = (): express.Application => {
@@ -55,10 +55,8 @@ export const createApp = (): express.Application => {
       max: 500,
       standardHeaders: true,
       legacyHeaders: false,
-      message: {
-        success: false,
-        error: 'Too many requests from this IP, please try again after 15 minutes.',
-        code: 'RATE_LIMIT_EXCEEDED',
+      handler: (req, res, next) => {
+        next(new RateLimitError('Too many requests from this IP, please try again after 15 minutes.'));
       },
     });
     app.use('/api', globalLimiter);
