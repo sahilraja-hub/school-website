@@ -58,7 +58,7 @@ export const App: React.FC = () => {
             <Route
               path="/portal/admin"
               element={
-                <ProtectedRoute allowedRoles={['ADMIN']}>
+                <ProtectedRoute allowedRoles={['SUPER_ADMIN', 'ADMIN']}>
                   <AdminDashboard />
                 </ProtectedRoute>
               }
@@ -66,7 +66,7 @@ export const App: React.FC = () => {
             <Route
               path="/portal/teacher"
               element={
-                <ProtectedRoute allowedRoles={['TEACHER', 'ADMIN']}>
+                <ProtectedRoute allowedRoles={['SUPER_ADMIN', 'TEACHER', 'ADMIN']}>
                   <TeacherDashboard />
                 </ProtectedRoute>
               }
@@ -74,7 +74,7 @@ export const App: React.FC = () => {
             <Route
               path="/portal/student"
               element={
-                <ProtectedRoute allowedRoles={['STUDENT', 'TEACHER', 'ADMIN']}>
+                <ProtectedRoute allowedRoles={['SUPER_ADMIN', 'STUDENT', 'TEACHER', 'ADMIN']}>
                   <StudentDashboard />
                 </ProtectedRoute>
               }
@@ -82,7 +82,7 @@ export const App: React.FC = () => {
             <Route
               path="/portal/parent"
               element={
-                <ProtectedRoute allowedRoles={['PARENT', 'ADMIN']}>
+                <ProtectedRoute allowedRoles={['SUPER_ADMIN', 'PARENT', 'ADMIN']}>
                   <ParentDashboard />
                 </ProtectedRoute>
               }

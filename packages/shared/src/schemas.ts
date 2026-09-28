@@ -1,6 +1,8 @@
 import { z } from 'zod';
 
-export const UserRoleSchema = z.enum(['ADMIN', 'TEACHER', 'STUDENT', 'PARENT']);
+export const UserRoleSchema = z.enum(['SUPER_ADMIN', 'ADMIN', 'TEACHER', 'STUDENT', 'PARENT']);
+
+export const AccountStatusSchema = z.enum(['ACTIVE', 'SUSPENDED', 'PENDING', 'LOCKED']);
 
 export const GradeLevelSchema = z.enum([
   'KINDERGARTEN',
@@ -20,6 +22,18 @@ export const AdmissionStatusSchema = z.enum([
 
 export const AttendanceStatusSchema = z.enum(['PRESENT', 'ABSENT', 'LATE', 'EXCUSED']);
 
+// Production-grade password policy
+export const PasswordPolicyRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,128}$/;
+
+export const PasswordSchema = z
+  .string()
+  .min(8, 'Password must be at least 8 characters')
+  .max(128, 'Password cannot exceed 128 characters')
+  .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
+  .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+  .regex(/\d/, 'Password must contain at least one digit')
+  .regex(/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/, 'Password must contain at least one special character');
+
 export const LoginSchema = z.object({
   email: z.string().trim().email('Invalid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
@@ -29,11 +43,17 @@ export const RegisterSchema = z.object({
   firstName: z.string().trim().min(2, 'First name must be at least 2 characters'),
   lastName: z.string().trim().min(2, 'Last name must be at least 2 characters'),
   email: z.string().trim().email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters with letters & numbers'),
+  password: PasswordSchema,
   role: UserRoleSchema.default('STUDENT'),
+  status: AccountStatusSchema.default('ACTIVE'),
   phone: z.string().optional(),
   gradeLevel: GradeLevelSchema.optional(),
   studentId: z.string().optional(),
+});
+
+export const ChangePasswordSchema = z.object({
+  currentPassword: z.string().min(1, 'Current password is required'),
+  newPassword: PasswordSchema,
 });
 
 export const AdmissionApplicationSchema = z.object({

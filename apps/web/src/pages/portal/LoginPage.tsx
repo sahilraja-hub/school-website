@@ -28,7 +28,7 @@ export const LoginPage: React.FC = () => {
       if (from) {
         navigate(from, { replace: true });
       } else if (user) {
-        navigate(`/portal/${user.role.toLowerCase()}`, { replace: true });
+        navigate(user.role === 'SUPER_ADMIN' ? '/portal/admin' : `/portal/${user.role.toLowerCase()}`, { replace: true });
       } else {
         navigate('/');
       }
@@ -44,7 +44,7 @@ export const LoginPage: React.FC = () => {
     setLoading(true);
     try {
       await quickLoginAs(role);
-      navigate(`/portal/${role.toLowerCase()}`);
+      navigate(role === 'SUPER_ADMIN' ? '/portal/admin' : `/portal/${role.toLowerCase()}`);
     } catch (err: any) {
       setError('Quick login failed.');
     } finally {
@@ -77,7 +77,15 @@ export const LoginPage: React.FC = () => {
             <ShieldCheck className="w-4 h-4" />
             <span>Instant Demo Sign-In (Select Role)</span>
           </div>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <button
+              type="button"
+              onClick={() => handleQuickDemo('SUPER_ADMIN')}
+              className="text-left p-2.5 rounded-lg bg-slate-900/80 hover:bg-gold-950 border border-gold-700/50 hover:border-gold-400 transition-all text-xs"
+            >
+              <span className="block font-bold text-gold-300">👑 Super Admin</span>
+              <span className="text-[10px] text-slate-400">Dr. Eleanor Vance</span>
+            </button>
             <button
               type="button"
               onClick={() => handleQuickDemo('ADMIN')}

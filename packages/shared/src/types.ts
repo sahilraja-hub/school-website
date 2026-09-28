@@ -1,10 +1,20 @@
-export type UserRole = 'ADMIN' | 'TEACHER' | 'STUDENT' | 'PARENT';
+export type UserRole = 'SUPER_ADMIN' | 'ADMIN' | 'TEACHER' | 'STUDENT' | 'PARENT';
 
 export const USER_ROLES: { [K in UserRole]: K } = {
+  SUPER_ADMIN: 'SUPER_ADMIN',
   ADMIN: 'ADMIN',
   TEACHER: 'TEACHER',
   STUDENT: 'STUDENT',
   PARENT: 'PARENT',
+};
+
+export type AccountStatus = 'ACTIVE' | 'SUSPENDED' | 'PENDING' | 'LOCKED';
+
+export const ACCOUNT_STATUSES: { [K in AccountStatus]: K } = {
+  ACTIVE: 'ACTIVE',
+  SUSPENDED: 'SUSPENDED',
+  PENDING: 'PENDING',
+  LOCKED: 'LOCKED',
 };
 
 export type AdmissionStatus = 'SUBMITTED' | 'UNDER_REVIEW' | 'INTERVIEW_SCHEDULED' | 'ACCEPTED' | 'WAITLISTED' | 'REJECTED';
@@ -23,10 +33,12 @@ export interface UserSummary {
   lastName: string;
   email: string;
   role: UserRole;
+  status: AccountStatus;
   avatarUrl?: string;
   studentId?: string;
   gradeLevel?: GradeLevel;
   phone?: string;
+  lastLoginAt?: string;
 }
 
 export interface AuthTokens {

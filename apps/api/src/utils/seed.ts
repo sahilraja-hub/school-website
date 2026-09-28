@@ -11,6 +11,7 @@ import { config } from '../config';
 export const seedDatabase = async () => {
   console.log('[Seed] Seeding sample data into database...');
 
+  const superAdminHash = await bcrypt.hash('SuperAdmin@123456', 10);
   const passwordHash = await bcrypt.hash('Admin@123456', 10);
   const teacherHash = await bcrypt.hash('Teacher@123456', 10);
   const studentHash = await bcrypt.hash('Student@123456', 10);
@@ -27,12 +28,24 @@ export const seedDatabase = async () => {
   ]);
 
   // 1. Create Users
+  const superAdmin = await User.create({
+    firstName: 'Eleanor',
+    lastName: 'Vance',
+    email: 'superadmin@oakridge.edu',
+    passwordHash: superAdminHash,
+    role: 'SUPER_ADMIN',
+    status: 'ACTIVE',
+    avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=256&q=80',
+    phone: '+1 (555) 019-2830',
+  });
+
   const admin = await User.create({
     firstName: 'Principal',
     lastName: 'Harrison',
     email: 'admin@oakridge.edu',
     passwordHash,
     role: 'ADMIN',
+    status: 'ACTIVE',
     avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80',
     phone: '+1 (555) 019-2831',
   });

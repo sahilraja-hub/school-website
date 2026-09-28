@@ -1,27 +1,42 @@
 import jwt from 'jsonwebtoken';
 import { Response } from 'express';
 import { config } from '../config';
-import { IUser } from '../models/User';
-import { UserRole } from '@school/shared';
+import { UserRole, AccountStatus } from '@school/shared';
 
 export interface TokenPayload {
   userId: string;
   email: string;
   role: UserRole;
+  status: AccountStatus;
+  tokenVersion?: number;
 }
 
-export const generateTokens = (user: IUser) => {
+export interface UserTokenSignable {
+  _id?: any;
+  id?: string;
+  email: string;
+  role: UserRole;
+  status: AccountStatus;
+  tokenVersion?: number;
+}
+
+export const generateTokens = (user: UserTokenSignable) => {
+  const userId = user._id ? user._id.toString() : user.id!;
+  const nonce = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+
   const payload: TokenPayload = {
-    userId: user._id.toString(),
+    userId,
     email: user.email,
     role: user.role,
+    status: user.status || 'ACTIVE',
+    tokenVersion: user.tokenVersion || 0,
   };
 
-  const accessToken = jwt.sign(payload, config.jwt.accessSecret, {
+  const accessToken = jwt.sign({ ...payload, jti: `acc-${nonce}` }, config.jwt.accessSecret, {
     expiresIn: config.jwt.accessExpiresIn as any,
   });
 
-  const refreshToken = jwt.sign(payload, config.jwt.refreshSecret, {
+  const refreshToken = jwt.sign({ ...payload, jti: `ref-${nonce}` }, config.jwt.refreshSecret, {
     expiresIn: config.jwt.refreshExpiresIn as any,
   });
 

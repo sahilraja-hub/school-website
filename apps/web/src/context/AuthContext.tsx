@@ -8,6 +8,8 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (data: any) => Promise<void>;
   logout: () => Promise<void>;
+  logoutAll: () => Promise<void>;
+  changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
   quickLoginAs: (role: UserRole) => Promise<void>;
 }
 
@@ -15,12 +17,23 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // Demo fallback users for instantaneous showcase when backend is offline or for quick preview
 const DEMO_USERS: Record<UserRole, UserSummary> = {
+  SUPER_ADMIN: {
+    id: 'usr-superadmin-01',
+    firstName: 'Eleanor',
+    lastName: 'Vance',
+    email: 'superadmin@oakridge.edu',
+    role: 'SUPER_ADMIN',
+    status: 'ACTIVE',
+    avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=256&q=80',
+    phone: '+1 (555) 019-2830',
+  },
   ADMIN: {
     id: 'demo-admin-id',
     firstName: 'Principal',
     lastName: 'Harrison',
     email: 'admin@oakridge.edu',
     role: 'ADMIN',
+    status: 'ACTIVE',
     avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80',
     phone: '+1 (555) 019-2831',
   },
@@ -30,6 +43,7 @@ const DEMO_USERS: Record<UserRole, UserSummary> = {
     lastName: 'Reed',
     email: 'teacher@oakridge.edu',
     role: 'TEACHER',
+    status: 'ACTIVE',
     avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=256&q=80',
     phone: '+1 (555) 019-2832',
   },
@@ -39,6 +53,7 @@ const DEMO_USERS: Record<UserRole, UserSummary> = {
     lastName: 'Vance',
     email: 'student@oakridge.edu',
     role: 'STUDENT',
+    status: 'ACTIVE',
     studentId: 'OAK-882190',
     gradeLevel: 'GRADE_11',
     avatarUrl: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=256&q=80',
@@ -50,6 +65,7 @@ const DEMO_USERS: Record<UserRole, UserSummary> = {
     lastName: 'Vance',
     email: 'parent@oakridge.edu',
     role: 'PARENT',
+    status: 'ACTIVE',
     avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=256&q=80',
     phone: '+1 (555) 019-2837',
   },
@@ -134,8 +150,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const logoutAll = async () => {
+    try {
+      await api.post('/auth/logout-all');
+    } catch (err) {
+      // ignore
+    } finally {
+      setUser(null);
+      setAccessToken(null);
+      localStorage.removeItem('oakridge_user');
+    }
+  };
+
+  const changePassword = async (currentPassword: string, newPassword: string) => {
+    await api.post('/auth/change-password', { currentPassword, newPassword });
+    // Password change logs out other devices
+  };
+
   const quickLoginAs = async (role: UserRole) => {
     const credentials: Record<UserRole, { email: string; pass: string }> = {
+      SUPER_ADMIN: { email: 'superadmin@oakridge.edu', pass: 'SuperAdmin@123456' },
       ADMIN: { email: 'admin@oakridge.edu', pass: 'Admin@123456' },
       TEACHER: { email: 'teacher@oakridge.edu', pass: 'Teacher@123456' },
       STUDENT: { email: 'student@oakridge.edu', pass: 'Student@123456' },
@@ -153,7 +187,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, quickLoginAs }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, logoutAll, changePassword, quickLoginAs }}>
       {children}
     </AuthContext.Provider>
   );
