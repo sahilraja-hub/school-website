@@ -80,3 +80,5 @@ export const createApp = (): express.Application => {
 
   return app;
 };
+
+export default createApp;

@@ -14,6 +14,7 @@ import { AdmissionApplicationSchema, AdmissionStatusUpdateSchema } from '@school
 const router = Router();
 
 // Public routes
+router.post('/', validate(AdmissionApplicationSchema), asyncHandler(submitApplication));
 router.post('/apply', validate(AdmissionApplicationSchema), asyncHandler(submitApplication));
 router.get('/track/:applicationNumber', asyncHandler(trackApplication));
 

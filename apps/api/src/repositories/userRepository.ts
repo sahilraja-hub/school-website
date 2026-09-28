@@ -317,6 +317,53 @@ class UserRepository {
     return this.inMemoryUsers.size;
   }
 
+  public async list(query: { page?: number; limit?: number; search?: string; role?: string; status?: string }): Promise<{ items: IUserLike[]; total: number; page: number; limit: number; totalPages: number }> {
+    const page = Math.max(1, query.page || 1);
+    const limit = Math.max(1, Math.min(100, query.limit || 20));
+    let allUsers = Array.from(this.inMemoryUsers.values());
+
+    if (query.role) {
+      allUsers = allUsers.filter((u) => u.role === query.role);
+    }
+    if (query.status) {
+      allUsers = allUsers.filter((u) => u.status === query.status);
+    }
+    if (query.search) {
+      const s = query.search.toLowerCase();
+      allUsers = allUsers.filter(
+        (u) =>
+          u.firstName.toLowerCase().includes(s) ||
+          u.lastName.toLowerCase().includes(s) ||
+          u.email.toLowerCase().includes(s)
+      );
+    }
+
+    const total = allUsers.length;
+    const totalPages = Math.ceil(total / limit) || 1;
+    const items = allUsers.slice((page - 1) * limit, page * limit);
+
+    return { items, total, page, limit, totalPages };
+  }
+
+  public async update(id: string, data: Partial<IUserLike>): Promise<IUserLike | null> {
+    const user = await this.findById(id);
+    if (!user) return null;
+
+    Object.assign(user, data);
+    user.updatedAt = new Date();
+    await user.save();
+    return user;
+  }
+
+  public async delete(id: string): Promise<boolean> {
+    const user = await this.findById(id);
+    if (!user) return false;
+    user.status = 'SUSPENDED';
+    user.updatedAt = new Date();
+    await user.save();
+    return true;
+  }
+
   public async resetForTesting(): Promise<void> {
     this.inMemoryUsers.clear();
     this.initialized = false;

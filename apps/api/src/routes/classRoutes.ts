@@ -1,15 +1,27 @@
 import { Router } from 'express';
-import { getClasses, getClassById, createClass } from '../controllers/classController';
-import { authenticate } from '../middleware/auth';
-import { authorizeRoles } from '../middleware/rbac';
+import {
+  listClasses,
+  getClassById,
+  createClass,
+  updateClass,
+  deleteClass,
+} from '../controllers/academicController';
+import { authenticate, authorize } from '../middleware/auth';
+import { validate } from '../middleware/validate';
 import { asyncHandler } from '../middleware/asyncHandler';
+import { CreateClassSchema, UpdateClassSchema } from '@school/shared';
 
 const router = Router();
 
 router.use(authenticate);
 
-router.get('/', asyncHandler(getClasses));
+// Directory access
+router.get('/', asyncHandler(listClasses));
 router.get('/:id', asyncHandler(getClassById));
-router.post('/', authorizeRoles('ADMIN'), asyncHandler(createClass));
+
+// Admin management
+router.post('/', authorize('ADMIN', 'SUPER_ADMIN'), validate(CreateClassSchema), asyncHandler(createClass));
+router.patch('/:id', authorize('ADMIN', 'SUPER_ADMIN'), validate(UpdateClassSchema), asyncHandler(updateClass));
+router.delete('/:id', authorize('SUPER_ADMIN'), asyncHandler(deleteClass));
 
 export default router;

@@ -1,11 +1,10 @@
 import { Router } from 'express';
 import {
-  markBatchAttendance,
-  getClassAttendanceByDate,
-  getStudentAttendanceSummary,
+  listAttendance,
+  recordAttendanceBatch,
+  getAttendanceStats,
 } from '../controllers/attendanceController';
-import { authenticate } from '../middleware/auth';
-import { authorizeRoles } from '../middleware/rbac';
+import { authenticate, authorize } from '../middleware/auth';
 import { validate } from '../middleware/validate';
 import { asyncHandler } from '../middleware/asyncHandler';
 import { MarkAttendanceBatchSchema } from '@school/shared';
@@ -14,16 +13,11 @@ const router = Router();
 
 router.use(authenticate);
 
-// Teachers and Admins can record and view class rosters
-router.post(
-  '/mark',
-  authorizeRoles('TEACHER', 'ADMIN'),
-  validate(MarkAttendanceBatchSchema),
-  asyncHandler(markBatchAttendance)
-);
-router.get('/class', authorizeRoles('TEACHER', 'ADMIN'), asyncHandler(getClassAttendanceByDate));
+// View attendance history (all authenticated users, with role-based tenancy in controller)
+router.get('/', asyncHandler(listAttendance));
+router.get('/stats', asyncHandler(getAttendanceStats));
 
-// Students, Parents, Teachers, Admins can view individual attendance summaries
-router.get('/student/:studentId?', asyncHandler(getStudentAttendanceSummary));
+// Faculty and Admins can record registers
+router.post('/batch', authorize('ADMIN', 'SUPER_ADMIN', 'TEACHER'), validate(MarkAttendanceBatchSchema), asyncHandler(recordAttendanceBatch));
 
 export default router;

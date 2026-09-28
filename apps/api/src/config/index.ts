@@ -9,6 +9,7 @@ export const config = {
   apiPrefix: process.env.API_PREFIX || '/api/v1',
   clientUrl: process.env.CLIENT_URL || 'http://localhost:3000',
   mongoUri: process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/school_portal',
+  databaseUrl: process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/school_db?schema=public',
   jwt: {
     accessSecret: process.env.JWT_ACCESS_SECRET || 'oakridge_super_secure_access_secret_key_2026',
     refreshSecret: process.env.JWT_REFRESH_SECRET || 'oakridge_super_secure_refresh_secret_key_2026',
