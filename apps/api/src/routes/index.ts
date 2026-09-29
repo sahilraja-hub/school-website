@@ -19,6 +19,7 @@ import admissionRoutes from './admissionRoutes';
 import noticeRoutes from './noticeRoutes';
 import eventRoutes from './eventRoutes';
 import galleryRoutes from './galleryRoutes';
+import mediaRoutes from './mediaRoutes';
 import documentRoutes from './documentRoutes';
 import feeRoutes from './feeRoutes';
 import paymentRoutes from './paymentRoutes';
@@ -87,7 +88,10 @@ router.use('/events', eventRoutes);
 // 17. /gallery
 router.use('/gallery', galleryRoutes);
 
-// 18. /documents
+// 18. /media (Phase 16 — Production Media Management)
+router.use('/media', mediaRoutes);
+
+// 19. /documents
 router.use('/documents', documentRoutes);
 
 // 19. /fees

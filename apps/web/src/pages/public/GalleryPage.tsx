@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Breadcrumb,
@@ -15,6 +15,7 @@ import {
   ArrowRight,
   Filter,
 } from 'lucide-react';
+import { api } from '../../services/api';
 
 interface GalleryItem {
   id: string;
@@ -23,9 +24,10 @@ interface GalleryItem {
   image: string;
   date: string;
   caption: string;
+  altText?: string;
 }
 
-const galleryItems: GalleryItem[] = [
+const defaultGalleryItems: GalleryItem[] = [
   {
     id: 'g1',
     title: 'Historic Cambridge Quad Autumn Morning',
@@ -33,6 +35,7 @@ const galleryItems: GalleryItem[] = [
     image: '/images/campus-hero.jpg',
     date: 'Fall Term',
     caption: 'Students conversing between morning lectures in front of Founder’s Hall clock tower.',
+    altText: 'Oakridge campus central quadrangle with stone arch and student walkways',
   },
   {
     id: 'g2',
@@ -41,6 +44,7 @@ const galleryItems: GalleryItem[] = [
     image: '/images/stem-lab.jpg',
     date: 'Spring Research Symposium',
     caption: 'Grade 11 IB Biology scholars conducting CRISPR electrophoresis gel analysis under laminar hoods.',
+    altText: 'Scholars in STEM lab conducting gel electrophoresis analysis',
   },
   {
     id: 'g3',
@@ -49,6 +53,7 @@ const galleryItems: GalleryItem[] = [
     image: '/images/library.jpg',
     date: 'Academic Term',
     caption: 'Scholars collaborating in our double-height timber commons overlooking the campus botanical preserve.',
+    altText: 'Alexander Media Library modern timber architecture learning commons',
   },
   {
     id: 'g4',
@@ -57,6 +62,7 @@ const galleryItems: GalleryItem[] = [
     image: '/images/athletics.jpg',
     date: 'State Championship',
     caption: 'The Oakridge Lions 4x400m relay squad securing the regional gold medal on our Olympic Mondotrack.',
+    altText: 'Track and field sprint relay athletes in competition',
   },
   {
     id: 'g5',
@@ -65,6 +71,7 @@ const galleryItems: GalleryItem[] = [
     image: '/images/principal.jpg',
     date: 'Baccalaureate Week',
     caption: 'Head of School Dr. Eleanor Vance addressing graduating seniors in the university archives collection.',
+    altText: 'Head of school welcoming senior scholars in archive hall',
   },
   {
     id: 'g6',
@@ -73,24 +80,64 @@ const galleryItems: GalleryItem[] = [
     image: '/images/stem-lab.jpg',
     date: 'FIRST Regional',
     caption: 'Robotics engineering team assembling the autonomous vision-guidance chassis for national competition.',
+    altText: 'Autonomous robot on competition course with sensor arrays',
   },
 ];
+
+const categoryMap: Record<string, 'Campus' | 'Science' | 'Sports' | 'Arts' | 'Events'> = {
+  CAMPUS: 'Campus',
+  ACADEMICS: 'Science',
+  ATHLETICS: 'Sports',
+  ARTS: 'Arts',
+  EVENTS: 'Events',
+};
 
 export const GalleryPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
   const [activePhoto, setActivePhoto] = useState<GalleryItem | null>(null);
+  const [items, setItems] = useState<GalleryItem[]>(defaultGalleryItems);
+
+  useEffect(() => {
+    const fetchPublicMedia = async () => {
+      try {
+        const res = await api.get('/media');
+        if (res.data?.success && Array.isArray(res.data.data) && res.data.data.length > 0) {
+          const apiItems: GalleryItem[] = res.data.data
+            .filter((m: any) => !m.isPrivate)
+            .map((m: any) => ({
+              id: m.id,
+              title: m.title || m.originalFileName || m.fileName,
+              category: categoryMap[m.category] || 'Campus',
+              image: m.variants?.large?.url || m.variants?.medium?.url || m.url,
+              date: new Date(m.createdAt).toLocaleDateString(undefined, { month: 'short', year: 'numeric' }),
+              caption: m.caption || m.title || 'Curated campus photography archive.',
+              altText: m.altText || m.title || 'Oakridge International Academy media photography',
+            }));
+
+          if (apiItems.length > 0) {
+            setItems(apiItems);
+          }
+        }
+      } catch (err) {
+        // Fallback to default items
+      }
+    };
+
+    fetchPublicMedia();
+  }, []);
 
   const categories = [
     { id: 'ALL', label: 'All Photographs' },
     { id: 'Campus', label: 'Campus & Architecture' },
     { id: 'Science', label: 'Science & Innovation' },
     { id: 'Sports', label: 'Athletics & Teams' },
+    { id: 'Arts', label: 'Fine Arts & Music' },
     { id: 'Events', label: 'Academic Events' },
   ];
 
   const filteredItems = selectedCategory === 'ALL'
-    ? galleryItems
-    : galleryItems.filter((item) => item.category === selectedCategory);
+    ? items
+    : items.filter((item) => item.category === selectedCategory);
 
   return (
     <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8 text-left">
@@ -154,8 +201,9 @@ export const GalleryPage: React.FC = () => {
               <div className="relative h-64 overflow-hidden bg-slate-900">
                 <img
                   src={item.image}
-                  alt={item.title}
+                  alt={item.altText || item.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
                   <div className="flex items-center gap-1.5 text-xs text-white font-medium">
@@ -208,7 +256,7 @@ export const GalleryPage: React.FC = () => {
               <div className="rounded-2xl overflow-hidden shadow-modal bg-slate-950 max-h-[60vh] flex items-center justify-center">
                 <img
                   src={activePhoto.image}
-                  alt={activePhoto.title}
+                  alt={activePhoto.altText || activePhoto.title}
                   className="w-full max-h-[60vh] object-contain"
                 />
               </div>

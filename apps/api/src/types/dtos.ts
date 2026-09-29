@@ -367,24 +367,45 @@ export interface EventDto {
 
 export interface MediaDto {
   id: string;
-  galleryId: string;
+  galleryId?: string | null;
+  galleryTitle?: string | null;
   title?: string | null;
+  caption?: string | null;
+  altText?: string | null;
+  category: string;
   url: string;
-  type: string;
+  variants: {
+    thumbnail?: { url: string; width: number; height: number; sizeBytes?: number };
+    medium?: { url: string; width: number; height: number; sizeBytes?: number };
+    large?: { url: string; width: number; height: number; sizeBytes?: number };
+    original?: { url: string; width: number; height: number; sizeBytes?: number };
+  };
+  fileName: string;
+  originalFileName?: string;
   fileSize: number;
   mimeType: string;
+  dimensions?: { width: number; height: number } | null;
+  order: number;
+  isPrivate: boolean;
+  uploadedBy?: string | null;
   createdAt: string;
+  updatedAt: string;
 }
 
 export interface GalleryDto {
   id: string;
   title: string;
-  slug: string;
+  slug?: string;
   description?: string | null;
-  coverImage?: string | null;
+  category: string;
+  academicYear?: string;
+  coverImage?: string;
   mediaCount?: number;
+  isPublic?: boolean;
+  order?: number;
   media?: MediaDto[];
   createdAt: string;
+  updatedAt?: string;
 }
 
 export interface DocumentDto {

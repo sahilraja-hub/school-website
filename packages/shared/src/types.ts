@@ -242,3 +242,63 @@ export interface ApiResponse<T = any> {
   error?: string;
   errors?: Record<string, string[]>;
 }
+
+export type MediaCategory =
+  | 'CAMPUS'
+  | 'ACADEMICS'
+  | 'ATHLETICS'
+  | 'ARTS'
+  | 'EVENTS'
+  | 'FACULTY'
+  | 'ARCHIVE'
+  | 'GENERAL';
+
+export interface ImageVariant {
+  label: 'thumbnail' | 'medium' | 'large' | 'original';
+  url: string;
+  width: number;
+  height: number;
+  sizeBytes: number;
+}
+
+export interface MediaItem {
+  id: string;
+  galleryId?: string | null;
+  title?: string | null;
+  caption?: string | null;
+  altText?: string | null;
+  category: MediaCategory;
+  url: string;
+  variants: {
+    thumbnail: ImageVariant;
+    medium: ImageVariant;
+    large: ImageVariant;
+    original: ImageVariant;
+  };
+  fileName: string;
+  originalFileName: string;
+  fileSize: number;
+  mimeType: string;
+  dimensions?: { width: number; height: number };
+  order: number;
+  isPrivate: boolean;
+  uploadedBy?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface GalleryAlbum {
+  id: string;
+  title: string;
+  slug: string;
+  description?: string | null;
+  category: MediaCategory;
+  academicYear?: string | null;
+  coverImage?: string | null;
+  mediaCount?: number;
+  isPublic: boolean;
+  order: number;
+  media?: MediaItem[];
+  createdAt: string;
+  updatedAt: string;
+}

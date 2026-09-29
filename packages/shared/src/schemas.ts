@@ -461,11 +461,78 @@ export const CreateEventSchema = z.object({
 export const UpdateEventSchema = CreateEventSchema.partial();
 
 // Gallery & Media
+export const MediaCategorySchema = z.enum([
+  'CAMPUS',
+  'ACADEMICS',
+  'ATHLETICS',
+  'ARTS',
+  'EVENTS',
+  'FACULTY',
+  'ARCHIVE',
+  'GENERAL',
+]);
+
 export const CreateGallerySchema = z.object({
   title: z.string().trim().min(3, 'Gallery title is required'),
-  slug: z.string().trim().min(2, 'Slug is required'),
+  slug: z.string().trim().min(2).optional(),
   description: z.string().optional(),
-  coverImage: z.string().url().optional(),
+  category: MediaCategorySchema.default('CAMPUS'),
+  academicYear: z.string().default('2026-2027'),
+  coverImage: z.string().optional(),
+  isPublic: z.boolean().default(true),
+  order: z.number().int().default(0),
+});
+
+export const UpdateGallerySchema = CreateGallerySchema.partial();
+
+export const UploadMediaSchema = z.object({
+  fileName: z.string().trim().min(1, 'File name is required'),
+  fileType: z.string().min(1, 'File type / MIME type is required'),
+  fileSizeBytes: z.number().positive('File size must be greater than 0'),
+  fileBase64: z.string().min(1, 'File data is required'),
+  galleryId: z.string().optional().nullable(),
+  title: z.string().trim().optional(),
+  caption: z.string().trim().optional(),
+  altText: z.string().trim().optional(),
+  category: MediaCategorySchema.optional().default('GENERAL'),
+  isPrivate: z.boolean().optional().default(false),
+  order: z.number().int().optional().default(0),
+});
+
+export const UploadMultipleMediaSchema = z.object({
+  galleryId: z.string().optional().nullable(),
+  category: MediaCategorySchema.optional().default('GENERAL'),
+  isPrivate: z.boolean().optional().default(false),
+  files: z.array(UploadMediaSchema).min(1, 'At least one file is required').max(20, 'Maximum 20 files per batch'),
+});
+
+export const UpdateMediaSchema = z.object({
+  title: z.string().trim().optional().nullable(),
+  caption: z.string().trim().optional().nullable(),
+  altText: z.string().trim().optional().nullable(),
+  category: MediaCategorySchema.optional(),
+  galleryId: z.string().optional().nullable(),
+  order: z.number().int().optional(),
+  isPrivate: z.boolean().optional(),
+});
+
+export const ReplaceMediaSchema = z.object({
+  fileName: z.string().trim().min(1, 'Replacement file name is required'),
+  fileType: z.string().min(1, 'File type is required'),
+  fileSizeBytes: z.number().positive('File size must be greater than 0'),
+  fileBase64: z.string().min(1, 'File data is required'),
+  caption: z.string().trim().optional(),
+  altText: z.string().trim().optional(),
+});
+
+export const ReorderMediaSchema = z.object({
+  galleryId: z.string().optional(),
+  items: z.array(
+    z.object({
+      id: z.string().min(1),
+      order: z.number().int(),
+    })
+  ).min(1, 'Reorder list must contain at least one item'),
 });
 
 export const AddMediaSchema = z.object({
@@ -475,6 +542,10 @@ export const AddMediaSchema = z.object({
   type: z.enum(['IMAGE', 'VIDEO', 'DOCUMENT']).default('IMAGE'),
   fileSize: z.number().int().positive().default(1024),
   mimeType: z.string().default('image/jpeg'),
+  caption: z.string().optional(),
+  altText: z.string().optional(),
+  order: z.number().int().optional().default(0),
+  isPrivate: z.boolean().optional().default(false),
 });
 
 // Documents
