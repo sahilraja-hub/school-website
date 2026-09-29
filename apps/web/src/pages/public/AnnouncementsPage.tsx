@@ -95,6 +95,27 @@ export const NoticesPage: React.FC = () => {
     let isMounted = true;
     const fetchAnnouncements = async () => {
       try {
+        const res = await api.get('/notices');
+        if (isMounted && res.data.success && Array.isArray(res.data.data) && res.data.data.length > 0) {
+          setAnnouncements(
+            res.data.data.map((n: any) => ({
+              id: n.id,
+              title: n.title,
+              content: n.description || n.content || '',
+              category: n.category || 'GENERAL',
+              isPinned: Boolean(n.isPinned),
+              authorName: n.authorName || 'Admissions Directorate',
+              publishDate: n.publishDate || n.publishedAt || new Date().toISOString(),
+              attachmentUrl: n.attachment || n.attachmentUrl,
+            }))
+          );
+          return;
+        }
+      } catch (err) {
+        // Fallback
+      }
+
+      try {
         const res = await api.get('/announcements');
         if (isMounted && res.data.success && Array.isArray(res.data.data)) {
           setAnnouncements(res.data.data);

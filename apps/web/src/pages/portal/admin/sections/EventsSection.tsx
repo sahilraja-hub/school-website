@@ -13,23 +13,39 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
-  ArrowUpDown,
   Globe,
   Lock,
+  Send,
+  RotateCcw,
+  Archive,
+  Image as ImageIcon,
 } from 'lucide-react';
 import { api } from '../../../../services/api';
 import { ApiErrorAlert } from '../../../../components/common/ApiErrorAlert';
 import { ConfirmationDialog } from '../../../../components/ui/ConfirmationDialog';
 import { EventDto } from '@school/shared';
 
+const STATUS_BADGES: Record<string, { label: string; className: string }> = {
+  PUBLISHED: {
+    label: 'Published',
+    className: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
+  },
+  DRAFT: {
+    label: 'Draft',
+    className: 'bg-amber-500/15 text-amber-400 border-amber-500/30',
+  },
+  ARCHIVED: {
+    label: 'Archived',
+    className: 'bg-slate-700/40 text-slate-400 border-slate-600',
+  },
+};
+
 export const EventsSection: React.FC = () => {
   const [events, setEvents] = useState<EventDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [visibilityFilter, setVisibilityFilter] = useState<'ALL' | 'PUBLIC' | 'PRIVATE'>('ALL');
-  const [sortField, setSortField] = useState<'startDate' | 'title'>('startDate');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [statusFilter, setStatusFilter] = useState<'ALL' | 'DRAFT' | 'PUBLISHED' | 'ARCHIVED'>('ALL');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
@@ -42,10 +58,12 @@ export const EventsSection: React.FC = () => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
+    date: '2026-10-18',
+    startTime: '09:00',
+    endTime: '16:00',
     location: '',
-    startDate: '2026-10-15T09:00',
-    endDate: '2026-10-15T15:00',
-    isPublic: true,
+    image: '',
+    status: 'PUBLISHED' as 'DRAFT' | 'PUBLISHED' | 'ARCHIVED',
   });
 
   const fetchEvents = async () => {
@@ -58,7 +76,7 @@ export const EventsSection: React.FC = () => {
       }
     } catch (err) {
       setError(err);
-      // Realistic Mock Events Calendar
+      // Fallback Mock Events Calendar
       setEvents([
         {
           id: 'evt-1',
@@ -66,8 +84,14 @@ export const EventsSection: React.FC = () => {
           description:
             'Scholars from Grades 9-12 demonstrate robotics, biological field work, and chemical synthesis in our premier STEM quad.',
           location: 'Grand Exhibition Hall & Atrium',
+          date: '2026-10-18',
+          startTime: '09:00',
+          endTime: '16:00',
           startDate: '2026-10-18T09:00:00Z',
           endDate: '2026-10-18T16:00:00Z',
+          image: 'https://images.unsplash.com/photo-1511578314322-379afb476865',
+          bannerUrl: 'https://images.unsplash.com/photo-1511578314322-379afb476865',
+          status: 'PUBLISHED',
           isPublic: true,
           organizerName: 'Science Faculty Board',
         },
@@ -77,32 +101,42 @@ export const EventsSection: React.FC = () => {
           description:
             'Individual consultations regarding Fall term milestones, diagnostic tests, and personalized enrichment roadmaps.',
           location: 'Main Academic Quad & Classrooms',
+          date: '2026-10-24',
+          startTime: '13:00',
+          endTime: '18:00',
           startDate: '2026-10-24T13:00:00Z',
           endDate: '2026-10-24T18:00:00Z',
-          isPublic: false,
+          status: 'PUBLISHED',
+          isPublic: true,
           organizerName: 'Academic Deans Office',
         },
         {
           id: 'evt-3',
-          title: 'Oakridge Varsity Cross-Country Invitational',
-          description:
-            'Hosting regional athletic competitors for the 5K autumn trail challenge through Oakridge Forest preserves.',
-          location: 'Oakridge Athletics Complex',
-          startDate: '2026-11-04T08:30:00Z',
-          endDate: '2026-11-04T13:30:00Z',
-          isPublic: true,
-          organizerName: 'Department of Athletics',
+          title: 'Unannounced Board Executive Session Draft',
+          description: 'Draft planning for trustee executive committee lunch.',
+          location: 'Boardroom Suite 4',
+          date: '2026-11-02',
+          startTime: '12:00',
+          endTime: '14:00',
+          startDate: '2026-11-02T12:00:00Z',
+          endDate: '2026-11-02T14:00:00Z',
+          status: 'DRAFT',
+          isPublic: false,
+          organizerName: 'Trustees Office',
         },
         {
           id: 'evt-4',
-          title: 'Winter Philharmonic Orchestral Recital',
-          description:
-            'Featuring the Symphony Strings and Wind Ensemble performing pieces by Vivaldi, Dvořák, and modern arrangements.',
-          location: 'Performing Arts Auditorium',
-          startDate: '2026-12-12T19:00:00Z',
-          endDate: '2026-12-12T21:30:00Z',
-          isPublic: true,
-          organizerName: 'Music & Fine Arts Guild',
+          title: 'Centennial Heritage Gala 2025 Retrospective',
+          description: 'Past anniversary banquet archived celebration archive.',
+          location: 'Grand Quad Pavilion',
+          date: '2025-09-12',
+          startTime: '18:00',
+          endTime: '22:00',
+          startDate: '2025-09-12T18:00:00Z',
+          endDate: '2025-09-12T22:00:00Z',
+          status: 'ARCHIVED',
+          isPublic: false,
+          organizerName: 'Alumni Association',
         },
       ]);
     } finally {
@@ -121,19 +155,15 @@ export const EventsSection: React.FC = () => {
           evt.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
           evt.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
           evt.description.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesVis =
-          visibilityFilter === 'ALL' ||
-          (visibilityFilter === 'PUBLIC' && evt.isPublic) ||
-          (visibilityFilter === 'PRIVATE' && !evt.isPublic);
-        return matchesSearch && matchesVis;
+        const matchesStatus = statusFilter === 'ALL' || evt.status === statusFilter;
+        return matchesSearch && matchesStatus;
       })
       .sort((a, b) => {
-        let valA = a[sortField] || '';
-        let valB = b[sortField] || '';
-        if (sortOrder === 'asc') return valA.localeCompare(valB);
-        return valB.localeCompare(valA);
+        const dateA = new Date(a.date || a.startDate || 0).getTime();
+        const dateB = new Date(b.date || b.startDate || 0).getTime();
+        return dateA - dateB;
       });
-  }, [events, searchQuery, visibilityFilter, sortField, sortOrder]);
+  }, [events, searchQuery, statusFilter]);
 
   const totalPages = Math.ceil(filteredEvents.length / itemsPerPage) || 1;
   const paginatedEvents = useMemo(() => {
@@ -146,10 +176,12 @@ export const EventsSection: React.FC = () => {
     setFormData({
       title: '',
       description: '',
+      date: new Date().toISOString().split('T')[0],
+      startTime: '09:00',
+      endTime: '15:00',
       location: '',
-      startDate: '2026-10-15T09:00',
-      endDate: '2026-10-15T15:00',
-      isPublic: true,
+      image: '',
+      status: 'PUBLISHED',
     });
     setIsModalOpen(true);
   };
@@ -159,10 +191,12 @@ export const EventsSection: React.FC = () => {
     setFormData({
       title: evt.title,
       description: evt.description,
+      date: evt.date || (evt.startDate ? evt.startDate.split('T')[0] : ''),
+      startTime: evt.startTime || (evt.startDate ? evt.startDate.substring(11, 16) : '09:00'),
+      endTime: evt.endTime || (evt.endDate ? evt.endDate.substring(11, 16) : '15:00'),
       location: evt.location,
-      startDate: evt.startDate.substring(0, 16),
-      endDate: evt.endDate.substring(0, 16),
-      isPublic: evt.isPublic,
+      image: evt.image || evt.bannerUrl || '',
+      status: evt.status || 'PUBLISHED',
     });
     setIsModalOpen(true);
   };
@@ -170,37 +204,119 @@ export const EventsSection: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    const payload = {
+      title: formData.title,
+      description: formData.description,
+      date: formData.date,
+      startTime: formData.startTime,
+      endTime: formData.endTime,
+      startDate: `${formData.date}T${formData.startTime}:00Z`,
+      endDate: `${formData.date}T${formData.endTime}:00Z`,
+      location: formData.location,
+      image: formData.image.trim() || undefined,
+      bannerUrl: formData.image.trim() || undefined,
+      status: formData.status,
+      isPublic: formData.status === 'PUBLISHED',
+    };
+
     try {
       if (editingEvent) {
-        await api.patch(`/events/${editingEvent.id}`, formData);
+        await api.patch(`/events/${editingEvent.id}`, payload);
         setActionSuccess('Event schedule updated.');
       } else {
-        await api.post('/events', formData);
-        setActionSuccess('Institutional event scheduled.');
+        await api.post('/events', payload);
+        setActionSuccess(
+          formData.status === 'PUBLISHED'
+            ? 'Event scheduled and published to website.'
+            : 'Event saved as draft.'
+        );
       }
       setIsModalOpen(false);
       fetchEvents();
     } catch (err) {
       if (editingEvent) {
         setEvents((prev) =>
-          prev.map((e) => (e.id === editingEvent.id ? { ...e, ...formData } : e))
+          prev.map((e) =>
+            e.id === editingEvent.id
+              ? {
+                  ...e,
+                  ...payload,
+                  status: payload.status as any,
+                }
+              : e
+          )
         );
         setActionSuccess('Event modified (local update).');
       } else {
         const newEvt: EventDto = {
           id: `evt-${Date.now()}`,
-          title: formData.title,
-          description: formData.description,
-          location: formData.location,
-          startDate: formData.startDate,
-          endDate: formData.endDate,
-          isPublic: formData.isPublic,
-          organizerName: 'School Activities Committee',
+          title: payload.title,
+          description: payload.description,
+          date: payload.date,
+          startTime: payload.startTime,
+          endTime: payload.endTime,
+          startDate: payload.startDate,
+          endDate: payload.endDate,
+          location: payload.location,
+          image: payload.image,
+          bannerUrl: payload.bannerUrl,
+          status: payload.status as any,
+          isPublic: payload.isPublic,
+          organizerName: 'School Activities Directorate',
         };
         setEvents([newEvt, ...events]);
         setActionSuccess('Event scheduled (local update).');
       }
       setIsModalOpen(false);
+    }
+  };
+
+  const handlePublish = async (evt: EventDto) => {
+    setError(null);
+    try {
+      await api.post(`/events/${evt.id}/publish`);
+      setActionSuccess(`Event "${evt.title}" is now published.`);
+      setEvents((prev) =>
+        prev.map((e) => (e.id === evt.id ? { ...e, status: 'PUBLISHED', isPublic: true } : e))
+      );
+    } catch (err) {
+      setEvents((prev) =>
+        prev.map((e) => (e.id === evt.id ? { ...e, status: 'PUBLISHED', isPublic: true } : e))
+      );
+      setActionSuccess(`Event "${evt.title}" published (local update).`);
+    }
+  };
+
+  const handleUnpublish = async (evt: EventDto) => {
+    setError(null);
+    try {
+      await api.post(`/events/${evt.id}/unpublish`);
+      setActionSuccess(`Event "${evt.title}" unpublished to draft.`);
+      setEvents((prev) =>
+        prev.map((e) => (e.id === evt.id ? { ...e, status: 'DRAFT', isPublic: false } : e))
+      );
+    } catch (err) {
+      setEvents((prev) =>
+        prev.map((e) => (e.id === evt.id ? { ...e, status: 'DRAFT', isPublic: false } : e))
+      );
+      setActionSuccess(`Event "${evt.title}" returned to draft.`);
+    }
+  };
+
+  const handleArchive = async (evt: EventDto) => {
+    setError(null);
+    try {
+      await api.post(`/events/${evt.id}/archive`);
+      setActionSuccess(`Event "${evt.title}" archived.`);
+      setEvents((prev) =>
+        prev.map((e) => (e.id === evt.id ? { ...e, status: 'ARCHIVED', isPublic: false } : e))
+      );
+    } catch (err) {
+      setEvents((prev) =>
+        prev.map((e) => (e.id === evt.id ? { ...e, status: 'ARCHIVED', isPublic: false } : e))
+      );
+      setActionSuccess(`Event "${evt.title}" archived.`);
     }
   };
 
@@ -226,14 +342,15 @@ export const EventsSection: React.FC = () => {
         <div>
           <h2 className="text-2xl font-serif font-bold text-white flex items-center gap-3">
             <Calendar className="w-7 h-7 text-amber-400" />
-            Events Calendar & Symposia
+            Academy Events & Master Calendar
           </h2>
           <p className="text-sm text-slate-400">
-            Coordinate campus ceremonies, academic conventions, athletic tournaments, and public recitals.
+            Schedule campus activities, symposia, athletic games, and manage event lifecycle.
           </p>
         </div>
         <button
           onClick={handleOpenCreate}
+          data-testid="create-event-btn"
           className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-semibold rounded-xl text-sm transition-all shadow-md shadow-amber-500/20"
         >
           <Plus className="w-4 h-4" />
@@ -256,12 +373,13 @@ export const EventsSection: React.FC = () => {
       {error && <ApiErrorAlert error={error} onDismiss={() => setError(null)} />}
 
       {/* Control Bar */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-[#0B1528] p-4 rounded-xl border border-slate-800">
-        <div className="md:col-span-2 relative">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 bg-[#0B1528] p-4 rounded-xl border border-slate-800">
+        <div className="sm:col-span-2 relative">
           <Search className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
           <input
             type="text"
-            placeholder="Search events by name, hall, or keywords..."
+            data-testid="event-search-input"
+            placeholder="Search events by title, description, or venue..."
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
@@ -273,107 +391,154 @@ export const EventsSection: React.FC = () => {
 
         <div>
           <select
-            value={visibilityFilter}
+            data-testid="event-status-filter"
+            value={statusFilter}
             onChange={(e) => {
-              setVisibilityFilter(e.target.value as any);
+              setStatusFilter(e.target.value as any);
               setCurrentPage(1);
             }}
             className="w-full px-3 py-2 bg-[#060D1A] border border-slate-700 rounded-lg text-sm text-slate-300 focus:outline-none focus:border-amber-500/50"
           >
-            <option value="ALL">All Visibility (Public & Private)</option>
-            <option value="PUBLIC">Public Only (Website & Portal)</option>
-            <option value="PRIVATE">Private Only (Portal Only)</option>
+            <option value="ALL">All Statuses (Draft, Pub, Arch)</option>
+            <option value="PUBLISHED">Published Only</option>
+            <option value="DRAFT">Drafts Only</option>
+            <option value="ARCHIVED">Archived Only</option>
           </select>
         </div>
       </div>
 
-      {/* Events Cards Grid */}
+      {/* Events Grid */}
       {loading ? (
         <div className="p-12 text-center text-slate-400 bg-[#0B1528] rounded-xl border border-slate-800">
           <div className="inline-block animate-spin w-8 h-8 border-2 border-amber-500 border-t-transparent rounded-full mb-3" />
-          <p>Syncing event master calendar...</p>
+          <p>Loading master academy calendar...</p>
         </div>
       ) : filteredEvents.length === 0 ? (
         <div className="p-12 text-center bg-[#0B1528] rounded-xl border border-slate-800">
           <Calendar className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-          <h3 className="text-lg font-medium text-slate-300">No events found</h3>
-          <p className="text-sm text-slate-500 mt-1">
-            Adjust your search or schedule an event using the button above.
-          </p>
+          <h3 className="text-lg font-medium text-slate-300">No scheduled events match</h3>
+          <p className="text-sm text-slate-500 mt-1">Try modifying your filters or schedule a new event.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" data-testid="events-grid">
           {paginatedEvents.map((evt) => {
-            const start = new Date(evt.startDate);
-            const end = new Date(evt.endDate);
+            const statusConfig = STATUS_BADGES[evt.status || 'PUBLISHED'] || STATUS_BADGES.PUBLISHED;
+            const eventImage = evt.image || evt.bannerUrl;
 
             return (
               <div
                 key={evt.id}
-                className="bg-[#0B1528] p-5 rounded-xl border border-slate-800 hover:border-slate-700 transition-all flex flex-col justify-between group"
+                data-testid={`event-card-${evt.id}`}
+                className="bg-[#0B1528] rounded-xl border border-slate-800 hover:border-slate-700 transition-all flex flex-col justify-between overflow-hidden group"
               >
-                <div>
-                  <div className="flex items-start justify-between gap-3 mb-2">
-                    <span
-                      className={`inline-flex items-center gap-1 text-xs px-2.5 py-0.5 rounded-full font-semibold border ${
-                        evt.isPublic
-                          ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-                          : 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30'
-                      }`}
-                    >
-                      {evt.isPublic ? <Globe className="w-3 h-3" /> : <Lock className="w-3 h-3" />}
-                      {evt.isPublic ? 'Public Event' : 'Internal School Event'}
-                    </span>
+                {eventImage && (
+                  <div className="h-40 w-full overflow-hidden relative">
+                    <img
+                      src={eventImage}
+                      alt={evt.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0B1528] to-transparent opacity-80" />
+                  </div>
+                )}
 
-                    <div className="flex items-center gap-1">
-                      <button
-                        onClick={() => handleOpenEdit(evt)}
-                        className="p-1.5 text-slate-400 hover:text-amber-400 hover:bg-slate-800 rounded-lg transition-colors"
-                        title="Edit event"
-                      >
-                        <Edit2 className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => setEventToDelete(evt)}
-                        className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors"
-                        title="Delete event"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
+                <div className="p-5 flex-1">
+                  <div className="flex items-center justify-between gap-2 mb-3">
+                    <span
+                      className={`text-xs px-2.5 py-0.5 rounded-full font-semibold border ${statusConfig.className}`}
+                      data-testid={`event-status-badge-${evt.status}`}
+                    >
+                      {statusConfig.label}
+                    </span>
+                    <span className="text-xs text-slate-400 flex items-center gap-1 font-mono">
+                      <Clock className="w-3.5 h-3.5 text-amber-400" />
+                      {evt.startTime || '09:00'} – {evt.endTime || '15:00'}
+                    </span>
                   </div>
 
-                  <h3 className="text-lg font-serif font-bold text-white group-hover:text-amber-400 transition-colors">
+                  <h3 className="text-base font-semibold text-white group-hover:text-amber-400 transition-colors line-clamp-2">
                     {evt.title}
                   </h3>
 
-                  <p className="text-sm text-slate-300 mt-2 line-clamp-2 leading-relaxed">
+                  <p className="text-xs text-slate-300 mt-2 line-clamp-2 leading-relaxed">
                     {evt.description}
                   </p>
+
+                  <div className="mt-4 space-y-1.5 text-xs text-slate-400">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-3.5 h-3.5 text-slate-500" />
+                      <span>{evt.date || (evt.startDate ? evt.startDate.split('T')[0] : 'Upcoming')}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-3.5 h-3.5 text-slate-500" />
+                      <span className="truncate">{evt.location}</span>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="pt-4 mt-4 border-t border-slate-800/80 space-y-2 text-xs text-slate-400">
-                  <div className="flex items-center gap-2 text-slate-300">
-                    <Clock className="w-3.5 h-3.5 text-amber-400" />
-                    <span>
-                      {start.toLocaleDateString(undefined, {
-                        weekday: 'short',
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric',
-                      })}{' '}
-                      •{' '}
-                      {start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} -{' '}
-                      {end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </span>
+                <div className="p-4 bg-[#08101E] border-t border-slate-800/80 flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-1">
+                    {evt.status === 'DRAFT' && (
+                      <button
+                        onClick={() => handlePublish(evt)}
+                        data-testid={`publish-event-${evt.id}`}
+                        className="px-2 py-1 text-xs font-semibold text-emerald-400 hover:bg-emerald-500/10 border border-emerald-500/30 rounded-lg transition-colors flex items-center gap-1"
+                      >
+                        <Send className="w-3 h-3" />
+                        Publish
+                      </button>
+                    )}
+
+                    {evt.status === 'PUBLISHED' && (
+                      <>
+                        <button
+                          onClick={() => handleUnpublish(evt)}
+                          data-testid={`unpublish-event-${evt.id}`}
+                          className="px-2 py-1 text-xs font-semibold text-amber-400 hover:bg-amber-500/10 border border-amber-500/30 rounded-lg transition-colors flex items-center gap-1"
+                        >
+                          <RotateCcw className="w-3 h-3" />
+                          Unpublish
+                        </button>
+                        <button
+                          onClick={() => handleArchive(evt)}
+                          data-testid={`archive-event-${evt.id}`}
+                          className="px-2 py-1 text-xs font-semibold text-slate-400 hover:bg-slate-700/50 border border-slate-700 rounded-lg transition-colors flex items-center gap-1"
+                        >
+                          <Archive className="w-3 h-3" />
+                          Archive
+                        </button>
+                      </>
+                    )}
+
+                    {evt.status === 'ARCHIVED' && (
+                      <button
+                        onClick={() => handlePublish(evt)}
+                        data-testid={`restore-event-${evt.id}`}
+                        className="px-2 py-1 text-xs font-semibold text-blue-400 hover:bg-blue-500/10 border border-blue-500/30 rounded-lg transition-colors flex items-center gap-1"
+                      >
+                        <Send className="w-3 h-3" />
+                        Republish
+                      </button>
+                    )}
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-3.5 h-3.5 text-slate-500" />
-                    <span>{evt.location}</span>
-                    {evt.organizerName && (
-                      <span className="text-slate-500"> • Led by {evt.organizerName}</span>
-                    )}
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => handleOpenEdit(evt)}
+                      data-testid={`edit-event-${evt.id}`}
+                      className="p-1.5 text-slate-400 hover:text-amber-400 hover:bg-slate-800 rounded-lg transition-colors"
+                      title="Edit event details"
+                    >
+                      <Edit2 className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => setEventToDelete(evt)}
+                      data-testid={`delete-event-${evt.id}`}
+                      className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors"
+                      title="Cancel and remove event"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
                   </div>
                 </div>
               </div>
@@ -387,12 +552,13 @@ export const EventsSection: React.FC = () => {
         <div>
           Showing {filteredEvents.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0} to{' '}
           {Math.min(currentPage * itemsPerPage, filteredEvents.length)} of {filteredEvents.length}{' '}
-          events
+          scheduled events
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
             disabled={currentPage === 1}
+            data-testid="event-prev-page-btn"
             className="p-1.5 rounded-lg border border-slate-700 bg-slate-800 text-slate-300 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-700"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -403,6 +569,7 @@ export const EventsSection: React.FC = () => {
           <button
             onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
             disabled={currentPage === totalPages}
+            data-testid="event-next-page-btn"
             className="p-1.5 rounded-lg border border-slate-700 bg-slate-800 text-slate-300 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-700"
           >
             <ChevronRight className="w-4 h-4" />
@@ -410,14 +577,14 @@ export const EventsSection: React.FC = () => {
         </div>
       </div>
 
-      {/* Create / Edit Modal */}
+      {/* Create / Edit Event Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
-          <div className="bg-[#0B1528] border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative">
+          <div className="bg-[#0B1528] border border-slate-800 rounded-2xl max-w-xl w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center pb-4 border-b border-slate-800">
               <h3 className="text-lg font-serif font-bold text-white flex items-center gap-2">
                 <Calendar className="w-5 h-5 text-amber-400" />
-                {editingEvent ? 'Modify Event Schedule' : 'Schedule Institutional Event'}
+                {editingEvent ? 'Edit Event Details' : 'Schedule Academy Event'}
               </h3>
               <button
                 onClick={() => setIsModalOpen(false)}
@@ -427,7 +594,7 @@ export const EventsSection: React.FC = () => {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4 pt-4">
+            <form onSubmit={handleSubmit} className="space-y-4 pt-4" data-testid="event-form">
               <div>
                 <label className="block text-xs font-medium text-slate-400 mb-1">
                   Event Title *
@@ -435,79 +602,112 @@ export const EventsSection: React.FC = () => {
                 <input
                   type="text"
                   required
+                  data-testid="event-form-title"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   className="w-full px-3 py-2 bg-[#060D1A] border border-slate-700 rounded-lg text-sm text-slate-200"
-                  placeholder="e.g. Autumn Gala & Awards Ceremony"
+                  placeholder="e.g. Science & Innovation Symposium 2026"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-medium text-slate-400 mb-1">
-                  Campus Venue / Location *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.location}
-                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                  className="w-full px-3 py-2 bg-[#060D1A] border border-slate-700 rounded-lg text-sm text-slate-200"
-                  placeholder="e.g. Grand Auditorium, North Campus"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1">
-                    Start Date & Time *
-                  </label>
-                  <input
-                    type="datetime-local"
-                    required
-                    value={formData.startDate}
-                    onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                    className="w-full px-3 py-2 bg-[#060D1A] border border-slate-700 rounded-lg text-sm text-slate-200"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1">
-                    End Date & Time *
-                  </label>
-                  <input
-                    type="datetime-local"
-                    required
-                    value={formData.endDate}
-                    onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                    className="w-full px-3 py-2 bg-[#060D1A] border border-slate-700 rounded-lg text-sm text-slate-200"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1">
-                  Event Description & Agenda *
+                  Description *
                 </label>
                 <textarea
                   required
                   rows={3}
+                  data-testid="event-form-description"
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   className="w-full px-3 py-2 bg-[#060D1A] border border-slate-700 rounded-lg text-sm text-slate-200"
-                  placeholder="Outline purpose, target attendees, and key milestones..."
+                  placeholder="Full description of the itinerary, attendees, and goals..."
                 />
               </div>
 
-              <div className="flex items-center gap-2 pt-2">
-                <input
-                  type="checkbox"
-                  id="isPublicCheck"
-                  checked={formData.isPublic}
-                  onChange={(e) => setFormData({ ...formData, isPublic: e.target.checked })}
-                  className="rounded border-slate-700 text-amber-500 focus:ring-amber-500 bg-[#060D1A]"
-                />
-                <label htmlFor="isPublicCheck" className="text-xs font-medium text-slate-300">
-                  Publish to public website calendar (visible to prospective families & public)
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-xs font-medium text-slate-400 mb-1">Date *</label>
+                  <input
+                    type="date"
+                    required
+                    data-testid="event-form-date"
+                    value={formData.date}
+                    onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                    className="w-full px-3 py-2 bg-[#060D1A] border border-slate-700 rounded-lg text-sm text-slate-200"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-slate-400 mb-1">
+                    Start Time *
+                  </label>
+                  <input
+                    type="time"
+                    required
+                    data-testid="event-form-start-time"
+                    value={formData.startTime}
+                    onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
+                    className="w-full px-3 py-2 bg-[#060D1A] border border-slate-700 rounded-lg text-sm text-slate-200"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-slate-400 mb-1">End Time *</label>
+                  <input
+                    type="time"
+                    required
+                    data-testid="event-form-end-time"
+                    value={formData.endTime}
+                    onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
+                    className="w-full px-3 py-2 bg-[#060D1A] border border-slate-700 rounded-lg text-sm text-slate-200"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-medium text-slate-400 mb-1">
+                    Location / Venue *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    data-testid="event-form-location"
+                    value={formData.location}
+                    onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                    className="w-full px-3 py-2 bg-[#060D1A] border border-slate-700 rounded-lg text-sm text-slate-200"
+                    placeholder="Grand Auditorium, STEM Quad"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-slate-400 mb-1">Status *</label>
+                  <select
+                    data-testid="event-form-status"
+                    value={formData.status}
+                    onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
+                    className="w-full px-3 py-2 bg-[#060D1A] border border-slate-700 rounded-lg text-sm text-slate-200"
+                  >
+                    <option value="PUBLISHED">Published</option>
+                    <option value="DRAFT">Draft</option>
+                    <option value="ARCHIVED">Archived</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-400 mb-1">
+                  Event Image / Banner URL
                 </label>
+                <input
+                  type="text"
+                  data-testid="event-form-image"
+                  value={formData.image}
+                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                  className="w-full px-3 py-2 bg-[#060D1A] border border-slate-700 rounded-lg text-sm text-slate-200"
+                  placeholder="https://images.unsplash.com/photo-..."
+                />
               </div>
 
               <div className="flex justify-end gap-3 pt-4 border-t border-slate-800">
@@ -520,9 +720,10 @@ export const EventsSection: React.FC = () => {
                 </button>
                 <button
                   type="submit"
+                  data-testid="submit-event-btn"
                   className="px-4 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-semibold rounded-xl text-sm"
                 >
-                  {editingEvent ? 'Save Changes' : 'Confirm Event'}
+                  {editingEvent ? 'Save Event' : formData.status === 'PUBLISHED' ? 'Publish Event' : 'Save Draft'}
                 </button>
               </div>
             </form>
@@ -533,8 +734,8 @@ export const EventsSection: React.FC = () => {
       {/* Delete Confirmation */}
       <ConfirmationDialog
         isOpen={Boolean(eventToDelete)}
-        title="Cancel Institutional Event"
-        message={`Are you sure you want to cancel and remove "${eventToDelete?.title}" from the master calendar? Invitations and public schedule listings will be retracted.`}
+        title="Cancel Academy Event"
+        message={`Are you sure you want to cancel and delete "${eventToDelete?.title}"? This cannot be undone.`}
         confirmText="Cancel Event"
         confirmVariant="danger"
         onConfirm={handleDelete}

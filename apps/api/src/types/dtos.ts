@@ -326,24 +326,39 @@ export interface AdmissionDto {
 export interface NoticeDto {
   id: string;
   title: string;
+  description: string;
   content: string;
   category: string;
+  publishDate: string;
+  publishedAt: string;
+  expiryDate?: string | null;
+  expiresAt?: string | null;
+  attachment?: string | null;
+  status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
   targetRole?: string | null;
   isPinned: boolean;
-  publishedAt: string;
   authorName?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface EventDto {
   id: string;
   title: string;
   description: string;
-  location: string;
+  date: string;
+  startTime: string;
+  endTime: string;
   startDate: string;
   endDate: string;
-  isPublic: boolean;
+  location: string;
+  image?: string | null;
   bannerUrl?: string | null;
+  status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
+  isPublic: boolean;
   organizerName?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 // ==========================================
@@ -583,15 +598,48 @@ export const dtos = {
   },
 
   toNoticeDto(notice: any): NoticeDto {
+    const desc = notice.description || notice.content || '';
+    const pubDate = notice.publishDate || notice.publishedAt || new Date().toISOString();
     return {
       id: notice.id,
       title: notice.title,
-      content: notice.content,
-      category: notice.category,
+      description: desc,
+      content: desc,
+      category: notice.category || 'GENERAL',
+      publishDate: typeof pubDate === 'string' ? pubDate : new Date(pubDate).toISOString(),
+      publishedAt: typeof pubDate === 'string' ? pubDate : new Date(pubDate).toISOString(),
+      expiryDate: notice.expiryDate ? (typeof notice.expiryDate === 'string' ? notice.expiryDate : new Date(notice.expiryDate).toISOString()) : (notice.expiresAt ? new Date(notice.expiresAt).toISOString() : null),
+      expiresAt: notice.expiryDate ? (typeof notice.expiryDate === 'string' ? notice.expiryDate : new Date(notice.expiryDate).toISOString()) : (notice.expiresAt ? new Date(notice.expiresAt).toISOString() : null),
+      attachment: notice.attachment || notice.attachmentUrl || null,
+      status: notice.status || 'DRAFT',
       targetRole: notice.targetRole ?? null,
-      isPinned: notice.isPinned,
-      publishedAt: new Date(notice.publishedAt).toISOString(),
-      authorName: notice.author ? `${notice.author.firstName} ${notice.author.lastName}`.trim() : undefined,
+      isPinned: Boolean(notice.isPinned),
+      authorName: notice.authorName || (notice.author ? `${notice.author.firstName} ${notice.author.lastName}`.trim() : undefined),
+      createdAt: notice.createdAt ? (typeof notice.createdAt === 'string' ? notice.createdAt : new Date(notice.createdAt).toISOString()) : new Date().toISOString(),
+      updatedAt: notice.updatedAt ? (typeof notice.updatedAt === 'string' ? notice.updatedAt : new Date(notice.updatedAt).toISOString()) : new Date().toISOString(),
+    };
+  },
+
+  toEventDto(event: any): EventDto {
+    const sDate = event.startDate || event.date || new Date().toISOString();
+    const eDate = event.endDate || event.date || new Date().toISOString();
+    return {
+      id: event.id,
+      title: event.title,
+      description: event.description,
+      date: event.date || (typeof sDate === 'string' ? sDate.split('T')[0] : new Date(sDate).toISOString().split('T')[0]),
+      startTime: event.startTime || '09:00',
+      endTime: event.endTime || '15:00',
+      startDate: typeof sDate === 'string' ? sDate : new Date(sDate).toISOString(),
+      endDate: typeof eDate === 'string' ? eDate : new Date(eDate).toISOString(),
+      location: event.location,
+      image: event.image || event.bannerUrl || null,
+      bannerUrl: event.image || event.bannerUrl || null,
+      status: event.status || (event.isPublic === false ? 'DRAFT' : 'PUBLISHED'),
+      isPublic: event.isPublic !== undefined ? Boolean(event.isPublic) : (event.status === 'PUBLISHED'),
+      organizerName: event.organizerName || (event.organizer ? `${event.organizer.firstName} ${event.organizer.lastName}`.trim() : undefined),
+      createdAt: event.createdAt ? (typeof event.createdAt === 'string' ? event.createdAt : new Date(event.createdAt).toISOString()) : new Date().toISOString(),
+      updatedAt: event.updatedAt ? (typeof event.updatedAt === 'string' ? event.updatedAt : new Date(event.updatedAt).toISOString()) : new Date().toISOString(),
     };
   },
 

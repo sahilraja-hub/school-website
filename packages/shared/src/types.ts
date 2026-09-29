@@ -181,6 +181,48 @@ export interface GradeEntry {
   submittedAt?: string;
 }
 
+export type ContentStatus = 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
+
+export interface Notice {
+  id: string;
+  title: string;
+  description: string;
+  content: string;
+  category: string;
+  publishDate: string;
+  publishedAt?: string;
+  expiryDate?: string;
+  expiresAt?: string;
+  attachment?: string;
+  status: ContentStatus;
+  isPinned?: boolean;
+  targetRole?: string;
+  authorId?: string;
+  authorName?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SchoolEvent {
+  id: string;
+  title: string;
+  description: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  startDate?: string;
+  endDate?: string;
+  location: string;
+  image?: string;
+  bannerUrl?: string;
+  status: ContentStatus;
+  isPublic?: boolean;
+  organizerId?: string;
+  organizerName?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Announcement {
   id: string;
   title: string;

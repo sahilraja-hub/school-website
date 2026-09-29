@@ -235,24 +235,39 @@ export interface AdmissionDto {
 export interface NoticeDto {
   id: string;
   title: string;
+  description: string;
   content: string;
   category: string;
+  publishDate: string;
+  publishedAt: string;
+  expiryDate?: string | null;
+  expiresAt?: string | null;
+  attachment?: string | null;
+  status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
   targetRole?: string | null;
   isPinned: boolean;
-  publishedAt: string;
-  authorName?: string;
+  authorName?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface EventDto {
   id: string;
   title: string;
   description: string;
-  location: string;
+  date: string;
+  startTime: string;
+  endTime: string;
   startDate: string;
   endDate: string;
-  isPublic: boolean;
+  location: string;
+  image?: string | null;
   bannerUrl?: string | null;
-  organizerName?: string;
+  status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
+  isPublic: boolean;
+  organizerName?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface InvoiceDto {

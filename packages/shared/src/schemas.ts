@@ -424,42 +424,41 @@ export const UpdateTimetableSchema = z.object({
 });
 
 // Notices & Events
+export const ContentStatusSchema = z.enum(['DRAFT', 'PUBLISHED', 'ARCHIVED']);
+
 export const CreateNoticeSchema = z.object({
   title: z.string().trim().min(3, 'Title is required'),
-  content: z.string().trim().min(5, 'Content is required'),
-  category: z.enum(['ACADEMIC', 'SPORTS', 'EVENT', 'URGENT', 'GENERAL']).default('GENERAL'),
-  targetRole: UserRoleSchema.optional(),
-  isPinned: z.boolean().default(false),
+  description: z.string().trim().min(3).optional(),
+  content: z.string().trim().min(3).optional(),
+  category: z.string().default('GENERAL'),
+  publishDate: z.string().optional(),
+  publishedAt: z.string().optional(),
+  expiryDate: z.string().optional(),
   expiresAt: z.string().optional(),
+  attachment: z.string().optional(),
+  status: ContentStatusSchema.default('DRAFT'),
+  isPinned: z.boolean().default(false),
+  targetRole: UserRoleSchema.optional(),
 });
 
-export const UpdateNoticeSchema = z.object({
-  title: z.string().trim().min(3).optional(),
-  content: z.string().trim().min(5).optional(),
-  category: z.enum(['ACADEMIC', 'SPORTS', 'EVENT', 'URGENT', 'GENERAL']).optional(),
-  targetRole: UserRoleSchema.optional(),
-  isPinned: z.boolean().optional(),
-});
+export const UpdateNoticeSchema = CreateNoticeSchema.partial();
 
 export const CreateEventSchema = z.object({
   title: z.string().trim().min(3, 'Event title is required'),
-  description: z.string().trim().min(5, 'Description is required'),
-  location: z.string().trim().min(2, 'Location is required'),
-  startDate: z.string().min(1, 'Start date is required'),
-  endDate: z.string().min(1, 'End date is required'),
-  isPublic: z.boolean().default(true),
-  bannerUrl: z.string().url().optional(),
-});
-
-export const UpdateEventSchema = z.object({
-  title: z.string().trim().min(3).optional(),
-  description: z.string().trim().min(5).optional(),
-  location: z.string().trim().min(2).optional(),
+  description: z.string().trim().min(3, 'Description is required'),
+  date: z.string().optional(),
+  startTime: z.string().optional(),
+  endTime: z.string().optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
-  isPublic: z.boolean().optional(),
-  bannerUrl: z.string().url().optional(),
+  location: z.string().trim().min(2, 'Location is required'),
+  image: z.string().optional(),
+  bannerUrl: z.string().optional(),
+  status: ContentStatusSchema.default('PUBLISHED'),
+  isPublic: z.boolean().default(true),
 });
+
+export const UpdateEventSchema = CreateEventSchema.partial();
 
 // Gallery & Media
 export const CreateGallerySchema = z.object({

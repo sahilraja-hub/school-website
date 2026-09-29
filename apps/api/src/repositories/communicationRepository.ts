@@ -1,13 +1,19 @@
 export interface INoticeRecord {
   id: string;
   title: string;
+  description: string;
   content: string;
   category: string;
+  publishDate: Date;
+  publishedAt: Date;
+  expiryDate?: Date;
+  expiresAt?: Date;
+  attachment?: string;
+  status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
   targetRole?: string;
   isPinned: boolean;
-  publishedAt: Date;
-  expiresAt?: Date;
   authorId?: string;
+  authorName?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -16,12 +22,18 @@ export interface IEventRecord {
   id: string;
   title: string;
   description: string;
-  location: string;
+  date: string;
+  startTime: string;
+  endTime: string;
   startDate: string;
   endDate: string;
-  isPublic: boolean;
+  location: string;
+  image?: string;
   bannerUrl?: string;
+  status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
+  isPublic: boolean;
   organizerId?: string;
+  organizerName?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -78,11 +90,14 @@ class CommunicationRepository {
     this.notices.set(noticeId, {
       id: noticeId,
       title: 'Parent-Teacher Conference Schedule — Term 1',
+      description: 'Individual conference slots are now open for scheduling through the Parent Portal.',
       content: 'Individual conference slots are now open for scheduling through the Parent Portal.',
       category: 'ACADEMIC',
       targetRole: 'PARENT',
       isPinned: true,
+      publishDate: new Date(),
       publishedAt: new Date(),
+      status: 'PUBLISHED',
       createdAt: new Date(),
       updatedAt: new Date(),
     });
@@ -94,8 +109,12 @@ class CommunicationRepository {
       title: 'Annual Science & Innovation Showcase 2026',
       description: 'Student engineering, robotics, and scientific research exhibitions.',
       location: 'Grand Auditorium & STEM Quad',
+      date: '2026-11-12',
+      startTime: '10:00',
+      endTime: '16:00',
       startDate: '2026-11-12T10:00:00Z',
       endDate: '2026-11-12T16:00:00Z',
+      status: 'PUBLISHED',
       isPublic: true,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -143,20 +162,53 @@ class CommunicationRepository {
   }
 
   // --- Notices ---
-  public async listNotices(query: { page?: number; limit?: number; category?: string; targetRole?: string; search?: string }) {
+  public async listNotices(query: {
+    page?: number;
+    limit?: number;
+    category?: string;
+    targetRole?: string;
+    search?: string;
+    status?: string;
+    isAdmin?: boolean;
+  }) {
     const page = Math.max(1, query.page || 1);
     const limit = Math.max(1, Math.min(100, query.limit || 20));
     let items = Array.from(this.notices.values());
 
-    if (query.category) items = items.filter((n) => n.category === query.category);
-    if (query.targetRole) items = items.filter((n) => !n.targetRole || n.targetRole === query.targetRole);
+    // Public website restriction: ONLY display published content and exclude expired notices
+    if (!query.isAdmin) {
+      const now = new Date();
+      items = items.filter((n) => {
+        if (n.status !== 'PUBLISHED') return false;
+        if (n.expiryDate && new Date(n.expiryDate) < now) return false;
+        if (n.expiresAt && new Date(n.expiresAt) < now) return false;
+        return true;
+      });
+    } else if (query.status && query.status !== 'ALL') {
+      items = items.filter((n) => n.status === query.status);
+    }
+
+    if (query.category && query.category !== 'ALL') items = items.filter((n) => n.category === query.category);
+    if (query.targetRole && query.targetRole !== 'ALL' && query.targetRole !== 'ALL_ROLES') {
+      items = items.filter((n) => !n.targetRole || n.targetRole === query.targetRole || n.targetRole === 'ALL_ROLES');
+    }
     if (query.search) {
       const s = query.search.toLowerCase();
-      items = items.filter((n) => n.title.toLowerCase().includes(s) || n.content.toLowerCase().includes(s));
+      items = items.filter(
+        (n) =>
+          n.title.toLowerCase().includes(s) ||
+          (n.description && n.description.toLowerCase().includes(s)) ||
+          (n.content && n.content.toLowerCase().includes(s)) ||
+          n.category.toLowerCase().includes(s)
+      );
     }
 
     // pinned first, then newest
-    items.sort((a, b) => (b.isPinned ? 1 : 0) - (a.isPinned ? 1 : 0) || b.publishedAt.getTime() - a.publishedAt.getTime());
+    items.sort(
+      (a, b) =>
+        (b.isPinned ? 1 : 0) - (a.isPinned ? 1 : 0) ||
+        new Date(b.publishDate || b.publishedAt).getTime() - new Date(a.publishDate || a.publishedAt).getTime()
+    );
 
     const total = items.length;
     const totalPages = Math.ceil(total / limit) || 1;
@@ -165,18 +217,40 @@ class CommunicationRepository {
     return { items: paged, total, page, limit, totalPages };
   }
 
-  public async getNoticeById(id: string) {
-    return this.notices.get(id) || null;
+  public async getNoticeById(id: string, isAdmin = false) {
+    const notice = this.notices.get(id);
+    if (!notice) return null;
+    if (!isAdmin && notice.status !== 'PUBLISHED') {
+      return null;
+    }
+    return notice;
   }
 
-  public async createNotice(data: Omit<INoticeRecord, 'id' | 'createdAt' | 'updatedAt' | 'publishedAt'>) {
-    const id = `not-${Date.now().toString(36)}`;
+  public async createNotice(data: Partial<INoticeRecord>) {
+    const id = `not-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 8)}`;
+    const desc = data.description || data.content || '';
+    const now = new Date();
+    const pubDate = data.publishDate ? new Date(data.publishDate) : (data.publishedAt ? new Date(data.publishedAt) : now);
+    const expDate = data.expiryDate ? new Date(data.expiryDate) : (data.expiresAt ? new Date(data.expiresAt) : undefined);
+
     const record: INoticeRecord = {
-      ...data,
       id,
-      publishedAt: new Date(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      title: data.title || 'Untitled Notice',
+      description: desc,
+      content: desc,
+      category: data.category || 'GENERAL',
+      publishDate: pubDate,
+      publishedAt: pubDate,
+      expiryDate: expDate,
+      expiresAt: expDate,
+      attachment: data.attachment,
+      status: data.status || 'DRAFT',
+      targetRole: data.targetRole,
+      isPinned: Boolean(data.isPinned),
+      authorId: data.authorId,
+      authorName: data.authorName,
+      createdAt: now,
+      updatedAt: now,
     };
     this.notices.set(id, record);
     return record;
@@ -185,7 +259,57 @@ class CommunicationRepository {
   public async updateNotice(id: string, data: Partial<INoticeRecord>) {
     const notice = this.notices.get(id);
     if (!notice) return null;
-    Object.assign(notice, data, { updatedAt: new Date() });
+
+    if (data.description || data.content) {
+      const desc = data.description || data.content || notice.description;
+      notice.description = desc;
+      notice.content = desc;
+    }
+    if (data.title) notice.title = data.title;
+    if (data.category) notice.category = data.category;
+    if (data.publishDate) {
+      notice.publishDate = new Date(data.publishDate);
+      notice.publishedAt = notice.publishDate;
+    }
+    if (data.expiryDate !== undefined) {
+      notice.expiryDate = data.expiryDate ? new Date(data.expiryDate) : undefined;
+      notice.expiresAt = notice.expiryDate;
+    }
+    if (data.attachment !== undefined) notice.attachment = data.attachment;
+    if (data.status) notice.status = data.status;
+    if (data.isPinned !== undefined) notice.isPinned = data.isPinned;
+    if (data.targetRole !== undefined) notice.targetRole = data.targetRole;
+    notice.updatedAt = new Date();
+
+    this.notices.set(id, notice);
+    return notice;
+  }
+
+  public async publishNotice(id: string) {
+    const notice = this.notices.get(id);
+    if (!notice) return null;
+    notice.status = 'PUBLISHED';
+    notice.publishDate = new Date();
+    notice.publishedAt = notice.publishDate;
+    notice.updatedAt = new Date();
+    this.notices.set(id, notice);
+    return notice;
+  }
+
+  public async unpublishNotice(id: string) {
+    const notice = this.notices.get(id);
+    if (!notice) return null;
+    notice.status = 'DRAFT';
+    notice.updatedAt = new Date();
+    this.notices.set(id, notice);
+    return notice;
+  }
+
+  public async archiveNotice(id: string) {
+    const notice = this.notices.get(id);
+    if (!notice) return null;
+    notice.status = 'ARCHIVED';
+    notice.updatedAt = new Date();
     this.notices.set(id, notice);
     return notice;
   }
@@ -195,16 +319,40 @@ class CommunicationRepository {
   }
 
   // --- Events ---
-  public async listEvents(query: { page?: number; limit?: number; search?: string; isPublic?: boolean }) {
+  public async listEvents(query: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    status?: string;
+    isPublic?: boolean;
+    isAdmin?: boolean;
+  }) {
     const page = Math.max(1, query.page || 1);
     const limit = Math.max(1, Math.min(100, query.limit || 20));
     let items = Array.from(this.events.values());
 
-    if (typeof query.isPublic === 'boolean') items = items.filter((e) => e.isPublic === query.isPublic);
+    // Public website restriction: ONLY display published events
+    if (!query.isAdmin) {
+      items = items.filter((e) => e.status === 'PUBLISHED');
+    } else if (query.status && query.status !== 'ALL') {
+      items = items.filter((e) => e.status === query.status);
+    }
+
     if (query.search) {
       const s = query.search.toLowerCase();
-      items = items.filter((e) => e.title.toLowerCase().includes(s) || e.location.toLowerCase().includes(s));
+      items = items.filter(
+        (e) =>
+          e.title.toLowerCase().includes(s) ||
+          e.description.toLowerCase().includes(s) ||
+          e.location.toLowerCase().includes(s)
+      );
     }
+
+    // Sort by date / start time
+    items.sort(
+      (a, b) =>
+        new Date(a.startDate || a.date).getTime() - new Date(b.startDate || b.date).getTime()
+    );
 
     const total = items.length;
     const totalPages = Math.ceil(total / limit) || 1;
@@ -213,13 +361,43 @@ class CommunicationRepository {
     return { items: paged, total, page, limit, totalPages };
   }
 
-  public async getEventById(id: string) {
-    return this.events.get(id) || null;
+  public async getEventById(id: string, isAdmin = false) {
+    const event = this.events.get(id);
+    if (!event) return null;
+    if (!isAdmin && event.status !== 'PUBLISHED') {
+      return null;
+    }
+    return event;
   }
 
-  public async createEvent(data: Omit<IEventRecord, 'id' | 'createdAt' | 'updatedAt'>) {
-    const id = `evt-${Date.now().toString(36)}`;
-    const record: IEventRecord = { ...data, id, createdAt: new Date(), updatedAt: new Date() };
+  public async createEvent(data: Partial<IEventRecord>) {
+    const id = `evt-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 8)}`;
+    const dateStr =
+      data.date || (data.startDate ? data.startDate.split('T')[0] : new Date().toISOString().split('T')[0]);
+    const startTimeStr = data.startTime || '09:00';
+    const endTimeStr = data.endTime || '15:00';
+    const sDate = data.startDate || `${dateStr}T${startTimeStr}:00Z`;
+    const eDate = data.endDate || `${dateStr}T${endTimeStr}:00Z`;
+
+    const record: IEventRecord = {
+      id,
+      title: data.title || 'Untitled Event',
+      description: data.description || '',
+      date: dateStr,
+      startTime: startTimeStr,
+      endTime: endTimeStr,
+      startDate: sDate,
+      endDate: eDate,
+      location: data.location || 'Campus Grounds',
+      image: data.image || data.bannerUrl,
+      bannerUrl: data.image || data.bannerUrl,
+      status: data.status || 'PUBLISHED',
+      isPublic: data.isPublic !== undefined ? data.isPublic : data.status !== 'DRAFT',
+      organizerId: data.organizerId,
+      organizerName: data.organizerName,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
     this.events.set(id, record);
     return record;
   }
@@ -227,7 +405,53 @@ class CommunicationRepository {
   public async updateEvent(id: string, data: Partial<IEventRecord>) {
     const event = this.events.get(id);
     if (!event) return null;
-    Object.assign(event, data, { updatedAt: new Date() });
+
+    if (data.title) event.title = data.title;
+    if (data.description) event.description = data.description;
+    if (data.location) event.location = data.location;
+    if (data.date) event.date = data.date;
+    if (data.startTime) event.startTime = data.startTime;
+    if (data.endTime) event.endTime = data.endTime;
+    if (data.startDate) event.startDate = data.startDate;
+    if (data.endDate) event.endDate = data.endDate;
+    if (data.image || data.bannerUrl) {
+      event.image = data.image || data.bannerUrl;
+      event.bannerUrl = event.image;
+    }
+    if (data.status) event.status = data.status;
+    if (data.isPublic !== undefined) event.isPublic = data.isPublic;
+    event.updatedAt = new Date();
+
+    this.events.set(id, event);
+    return event;
+  }
+
+  public async publishEvent(id: string) {
+    const event = this.events.get(id);
+    if (!event) return null;
+    event.status = 'PUBLISHED';
+    event.isPublic = true;
+    event.updatedAt = new Date();
+    this.events.set(id, event);
+    return event;
+  }
+
+  public async unpublishEvent(id: string) {
+    const event = this.events.get(id);
+    if (!event) return null;
+    event.status = 'DRAFT';
+    event.isPublic = false;
+    event.updatedAt = new Date();
+    this.events.set(id, event);
+    return event;
+  }
+
+  public async archiveEvent(id: string) {
+    const event = this.events.get(id);
+    if (!event) return null;
+    event.status = 'ARCHIVED';
+    event.isPublic = false;
+    event.updatedAt = new Date();
     this.events.set(id, event);
     return event;
   }

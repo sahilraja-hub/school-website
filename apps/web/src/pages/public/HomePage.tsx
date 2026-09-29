@@ -37,53 +37,59 @@ export const HomePage: React.FC = () => {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
 
   useEffect(() => {
+    let isMounted = true;
     const fetchAnnouncements = async () => {
       try {
         const res = await api.get('/announcements');
-        if (res.data.success && Array.isArray(res.data.data)) {
+        if (isMounted && res.data.success && Array.isArray(res.data.data)) {
           setAnnouncements(res.data.data.slice(0, 3));
-        } else {
+        } else if (isMounted) {
           throw new Error('Default fallback');
         }
       } catch (err) {
-        setAnnouncements([
-          {
-            id: '1',
-            title: 'Admissions Cycle 2026-2027: Early Action Deadlines & Registration',
-            content: 'Early Action scholarship consideration closes on November 1st, 2026. Submit required transcripts via the admissions portal.',
-            category: 'URGENT',
-            isPinned: true,
-            authorId: 'admin1',
-            authorName: 'Office of the Registrar',
-            targetRoles: ['ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
-            publishDate: new Date().toISOString(),
-          },
-          {
-            id: '2',
-            title: 'Fall Semester Mid-Term Examination Schedule Released',
-            content: 'The official schedule for mid-term assessments is now published on student and parent portals. Please review examination venues.',
-            category: 'ACADEMIC',
-            isPinned: true,
-            authorId: 'admin2',
-            authorName: 'Academic Directorate',
-            targetRoles: ['ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
-            publishDate: new Date(Date.now() - 86400000).toISOString(),
-          },
-          {
-            id: '3',
-            title: 'Annual STEM & Robotics Innovation Expo 2026',
-            content: 'Over 40 student-led research initiatives, competitive AI models, and robotics demonstrations will be showcased in the Grand Hall.',
-            category: 'EVENT',
-            isPinned: false,
-            authorId: 'teacher1',
-            authorName: 'Sarah Montgomery',
-            targetRoles: ['ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
-            publishDate: new Date(Date.now() - 172800000).toISOString(),
-          },
-        ]);
+        if (isMounted) {
+          setAnnouncements([
+            {
+              id: '1',
+              title: 'Admissions Cycle 2026-2027: Early Action Deadlines & Registration',
+              content: 'Early Action scholarship consideration closes on November 1st, 2026. Submit required transcripts via the admissions portal.',
+              category: 'URGENT',
+              isPinned: true,
+              authorId: 'admin1',
+              authorName: 'Office of the Registrar',
+              targetRoles: ['ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
+              publishDate: new Date().toISOString(),
+            },
+            {
+              id: '2',
+              title: 'Fall Semester Mid-Term Examination Schedule Released',
+              content: 'The official schedule for mid-term assessments is now published on student and parent portals. Please review examination venues.',
+              category: 'ACADEMIC',
+              isPinned: true,
+              authorId: 'admin2',
+              authorName: 'Academic Directorate',
+              targetRoles: ['ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
+              publishDate: new Date(Date.now() - 86400000).toISOString(),
+            },
+            {
+              id: '3',
+              title: 'Annual STEM & Robotics Innovation Expo 2026',
+              content: 'Over 40 student-led research initiatives, competitive AI models, and robotics demonstrations will be showcased in the Grand Hall.',
+              category: 'EVENT',
+              isPinned: false,
+              authorId: 'teacher1',
+              authorName: 'Sarah Montgomery',
+              targetRoles: ['ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
+              publishDate: new Date(Date.now() - 172800000).toISOString(),
+            },
+          ]);
+        }
       }
     };
     fetchAnnouncements();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   return (

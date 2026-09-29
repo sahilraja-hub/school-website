@@ -7,9 +7,10 @@ import { NotFoundError } from '../errors';
 // NOTICES
 // ==========================================
 export const listNotices = async (req: Request, res: Response): Promise<void> => {
-  const { page, limit, category, targetRole, search } = req.query as any;
+  const { page, limit, category, targetRole, search, status } = req.query as any;
   const userRole = req.user?.role;
-  const effectiveRole = targetRole || (userRole !== 'SUPER_ADMIN' && userRole !== 'ADMIN' ? userRole : undefined);
+  const isAdmin = userRole === 'SUPER_ADMIN' || userRole === 'ADMIN';
+  const effectiveRole = targetRole || (!isAdmin ? userRole : undefined);
 
   const result = await communicationRepository.listNotices({
     page: page ? parseInt(page, 10) : 1,
@@ -17,6 +18,8 @@ export const listNotices = async (req: Request, res: Response): Promise<void> =>
     category,
     targetRole: effectiveRole,
     search,
+    status,
+    isAdmin,
   });
 
   res.json({
@@ -36,7 +39,8 @@ export const listNotices = async (req: Request, res: Response): Promise<void> =>
 };
 
 export const getNoticeById = async (req: Request, res: Response): Promise<void> => {
-  const notice = await communicationRepository.getNoticeById(req.params.id);
+  const isAdmin = req.user?.role === 'SUPER_ADMIN' || req.user?.role === 'ADMIN';
+  const notice = await communicationRepository.getNoticeById(req.params.id, isAdmin);
   if (!notice) throw new NotFoundError('Notice not found');
 
   res.json({
@@ -50,11 +54,12 @@ export const createNotice = async (req: Request, res: Response): Promise<void> =
   const created = await communicationRepository.createNotice({
     ...req.body,
     authorId: req.user?.id,
+    authorName: req.user ? `${req.user.firstName || ''} ${req.user.lastName || ''}`.trim() : 'Admissions Office',
   });
 
   res.status(201).json({
     success: true,
-    message: 'Notice published successfully',
+    message: created.status === 'PUBLISHED' ? 'Notice published successfully' : 'Notice saved as draft',
     data: dtos.toNoticeDto(created),
     meta: { requestId: req.id, timestamp: new Date().toISOString() },
   });
@@ -66,8 +71,44 @@ export const updateNotice = async (req: Request, res: Response): Promise<void> =
 
   res.json({
     success: true,
-    message: 'Notice updated',
+    message: 'Notice updated successfully',
     data: dtos.toNoticeDto(updated),
+    meta: { requestId: req.id, timestamp: new Date().toISOString() },
+  });
+};
+
+export const publishNotice = async (req: Request, res: Response): Promise<void> => {
+  const published = await communicationRepository.publishNotice(req.params.id);
+  if (!published) throw new NotFoundError('Notice not found');
+
+  res.json({
+    success: true,
+    message: 'Notice published successfully',
+    data: dtos.toNoticeDto(published),
+    meta: { requestId: req.id, timestamp: new Date().toISOString() },
+  });
+};
+
+export const unpublishNotice = async (req: Request, res: Response): Promise<void> => {
+  const unpublished = await communicationRepository.unpublishNotice(req.params.id);
+  if (!unpublished) throw new NotFoundError('Notice not found');
+
+  res.json({
+    success: true,
+    message: 'Notice unpublished and returned to draft',
+    data: dtos.toNoticeDto(unpublished),
+    meta: { requestId: req.id, timestamp: new Date().toISOString() },
+  });
+};
+
+export const archiveNotice = async (req: Request, res: Response): Promise<void> => {
+  const archived = await communicationRepository.archiveNotice(req.params.id);
+  if (!archived) throw new NotFoundError('Notice not found');
+
+  res.json({
+    success: true,
+    message: 'Notice archived',
+    data: dtos.toNoticeDto(archived),
     meta: { requestId: req.id, timestamp: new Date().toISOString() },
   });
 };
@@ -87,17 +128,21 @@ export const deleteNotice = async (req: Request, res: Response): Promise<void> =
 // EVENTS
 // ==========================================
 export const listEvents = async (req: Request, res: Response): Promise<void> => {
-  const { page, limit, search, isPublic } = req.query as any;
+  const { page, limit, search, isPublic, status } = req.query as any;
+  const isAdmin = req.user?.role === 'SUPER_ADMIN' || req.user?.role === 'ADMIN';
+
   const result = await communicationRepository.listEvents({
     page: page ? parseInt(page, 10) : 1,
     limit: limit ? parseInt(limit, 10) : 20,
     search,
     isPublic: isPublic !== undefined ? isPublic === 'true' : undefined,
+    status,
+    isAdmin,
   });
 
   res.json({
     success: true,
-    data: result.items,
+    data: result.items.map((e) => dtos.toEventDto(e)),
     meta: {
       requestId: req.id,
       timestamp: new Date().toISOString(),
@@ -112,12 +157,13 @@ export const listEvents = async (req: Request, res: Response): Promise<void> => 
 };
 
 export const getEventById = async (req: Request, res: Response): Promise<void> => {
-  const event = await communicationRepository.getEventById(req.params.id);
+  const isAdmin = req.user?.role === 'SUPER_ADMIN' || req.user?.role === 'ADMIN';
+  const event = await communicationRepository.getEventById(req.params.id, isAdmin);
   if (!event) throw new NotFoundError('Event not found');
 
   res.json({
     success: true,
-    data: event,
+    data: dtos.toEventDto(event),
     meta: { requestId: req.id, timestamp: new Date().toISOString() },
   });
 };
@@ -126,12 +172,13 @@ export const createEvent = async (req: Request, res: Response): Promise<void> =>
   const created = await communicationRepository.createEvent({
     ...req.body,
     organizerId: req.user?.id,
+    organizerName: req.user ? `${req.user.firstName || ''} ${req.user.lastName || ''}`.trim() : 'Event Directorate',
   });
 
   res.status(201).json({
     success: true,
     message: 'Event scheduled',
-    data: created,
+    data: dtos.toEventDto(created),
     meta: { requestId: req.id, timestamp: new Date().toISOString() },
   });
 };
@@ -143,7 +190,43 @@ export const updateEvent = async (req: Request, res: Response): Promise<void> =>
   res.json({
     success: true,
     message: 'Event updated',
-    data: updated,
+    data: dtos.toEventDto(updated),
+    meta: { requestId: req.id, timestamp: new Date().toISOString() },
+  });
+};
+
+export const publishEvent = async (req: Request, res: Response): Promise<void> => {
+  const published = await communicationRepository.publishEvent(req.params.id);
+  if (!published) throw new NotFoundError('Event not found');
+
+  res.json({
+    success: true,
+    message: 'Event published',
+    data: dtos.toEventDto(published),
+    meta: { requestId: req.id, timestamp: new Date().toISOString() },
+  });
+};
+
+export const unpublishEvent = async (req: Request, res: Response): Promise<void> => {
+  const unpublished = await communicationRepository.unpublishEvent(req.params.id);
+  if (!unpublished) throw new NotFoundError('Event not found');
+
+  res.json({
+    success: true,
+    message: 'Event unpublished and returned to draft',
+    data: dtos.toEventDto(unpublished),
+    meta: { requestId: req.id, timestamp: new Date().toISOString() },
+  });
+};
+
+export const archiveEvent = async (req: Request, res: Response): Promise<void> => {
+  const archived = await communicationRepository.archiveEvent(req.params.id);
+  if (!archived) throw new NotFoundError('Event not found');
+
+  res.json({
+    success: true,
+    message: 'Event archived',
+    data: dtos.toEventDto(archived),
     meta: { requestId: req.id, timestamp: new Date().toISOString() },
   });
 };

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Breadcrumb,
@@ -21,6 +21,7 @@ import {
   Users,
   CheckCircle2,
 } from 'lucide-react';
+import { api } from '../../services/api';
 
 interface SchoolEvent {
   id: string;
@@ -100,9 +101,47 @@ const mockEvents: SchoolEvent[] = [
 ];
 
 export const EventsPage: React.FC = () => {
+  const [allEvents, setAllEvents] = useState<SchoolEvent[]>(mockEvents);
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
   const [savedEvents, setSavedEvents] = useState<string[]>([]);
   const { toast } = useToast();
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchLiveEvents = async () => {
+      try {
+        const res = await api.get('/events');
+        if (isMounted && res.data.success && Array.isArray(res.data.data) && res.data.data.length > 0) {
+          const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+          const mapped: SchoolEvent[] = res.data.data.map((e: any) => {
+            const dateObj = new Date(e.date || e.startDate || Date.now());
+            return {
+              id: e.id,
+              title: e.title,
+              category: (e.category as any) || 'Academic',
+              date: {
+                day: String(dateObj.getDate()).padStart(2, '0'),
+                month: months[dateObj.getMonth()] || 'OCT',
+                year: String(dateObj.getFullYear()),
+              },
+              time: `${e.startTime || '09:00'} – ${e.endTime || '15:00'} PST`,
+              location: e.location || 'Campus Grounds',
+              audience: 'Open to Public & All Scholars',
+              description: e.description || '',
+              featured: Boolean(e.featured),
+            };
+          });
+          setAllEvents(mapped);
+        }
+      } catch (err) {
+        // Fallback to initial mockEvents on error
+      }
+    };
+    fetchLiveEvents();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const categories = [
     { id: 'ALL', label: 'All Calendar Events' },
@@ -113,8 +152,8 @@ export const EventsPage: React.FC = () => {
   ];
 
   const filteredEvents = selectedCategory === 'ALL'
-    ? mockEvents
-    : mockEvents.filter((e) => e.category === selectedCategory);
+    ? allEvents
+    : allEvents.filter((e) => e.category === selectedCategory);
 
   const toggleSaveEvent = (id: string, title: string) => {
     if (savedEvents.includes(id)) {
