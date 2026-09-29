@@ -286,19 +286,40 @@ export interface HomeworkSubmissionDto {
 export interface AdmissionDto {
   id: string;
   applicationNumber: string;
+  trackingToken?: string;
   applicantFirstName: string;
   applicantLastName: string;
   applicantFullName: string;
   dateOfBirth: string;
   gender: string;
+  bloodGroup?: string | null;
+  nationality?: string | null;
   parentName: string;
+  parentRelationship?: string | null;
   parentEmail: string;
   parentPhone: string;
+  parentOccupation?: string | null;
+  emergencyContact?: string | null;
+  alternatePhone?: string | null;
+  address: string;
+  city?: string | null;
+  state?: string | null;
+  postalCode?: string | null;
+  country?: string | null;
   gradeApplyingFor: string;
   academicYear: string;
+  streamOrTrack?: string | null;
   status: string;
   previousSchool?: string | null;
+  previousGrade?: string | null;
+  previousGpa?: string | null;
+  transferCertificateNumber?: string | null;
+  documents?: any[];
   notes?: string | null;
+  reviewNotes?: any[];
+  correctionRequest?: any;
+  enrolledStudentId?: string | null;
+  enrolledAt?: string | null;
   submittedAt: string;
 }
 
@@ -603,4 +624,58 @@ export const dtos = {
       })),
     };
   },
+
+  toAdmissionDto(adm: any): AdmissionDto {
+    const fn = adm.studentFirstName || adm.applicantFirstName || '';
+    const ln = adm.studentLastName || adm.applicantLastName || '';
+    return {
+      id: adm.id || adm._id?.toString() || '',
+      applicationNumber: adm.applicationNumber,
+      trackingToken: adm.trackingToken,
+      applicantFirstName: fn,
+      applicantLastName: ln,
+      applicantFullName: adm.applicantFullName || `${fn} ${ln}`.trim(),
+      dateOfBirth: adm.dateOfBirth
+        ? typeof adm.dateOfBirth === 'string'
+          ? adm.dateOfBirth
+          : new Date(adm.dateOfBirth).toISOString().split('T')[0]
+        : '',
+      gender: adm.gender || 'MALE',
+      bloodGroup: adm.bloodGroup ?? null,
+      nationality: adm.nationality ?? null,
+      parentName: adm.parentName || '',
+      parentRelationship: adm.parentRelationship ?? null,
+      parentEmail: adm.parentEmail || '',
+      parentPhone: adm.parentPhone || '',
+      parentOccupation: adm.parentOccupation ?? null,
+      emergencyContact: adm.emergencyContact ?? null,
+      alternatePhone: adm.alternatePhone ?? null,
+      address: adm.address || '',
+      city: adm.city ?? null,
+      state: adm.state ?? null,
+      postalCode: adm.postalCode ?? null,
+      country: adm.country ?? null,
+      gradeApplyingFor: adm.gradeApplyingFor || 'GRADE_9',
+      academicYear: adm.academicYear || '2026-2027',
+      streamOrTrack: adm.streamOrTrack ?? null,
+      status: adm.status || 'SUBMITTED',
+      previousSchool: adm.previousSchool ?? null,
+      previousGrade: adm.previousGrade ?? null,
+      previousGpa: adm.previousGpa ?? null,
+      transferCertificateNumber: adm.transferCertificateNumber ?? null,
+      documents: adm.documents || [],
+      notes: adm.notes ?? null,
+      reviewNotes: adm.reviewNotes || [],
+      correctionRequest: adm.correctionRequest || null,
+      enrolledStudentId: adm.enrolledStudentId ?? null,
+      enrolledAt: adm.enrolledAt ? new Date(adm.enrolledAt).toISOString() : null,
+      submittedAt: adm.submittedAt
+        ? new Date(adm.submittedAt).toISOString()
+        : adm.createdAt
+        ? new Date(adm.createdAt).toISOString()
+        : new Date().toISOString(),
+    };
+  },
 };
+
+export const ResponseMappers = dtos;

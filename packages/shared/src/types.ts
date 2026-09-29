@@ -17,7 +17,52 @@ export const ACCOUNT_STATUSES: { [K in AccountStatus]: K } = {
   LOCKED: 'LOCKED',
 };
 
-export type AdmissionStatus = 'SUBMITTED' | 'UNDER_REVIEW' | 'INTERVIEW_SCHEDULED' | 'ACCEPTED' | 'WAITLISTED' | 'REJECTED';
+export type AdmissionStatus =
+  | 'DRAFT'
+  | 'SUBMITTED'
+  | 'UNDER_REVIEW'
+  | 'INTERVIEW_SCHEDULED'
+  | 'CORRECTION_REQUESTED'
+  | 'APPROVED'
+  | 'ACCEPTED'
+  | 'WAITLISTED'
+  | 'REJECTED'
+  | 'ENROLLED';
+
+export type AdmissionDocumentType =
+  | 'BIRTH_CERTIFICATE'
+  | 'PREVIOUS_REPORT_CARD'
+  | 'TRANSFER_CERTIFICATE'
+  | 'STUDENT_PHOTO'
+  | 'ID_PROOF'
+  | 'OTHER';
+
+export interface AdmissionDocument {
+  id: string;
+  documentType: AdmissionDocumentType | string;
+  fileName: string;
+  fileType: string;
+  fileSizeBytes: number;
+  fileUrl: string;
+  uploadedAt: string;
+  verified?: boolean;
+}
+
+export interface AdmissionReviewNote {
+  id: string;
+  adminId: string;
+  adminName: string;
+  note: string;
+  createdAt: string;
+  action?: string;
+}
+
+export interface AdmissionCorrectionRequest {
+  reason: string;
+  fieldsToCorrect: string[];
+  requestedAt: string;
+  resolvedAt?: string;
+}
 
 export type AttendanceStatus = 'PRESENT' | 'ABSENT' | 'LATE' | 'EXCUSED';
 
@@ -57,15 +102,37 @@ export interface AdmissionApplication {
   studentFirstName: string;
   studentLastName: string;
   dateOfBirth: string;
+  gender?: string;
+  bloodGroup?: string;
+  nationality?: string;
   gradeApplyingFor: GradeLevel;
+  academicYear?: string;
+  streamOrTrack?: string;
   parentName: string;
+  parentRelationship?: string;
   parentEmail: string;
   parentPhone: string;
+  parentOccupation?: string;
+  emergencyContact?: string;
+  alternatePhone?: string;
   address: string;
+  city?: string;
+  state?: string;
+  postalCode?: string;
+  country?: string;
   previousSchool?: string;
+  previousGrade?: string;
+  previousGpa?: string;
+  transferCertificateNumber?: string;
   status: AdmissionStatus;
+  documents?: AdmissionDocument[];
   notes?: string;
-  submittedAt: string;
+  reviewNotes?: AdmissionReviewNote[];
+  correctionRequest?: AdmissionCorrectionRequest;
+  enrolledStudentId?: string;
+  enrolledAt?: string;
+  submittedAt?: string;
+  createdAt: string;
   updatedAt: string;
 }
 

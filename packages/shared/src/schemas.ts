@@ -12,12 +12,16 @@ export const GradeLevelSchema = z.enum([
 ]);
 
 export const AdmissionStatusSchema = z.enum([
+  'DRAFT',
   'SUBMITTED',
   'UNDER_REVIEW',
   'INTERVIEW_SCHEDULED',
+  'CORRECTION_REQUESTED',
+  'APPROVED',
   'ACCEPTED',
   'WAITLISTED',
   'REJECTED',
+  'ENROLLED',
 ]);
 
 export const AttendanceStatusSchema = z.enum(['PRESENT', 'ABSENT', 'LATE', 'EXCUSED']);
@@ -56,22 +60,95 @@ export const ChangePasswordSchema = z.object({
   newPassword: PasswordSchema,
 });
 
+export const AdmissionDocumentSchema = z.object({
+  id: z.string().optional(),
+  documentType: z.string(),
+  fileName: z.string().min(1, 'File name is required'),
+  fileType: z.string(),
+  fileSizeBytes: z.number().max(5 * 1024 * 1024, 'File size cannot exceed 5MB'),
+  fileUrl: z.string().min(1, 'File URL or reference is required'),
+  uploadedAt: z.string().optional(),
+  verified: z.boolean().optional(),
+});
+
+export const AdmissionDraftSchema = z.object({
+  applicationNumber: z.string().optional(),
+  studentFirstName: z.string().trim().optional(),
+  studentLastName: z.string().trim().optional(),
+  dateOfBirth: z.string().optional(),
+  gender: z.string().optional(),
+  bloodGroup: z.string().optional(),
+  nationality: z.string().optional(),
+  gradeApplyingFor: GradeLevelSchema.optional(),
+  academicYear: z.string().optional(),
+  streamOrTrack: z.string().optional(),
+  parentName: z.string().trim().optional(),
+  parentRelationship: z.string().optional(),
+  parentEmail: z.string().trim().email('Invalid email address').optional().or(z.literal('')),
+  parentPhone: z.string().trim().optional(),
+  parentOccupation: z.string().optional(),
+  emergencyContact: z.string().optional(),
+  alternatePhone: z.string().optional(),
+  address: z.string().trim().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  postalCode: z.string().optional(),
+  country: z.string().optional(),
+  previousSchool: z.string().trim().optional(),
+  previousGrade: z.string().optional(),
+  previousGpa: z.string().optional(),
+  transferCertificateNumber: z.string().optional(),
+  documents: z.array(AdmissionDocumentSchema).optional(),
+  notes: z.string().trim().optional(),
+});
+
 export const AdmissionApplicationSchema = z.object({
+  applicationNumber: z.string().optional(),
   studentFirstName: z.string().trim().min(2, 'Student first name is required'),
   studentLastName: z.string().trim().min(2, 'Student last name is required'),
   dateOfBirth: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date of birth must be YYYY-MM-DD'),
+  gender: z.string().optional(),
+  bloodGroup: z.string().optional(),
+  nationality: z.string().optional(),
   gradeApplyingFor: GradeLevelSchema,
+  academicYear: z.string().optional().default('2026-2027'),
+  streamOrTrack: z.string().optional().default('General'),
   parentName: z.string().trim().min(2, 'Parent/Guardian full name is required'),
+  parentRelationship: z.string().optional().default('Parent / Guardian'),
   parentEmail: z.string().trim().email('Valid parent email address is required'),
   parentPhone: z.string().trim().min(7, 'Valid contact number is required'),
+  parentOccupation: z.string().optional(),
+  emergencyContact: z.string().optional(),
+  alternatePhone: z.string().optional(),
   address: z.string().trim().min(5, 'Residential address is required'),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  postalCode: z.string().optional(),
+  country: z.string().optional(),
   previousSchool: z.string().trim().optional(),
+  previousGrade: z.string().optional(),
+  previousGpa: z.string().optional(),
+  transferCertificateNumber: z.string().optional(),
+  documents: z.array(AdmissionDocumentSchema).optional(),
   notes: z.string().trim().optional(),
 });
 
 export const AdmissionStatusUpdateSchema = z.object({
   status: AdmissionStatusSchema,
   notes: z.string().optional(),
+  correctionReason: z.string().optional(),
+  fieldsToCorrect: z.array(z.string()).optional(),
+});
+
+export const AdmissionAddNoteSchema = z.object({
+  note: z.string().trim().min(1, 'Note content cannot be empty'),
+});
+
+export const AdmissionConvertToStudentSchema = z.object({
+  classId: z.string().optional(),
+  sectionId: z.string().optional(),
+  rollNumber: z.string().optional(),
+  admissionNumber: z.string().optional(),
 });
 
 export const MarkAttendanceItemSchema = z.object({
@@ -457,10 +534,25 @@ export const AuditLogQuerySchema = QueryFilterSchema.extend({
   endDate: z.string().optional(),
 });
 
+export const FileUploadSchema = z.object({
+  fileName: z.string().min(1, 'File name is required'),
+  fileType: z.string().refine(
+    (type) => ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'].includes(type),
+    'File type must be JPEG, PNG, WEBP, or PDF'
+  ),
+  fileSizeBytes: z.number().max(5 * 1024 * 1024, 'File size cannot exceed 5MB'),
+  fileBase64: z.string().min(1, 'File payload is required'),
+  documentType: z.string().optional().default('OTHER'),
+});
+
 export type LoginInput = z.infer<typeof LoginSchema>;
 export type RegisterInput = z.infer<typeof RegisterSchema>;
 export type AdmissionApplicationInput = z.infer<typeof AdmissionApplicationSchema>;
+export type AdmissionDraftInput = z.infer<typeof AdmissionDraftSchema>;
 export type AdmissionStatusUpdateInput = z.infer<typeof AdmissionStatusUpdateSchema>;
+export type AdmissionAddNoteInput = z.infer<typeof AdmissionAddNoteSchema>;
+export type AdmissionConvertToStudentInput = z.infer<typeof AdmissionConvertToStudentSchema>;
+export type FileUploadInput = z.infer<typeof FileUploadSchema>;
 export type MarkAttendanceBatchInput = z.infer<typeof MarkAttendanceBatchSchema>;
 export type CreateAssignmentInput = z.infer<typeof CreateAssignmentSchema>;
 export type SubmitGradeInput = z.infer<typeof SubmitGradeSchema>;

@@ -211,3 +211,39 @@ export const requireActiveAccount = (req: Request, res: Response, next: NextFunc
   }
   next();
 };
+
+/**
+ * Optional Authentication Middleware:
+ * If a valid token is present, sets req.user. Does not fail if unauthenticated.
+ */
+export const optionalAuthenticate = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    let token: string | undefined;
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.substring(7);
+    } else if (req.cookies?.accessToken) {
+      token = req.cookies.accessToken;
+    }
+
+    if (token) {
+      try {
+        const decoded = verifyAccessToken(token);
+        const user = await userRepository.findById(decoded.userId);
+        if (user && user.status === 'ACTIVE') {
+          req.user = user;
+          req.tokenPayload = decoded;
+        }
+      } catch {
+        // Silently continue for optional auth
+      }
+    }
+  } catch {
+    // Silently continue for optional auth
+  }
+  next();
+};

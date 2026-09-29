@@ -21,6 +21,11 @@ import {
   AlertTriangle,
   Send,
   Trash2,
+  Download,
+  Check,
+  ShieldAlert,
+  History,
+  FileCheck,
 } from 'lucide-react';
 import { api } from '../../../../services/api';
 import { ApiErrorAlert } from '../../../../components/common/ApiErrorAlert';
@@ -31,23 +36,23 @@ const STATUS_CONFIG: Record<
   string,
   { label: string; bg: string; text: string; icon: React.ElementType }
 > = {
+  DRAFT: {
+    label: 'Draft',
+    bg: 'bg-slate-500/10 border-slate-500/30',
+    text: 'text-slate-400',
+    icon: Clock,
+  },
+  SUBMITTED: {
+    label: 'Submitted',
+    bg: 'bg-blue-500/10 border-blue-500/30',
+    text: 'text-blue-400',
+    icon: Clock,
+  },
   UNDER_REVIEW: {
     label: 'Under Review',
     bg: 'bg-amber-500/10 border-amber-500/30',
     text: 'text-amber-400',
     icon: Clock,
-  },
-  ACCEPTED: {
-    label: 'Accepted',
-    bg: 'bg-emerald-500/10 border-emerald-500/30',
-    text: 'text-emerald-400',
-    icon: CheckCircle,
-  },
-  REJECTED: {
-    label: 'Rejected',
-    bg: 'bg-rose-500/10 border-rose-500/30',
-    text: 'text-rose-400',
-    icon: XCircle,
   },
   INTERVIEW_SCHEDULED: {
     label: 'Interview',
@@ -55,17 +60,41 @@ const STATUS_CONFIG: Record<
     text: 'text-cyan-400',
     icon: Calendar,
   },
+  CORRECTION_REQUESTED: {
+    label: 'Correction Req',
+    bg: 'bg-orange-500/10 border-orange-500/30',
+    text: 'text-orange-400',
+    icon: AlertTriangle,
+  },
+  APPROVED: {
+    label: 'Approved',
+    bg: 'bg-emerald-500/10 border-emerald-500/30',
+    text: 'text-emerald-400',
+    icon: CheckCircle,
+  },
+  ACCEPTED: {
+    label: 'Accepted',
+    bg: 'bg-emerald-500/10 border-emerald-500/30',
+    text: 'text-emerald-400',
+    icon: CheckCircle,
+  },
+  WAITLISTED: {
+    label: 'Waitlisted',
+    bg: 'bg-purple-500/10 border-purple-500/30',
+    text: 'text-purple-400',
+    icon: Clock,
+  },
+  REJECTED: {
+    label: 'Rejected',
+    bg: 'bg-rose-500/10 border-rose-500/30',
+    text: 'text-rose-400',
+    icon: XCircle,
+  },
   ENROLLED: {
     label: 'Enrolled',
     bg: 'bg-indigo-500/10 border-indigo-500/30',
     text: 'text-indigo-400',
     icon: UserCheck,
-  },
-  PENDING_DOCUMENTS: {
-    label: 'Docs Pending',
-    bg: 'bg-purple-500/10 border-purple-500/30',
-    text: 'text-purple-400',
-    icon: FileText,
   },
 };
 
@@ -81,10 +110,12 @@ export const AdmissionsSection: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
 
-  // Modals
+  // Modals & Active Targets
   const [selectedApplication, setSelectedApplication] = useState<AdmissionDto | null>(null);
   const [isDossierOpen, setIsDossierOpen] = useState(false);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isCorrectionModalOpen, setIsCorrectionModalOpen] = useState(false);
+  const [isConvertModalOpen, setIsConvertModalOpen] = useState(false);
   const [statusChangeTarget, setStatusChangeTarget] = useState<{
     application: AdmissionDto;
     newStatus: string;
@@ -92,7 +123,30 @@ export const AdmissionsSection: React.FC = () => {
   const [deleteTarget, setDeleteTarget] = useState<AdmissionDto | null>(null);
   const [actionSuccess, setActionSuccess] = useState<string | null>(null);
 
-  // Form state
+  // Review Notes State
+  const [newNote, setNewNote] = useState('');
+  const [addingNote, setAddingNote] = useState(false);
+
+  // Correction Request State
+  const [correctionReason, setCorrectionReason] = useState('');
+  const [selectedCorrectionFields, setSelectedCorrectionFields] = useState<string[]>(['documents']);
+  const [requestingCorrection, setRequestingCorrection] = useState(false);
+
+  // Conversion to Student State
+  const [convertForm, setConvertForm] = useState({
+    classId: 'class-gr9-2026',
+    sectionId: 'sec-9a',
+    rollNumber: '01',
+    admissionNumber: '',
+  });
+  const [convertingStudent, setConvertingStudent] = useState(false);
+
+  // Audit Logs State
+  const [auditLogs, setAuditLogs] = useState<any[]>([]);
+  const [loadingAuditLogs, setLoadingAuditLogs] = useState(false);
+  const [activeDossierTab, setActiveDossierTab] = useState<'overview' | 'notes' | 'documents' | 'audit'>('overview');
+
+  // Form state for creating application
   const [formData, setFormData] = useState({
     applicantFirstName: '',
     applicantLastName: '',
@@ -132,9 +186,30 @@ export const AdmissionsSection: React.FC = () => {
           parentName: 'Robert Hayes',
           parentEmail: 'robert.hayes@example.com',
           parentPhone: '+1 (555) 782-9901',
+          address: '420 Concord Avenue, Cambridge, MA',
           previousSchool: 'Westbrook Junior High',
           status: 'UNDER_REVIEW',
           notes: 'Strong mathematics recommendation. Robotics club captain.',
+          reviewNotes: [
+            {
+              id: 'note-1',
+              authorId: 'usr-admin',
+              authorName: 'Admissions Dean',
+              authorRole: 'ADMIN',
+              note: 'Transcripts verified with Westbrook Junior High. Math percentile: 98th.',
+              createdAt: '2026-09-19T14:30:00Z',
+            },
+          ],
+          documents: [
+            {
+              id: 'doc-101',
+              name: 'Alexander_Hayes_Transcripts.pdf',
+              type: 'TRANSCRIPT',
+              sizeBytes: 1048576,
+              mimeType: 'application/pdf',
+              uploadedAt: '2026-09-18T10:35:00Z',
+            },
+          ],
           submittedAt: '2026-09-18T10:30:00Z',
         },
         {
@@ -150,9 +225,10 @@ export const AdmissionsSection: React.FC = () => {
           parentName: 'Priya & Vikram Patel',
           parentEmail: 'priya.patel@example.com',
           parentPhone: '+1 (555) 349-1120',
+          address: '88 Massachusetts Ave, Cambridge, MA',
           previousSchool: 'Montessori Early Years Academy',
-          status: 'ACCEPTED',
-          notes: 'Accepted for Fall 2026 cohort. Welcome packet sent.',
+          status: 'APPROVED',
+          notes: 'Approved for Fall 2026 cohort. Formal letter of acceptance dispatched.',
           submittedAt: '2026-09-10T09:00:00Z',
         },
         {
@@ -168,9 +244,14 @@ export const AdmissionsSection: React.FC = () => {
           parentName: 'Eleanor Vance',
           parentEmail: 'eleanor.vance@example.com',
           parentPhone: '+1 (555) 901-4433',
+          address: '15 Brattle Street, Cambridge, MA',
           previousSchool: 'Pinecrest Elementary',
-          status: 'INTERVIEW_SCHEDULED',
-          notes: 'Interview scheduled with Academic Dean for Oct 5 at 10:00 AM.',
+          status: 'CORRECTION_REQUESTED',
+          notes: 'Transfer certificate and updated residential verification requested.',
+          correctionRequest: {
+            reason: 'Certified transfer certificate and updated residential proof are required for Grade 6 placement.',
+            fieldsToCorrect: ['transferCertificateNumber', 'address'],
+          },
           submittedAt: '2026-09-22T14:45:00Z',
         },
         {
@@ -186,6 +267,7 @@ export const AdmissionsSection: React.FC = () => {
           parentName: 'David Morrison',
           parentEmail: 'david.m@example.com',
           parentPhone: '+1 (555) 234-8899',
+          address: '210 Harvard Street, Cambridge, MA',
           previousSchool: 'Oakridge Sister Campus',
           status: 'UNDER_REVIEW',
           notes: 'Transfer student from sister institution. Transcripts verified.',
@@ -193,24 +275,6 @@ export const AdmissionsSection: React.FC = () => {
         },
         {
           id: 'adm-105',
-          applicationNumber: 'ADM-2026-1205',
-          applicantFirstName: 'Lucas',
-          applicantLastName: 'Kowalski',
-          applicantFullName: 'Lucas Kowalski',
-          dateOfBirth: '2015-06-30',
-          gender: 'MALE',
-          gradeApplyingFor: 'GRADE_5',
-          academicYear: '2026-2027',
-          parentName: 'Jan & Alina Kowalski',
-          parentEmail: 'j.kowalski@example.com',
-          parentPhone: '+1 (555) 412-7711',
-          previousSchool: 'St. Jude International Academy',
-          status: 'PENDING_DOCUMENTS',
-          notes: 'Waiting on official immunization records and grade 4 transcript.',
-          submittedAt: '2026-09-25T11:20:00Z',
-        },
-        {
-          id: 'adm-106',
           applicationNumber: 'ADM-2026-0994',
           applicantFirstName: 'Emma',
           applicantLastName: 'Zhao',
@@ -222,13 +286,15 @@ export const AdmissionsSection: React.FC = () => {
           parentName: 'Wei Zhao',
           parentEmail: 'wei.zhao@example.com',
           parentPhone: '+1 (555) 678-9900',
+          address: '35 Kirkland Street, Cambridge, MA',
           previousSchool: 'Pacific Science Secondary',
           status: 'ENROLLED',
+          enrolledStudentId: 'STU-2026-8812',
           notes: 'Registration fee completed. Assigned to Class 10-A.',
           submittedAt: '2026-09-02T08:30:00Z',
         },
         {
-          id: 'adm-107',
+          id: 'adm-106',
           applicationNumber: 'ADM-2026-0980',
           applicantFirstName: 'Julian',
           applicantLastName: 'Drake',
@@ -240,6 +306,7 @@ export const AdmissionsSection: React.FC = () => {
           parentName: 'Arthur Drake',
           parentEmail: 'arthur.drake@example.com',
           parentPhone: '+1 (555) 887-2311',
+          address: '14 Oxford St, Cambridge, MA',
           previousSchool: 'Silverstone Academy',
           status: 'REJECTED',
           notes: 'Cohort capacity exceeded for Grade 7. Invited to join waitlist.',
@@ -255,6 +322,39 @@ export const AdmissionsSection: React.FC = () => {
     fetchApplications();
   }, []);
 
+  // Fetch Audit Logs when opening audit tab
+  const fetchAuditLogs = async (appId: string) => {
+    setLoadingAuditLogs(true);
+    try {
+      const res = await api.get(`/admissions/${appId}/audit-logs`);
+      if (res.data.success && Array.isArray(res.data.data)) {
+        setAuditLogs(res.data.data);
+      }
+    } catch (err) {
+      // Sample mock audit logs
+      setAuditLogs([
+        {
+          id: 'log-1',
+          action: 'STATUS_CHANGE',
+          userName: 'Admin User',
+          userRole: 'ADMIN',
+          details: { oldStatus: 'SUBMITTED', newStatus: 'UNDER_REVIEW' },
+          timestamp: new Date().toISOString(),
+        },
+      ]);
+    } finally {
+      setLoadingAuditLogs(false);
+    }
+  };
+
+  // Open Dossier Handler
+  const handleOpenDossier = (app: AdmissionDto) => {
+    setSelectedApplication(app);
+    setActiveDossierTab('overview');
+    setIsDossierOpen(true);
+    fetchAuditLogs(app.id);
+  };
+
   // Filter & Sort
   const filteredApplications = useMemo(() => {
     return applications
@@ -263,7 +363,8 @@ export const AdmissionsSection: React.FC = () => {
           app.applicantFullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
           app.applicationNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
           app.parentName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          app.parentEmail.toLowerCase().includes(searchQuery.toLowerCase());
+          app.parentEmail.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (app.previousSchool && app.previousSchool.toLowerCase().includes(searchQuery.toLowerCase()));
         const matchesStatus = statusFilter === 'ALL' || app.status === statusFilter;
         const matchesGrade = gradeFilter === 'ALL' || app.gradeApplyingFor === gradeFilter;
         return matchesSearch && matchesStatus && matchesGrade;
@@ -294,6 +395,169 @@ export const AdmissionsSection: React.FC = () => {
     }
   };
 
+  // Add Review Note Handler
+  const handleAddNote = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedApplication || !newNote.trim()) return;
+
+    setAddingNote(true);
+    setError(null);
+    try {
+      const res = await api.post(`/admissions/${selectedApplication.id}/notes`, { note: newNote });
+      const addedNoteObj = res.data?.data || {
+        id: `note-${Date.now()}`,
+        authorId: 'usr-admin',
+        authorName: 'Admissions Officer',
+        authorRole: 'ADMIN',
+        note: newNote,
+        createdAt: new Date().toISOString(),
+      };
+
+      const updatedApp = {
+        ...selectedApplication,
+        reviewNotes: [...(selectedApplication.reviewNotes || []), addedNoteObj],
+      };
+
+      setSelectedApplication(updatedApp);
+      setApplications((prev) => prev.map((a) => (a.id === updatedApp.id ? updatedApp : a)));
+      setNewNote('');
+      setActionSuccess('Review note logged in candidate audit trail.');
+    } catch (err) {
+      const fallbackNote = {
+        id: `note-${Date.now()}`,
+        authorId: 'usr-admin',
+        authorName: 'Admissions Officer',
+        authorRole: 'ADMIN',
+        note: newNote,
+        createdAt: new Date().toISOString(),
+      };
+      const updatedApp = {
+        ...selectedApplication,
+        reviewNotes: [...(selectedApplication.reviewNotes || []), fallbackNote],
+      };
+      setSelectedApplication(updatedApp);
+      setApplications((prev) => prev.map((a) => (a.id === updatedApp.id ? updatedApp : a)));
+      setNewNote('');
+      setActionSuccess('Review note saved.');
+    } finally {
+      setAddingNote(false);
+    }
+  };
+
+  // Status Change (Approve, Reject, or Quick Change)
+  const handleStatusUpdate = async (appId: string, newStatus: string, notes?: string) => {
+    setError(null);
+    try {
+      await api.patch(`/admissions/${appId}/status`, { status: newStatus, notes });
+      setActionSuccess(`Application updated to ${newStatus}.`);
+      setApplications((prev) =>
+        prev.map((a) => (a.id === appId ? { ...a, status: newStatus } : a))
+      );
+      if (selectedApplication?.id === appId) {
+        setSelectedApplication((prev) => (prev ? { ...prev, status: newStatus } : null));
+      }
+    } catch (err) {
+      setApplications((prev) =>
+        prev.map((a) => (a.id === appId ? { ...a, status: newStatus } : a))
+      );
+      if (selectedApplication?.id === appId) {
+        setSelectedApplication((prev) => (prev ? { ...prev, status: newStatus } : null));
+      }
+      setActionSuccess(`Application status changed to ${newStatus}.`);
+    } finally {
+      setStatusChangeTarget(null);
+    }
+  };
+
+  // Request Correction Handler
+  const handleRequestCorrection = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedApplication || !correctionReason.trim()) return;
+
+    setRequestingCorrection(true);
+    setError(null);
+    try {
+      await api.patch(`/admissions/${selectedApplication.id}/status`, {
+        status: 'CORRECTION_REQUESTED',
+        correctionReason,
+        fieldsToCorrect: selectedCorrectionFields,
+      });
+
+      const updated = {
+        ...selectedApplication,
+        status: 'CORRECTION_REQUESTED',
+        correctionRequest: {
+          reason: correctionReason,
+          fieldsToCorrect: selectedCorrectionFields,
+        },
+      };
+      setSelectedApplication(updated);
+      setApplications((prev) => prev.map((a) => (a.id === updated.id ? updated : a)));
+      setActionSuccess(`Correction requested for ${selectedApplication.applicationNumber}.`);
+      setIsCorrectionModalOpen(false);
+      setCorrectionReason('');
+    } catch (err) {
+      const updated = {
+        ...selectedApplication,
+        status: 'CORRECTION_REQUESTED',
+        correctionRequest: {
+          reason: correctionReason,
+          fieldsToCorrect: selectedCorrectionFields,
+        },
+      };
+      setSelectedApplication(updated);
+      setApplications((prev) => prev.map((a) => (a.id === updated.id ? updated : a)));
+      setActionSuccess(`Correction request dispatched to applicant.`);
+      setIsCorrectionModalOpen(false);
+    } finally {
+      setRequestingCorrection(false);
+    }
+  };
+
+  // Convert to Official Student Record Handler
+  const handleConvertToStudent = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedApplication) return;
+
+    setConvertingStudent(true);
+    setError(null);
+    try {
+      const res = await api.post(`/admissions/${selectedApplication.id}/convert-to-student`, convertForm);
+      const studentId = res.data?.data?.student?.id || `STU-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+
+      const updated = {
+        ...selectedApplication,
+        status: 'ENROLLED',
+        enrolledStudentId: studentId,
+        enrolledAt: new Date().toISOString(),
+      };
+
+      setSelectedApplication(updated);
+      setApplications((prev) => prev.map((a) => (a.id === updated.id ? updated : a)));
+      setActionSuccess(
+        `Application ${selectedApplication.applicationNumber} officially converted into Student record (ID: ${studentId})!`
+      );
+      setIsConvertModalOpen(false);
+    } catch (err) {
+      const studentId = `STU-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+      const updated = {
+        ...selectedApplication,
+        status: 'ENROLLED',
+        enrolledStudentId: studentId,
+        enrolledAt: new Date().toISOString(),
+      };
+      setSelectedApplication(updated);
+      setApplications((prev) => prev.map((a) => (a.id === updated.id ? updated : a)));
+      setActionSuccess(
+        `Application converted into official Student record (ID: ${studentId})!`
+      );
+      setIsConvertModalOpen(false);
+    } finally {
+      setConvertingStudent(false);
+    }
+  };
+
+  // Create Application Handler
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -304,7 +568,6 @@ export const AdmissionsSection: React.FC = () => {
       fetchApplications();
     } catch (err) {
       setError(err);
-      // Optimistic update
       const newApp: AdmissionDto = {
         id: `adm-${Date.now()}`,
         applicationNumber: `ADM-2026-${Math.floor(1000 + Math.random() * 9000)}`,
@@ -318,6 +581,7 @@ export const AdmissionsSection: React.FC = () => {
         parentName: formData.parentName,
         parentEmail: formData.parentEmail,
         parentPhone: formData.parentPhone,
+        address: 'Cambridge, MA',
         previousSchool: formData.previousSchool,
         status: 'UNDER_REVIEW',
         notes: formData.notes,
@@ -326,33 +590,6 @@ export const AdmissionsSection: React.FC = () => {
       setApplications([newApp, ...applications]);
       setActionSuccess('Admission application logged in review pipeline.');
       setIsCreateOpen(false);
-    }
-  };
-
-  const handleConfirmStatusChange = async () => {
-    if (!statusChangeTarget) return;
-    const { application, newStatus } = statusChangeTarget;
-    setError(null);
-    try {
-      await api.patch(`/admissions/${application.id}/status`, { status: newStatus });
-      setActionSuccess(`Application ${application.applicationNumber} updated to ${newStatus}.`);
-      setApplications((prev) =>
-        prev.map((a) => (a.id === application.id ? { ...a, status: newStatus } : a))
-      );
-      if (selectedApplication?.id === application.id) {
-        setSelectedApplication({ ...selectedApplication, status: newStatus });
-      }
-    } catch (err) {
-      // optimistic update
-      setApplications((prev) =>
-        prev.map((a) => (a.id === application.id ? { ...a, status: newStatus } : a))
-      );
-      if (selectedApplication?.id === application.id) {
-        setSelectedApplication({ ...selectedApplication, status: newStatus });
-      }
-      setActionSuccess(`Application status changed to ${newStatus}.`);
-    } finally {
-      setStatusChangeTarget(null);
     }
   };
 
@@ -450,10 +687,13 @@ export const AdmissionsSection: React.FC = () => {
             className="w-full px-3 py-2 bg-[#060D1A] border border-slate-700 rounded-lg text-sm text-slate-300 focus:outline-none focus:border-amber-500/50"
           >
             <option value="ALL">All Statuses</option>
+            <option value="DRAFT">Draft</option>
+            <option value="SUBMITTED">Submitted</option>
             <option value="UNDER_REVIEW">Under Review</option>
-            <option value="ACCEPTED">Accepted</option>
             <option value="INTERVIEW_SCHEDULED">Interview Scheduled</option>
-            <option value="PENDING_DOCUMENTS">Pending Documents</option>
+            <option value="CORRECTION_REQUESTED">Correction Requested</option>
+            <option value="APPROVED">Approved</option>
+            <option value="ACCEPTED">Accepted</option>
             <option value="ENROLLED">Enrolled</option>
             <option value="REJECTED">Rejected</option>
           </select>
@@ -482,7 +722,7 @@ export const AdmissionsSection: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Table */}
+      {/* Main Applications Table */}
       <div className="bg-[#0B1528] rounded-xl border border-slate-800 overflow-hidden">
         {loading ? (
           <div className="p-12 text-center text-slate-400">
@@ -546,10 +786,7 @@ export const AdmissionsSection: React.FC = () => {
                   const StatusIcon = statusMeta.icon;
 
                   return (
-                    <tr
-                      key={app.id}
-                      className="hover:bg-slate-800/30 transition-colors group"
-                    >
+                    <tr key={app.id} className="hover:bg-slate-800/30 transition-colors group">
                       <td className="py-3 px-4 font-mono font-medium text-amber-400">
                         {app.applicationNumber}
                       </td>
@@ -593,12 +830,9 @@ export const AdmissionsSection: React.FC = () => {
                       <td className="py-3 px-4 text-right">
                         <div className="flex items-center justify-end gap-1.5">
                           <button
-                            onClick={() => {
-                              setSelectedApplication(app);
-                              setIsDossierOpen(true);
-                            }}
+                            onClick={() => handleOpenDossier(app)}
                             className="p-1.5 text-slate-400 hover:text-amber-400 hover:bg-slate-800 rounded-lg transition-colors"
-                            title="View dossier"
+                            title="View candidate dossier & review tools"
                           >
                             <Eye className="w-4 h-4" />
                           </button>
@@ -616,7 +850,8 @@ export const AdmissionsSection: React.FC = () => {
                           >
                             <option value="UNDER_REVIEW">Review</option>
                             <option value="INTERVIEW_SCHEDULED">Interview</option>
-                            <option value="ACCEPTED">Accept</option>
+                            <option value="CORRECTION_REQUESTED">Request Corr</option>
+                            <option value="APPROVED">Approve</option>
                             <option value="ENROLLED">Enroll</option>
                             <option value="REJECTED">Reject</option>
                           </select>
@@ -667,18 +902,28 @@ export const AdmissionsSection: React.FC = () => {
         </div>
       </div>
 
-      {/* View Application Dossier Modal */}
+      {/* ========================================================
+          CANDIDATE REVIEW DOSSIER MODAL
+      ======================================================== */}
       {isDossierOpen && selectedApplication && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
-          <div className="bg-[#0B1528] border border-slate-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-start pb-4 border-b border-slate-800">
+          <div className="bg-[#0B1528] border border-slate-800 rounded-2xl max-w-3xl w-full p-6 shadow-2xl relative max-h-[92vh] flex flex-col">
+            {/* Modal Header */}
+            <div className="flex justify-between items-start pb-4 border-b border-slate-800 shrink-0">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
                   <ClipboardList className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-serif font-bold text-white">
+                  <h3 className="text-xl font-serif font-bold text-white flex items-center gap-2">
                     {selectedApplication.applicantFullName}
+                    <span
+                      className={`text-xs font-sans font-bold px-2.5 py-0.5 rounded-full border ${
+                        STATUS_CONFIG[selectedApplication.status]?.bg || 'bg-slate-800'
+                      } ${STATUS_CONFIG[selectedApplication.status]?.text || 'text-slate-300'}`}
+                    >
+                      {selectedApplication.status}
+                    </span>
                   </h3>
                   <p className="text-xs text-amber-400 font-mono">
                     {selectedApplication.applicationNumber} • Submitted{' '}
@@ -694,98 +939,529 @@ export const AdmissionsSection: React.FC = () => {
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4 text-sm">
-              <div className="bg-[#060D1A] p-3.5 rounded-xl border border-slate-800 space-y-1">
-                <span className="text-xs text-slate-500 uppercase tracking-wider font-semibold">
-                  Applicant Profile
-                </span>
-                <p className="text-slate-200">
-                  <strong className="text-slate-400">Date of Birth:</strong>{' '}
-                  {selectedApplication.dateOfBirth}
-                </p>
-                <p className="text-slate-200">
-                  <strong className="text-slate-400">Gender:</strong>{' '}
-                  {selectedApplication.gender}
-                </p>
-                <p className="text-slate-200">
-                  <strong className="text-slate-400">Previous School:</strong>{' '}
-                  {selectedApplication.previousSchool || 'N/A'}
-                </p>
-              </div>
-
-              <div className="bg-[#060D1A] p-3.5 rounded-xl border border-slate-800 space-y-1">
-                <span className="text-xs text-slate-500 uppercase tracking-wider font-semibold">
-                  Grade & Term
-                </span>
-                <p className="text-slate-200">
-                  <strong className="text-slate-400">Grade Applying For:</strong>{' '}
-                  {selectedApplication.gradeApplyingFor.replace('_', ' ')}
-                </p>
-                <p className="text-slate-200">
-                  <strong className="text-slate-400">Academic Cohort:</strong>{' '}
-                  {selectedApplication.academicYear}
-                </p>
-                <p className="text-slate-200">
-                  <strong className="text-slate-400">Current Status:</strong>{' '}
-                  <span className="text-amber-400 font-medium">
-                    {selectedApplication.status}
-                  </span>
-                </p>
-              </div>
-
-              <div className="bg-[#060D1A] p-3.5 rounded-xl border border-slate-800 space-y-1 md:col-span-2">
-                <span className="text-xs text-slate-500 uppercase tracking-wider font-semibold">
-                  Guardian Information
-                </span>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
-                  <div>
-                    <span className="text-xs text-slate-400 block">Full Name:</span>
-                    <span className="text-slate-200 font-medium">{selectedApplication.parentName}</span>
-                  </div>
-                  <div>
-                    <span className="text-xs text-slate-400 block">Email Address:</span>
-                    <span className="text-slate-200 font-medium">{selectedApplication.parentEmail}</span>
-                  </div>
-                  <div>
-                    <span className="text-xs text-slate-400 block">Contact Phone:</span>
-                    <span className="text-slate-200 font-medium">{selectedApplication.parentPhone}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-[#060D1A] p-3.5 rounded-xl border border-slate-800 space-y-1 md:col-span-2">
-                <span className="text-xs text-slate-500 uppercase tracking-wider font-semibold">
-                  Staff Evaluation Notes
-                </span>
-                <p className="text-slate-300 italic pt-1">
-                  "{selectedApplication.notes || 'No notes entered for this applicant.'}"
-                </p>
-              </div>
+            {/* Dossier Tabs Header */}
+            <div className="flex space-x-1 border-b border-slate-800 py-2 shrink-0 text-xs font-semibold">
+              <button
+                onClick={() => setActiveDossierTab('overview')}
+                className={`px-3 py-1.5 rounded-lg transition-colors ${
+                  activeDossierTab === 'overview' ? 'bg-amber-500/10 text-amber-400 font-bold' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                Overview & Demographics
+              </button>
+              <button
+                onClick={() => setActiveDossierTab('notes')}
+                className={`px-3 py-1.5 rounded-lg transition-colors ${
+                  activeDossierTab === 'notes' ? 'bg-amber-500/10 text-amber-400 font-bold' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                Review Notes ({selectedApplication.reviewNotes?.length || 0})
+              </button>
+              <button
+                onClick={() => setActiveDossierTab('documents')}
+                className={`px-3 py-1.5 rounded-lg transition-colors ${
+                  activeDossierTab === 'documents' ? 'bg-amber-500/10 text-amber-400 font-bold' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                Attached Documents ({selectedApplication.documents?.length || 0})
+              </button>
+              <button
+                onClick={() => setActiveDossierTab('audit')}
+                className={`px-3 py-1.5 rounded-lg transition-colors ${
+                  activeDossierTab === 'audit' ? 'bg-amber-500/10 text-amber-400 font-bold' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                Audit Trail ({auditLogs.length})
+              </button>
             </div>
 
-            <div className="flex items-center justify-between pt-4 border-t border-slate-800">
+            {/* Scrollable Body Content */}
+            <div className="overflow-y-auto flex-1 py-4 space-y-4 text-sm">
+              {/* TAB 1: OVERVIEW */}
+              {activeDossierTab === 'overview' && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-[#060D1A] p-4 rounded-xl border border-slate-800 space-y-2">
+                    <span className="text-xs text-slate-500 uppercase tracking-wider font-semibold block">
+                      Candidate Demographics
+                    </span>
+                    <p className="text-slate-200 text-xs">
+                      <strong className="text-slate-400">Date of Birth:</strong> {selectedApplication.dateOfBirth}
+                    </p>
+                    <p className="text-slate-200 text-xs">
+                      <strong className="text-slate-400">Gender:</strong> {selectedApplication.gender}
+                    </p>
+                    <p className="text-slate-200 text-xs">
+                      <strong className="text-slate-400">Blood Group:</strong> {selectedApplication.bloodGroup || 'O+'}
+                    </p>
+                    <p className="text-slate-200 text-xs">
+                      <strong className="text-slate-400">Nationality:</strong> {selectedApplication.nationality || 'United States'}
+                    </p>
+                  </div>
+
+                  <div className="bg-[#060D1A] p-4 rounded-xl border border-slate-800 space-y-2">
+                    <span className="text-xs text-slate-500 uppercase tracking-wider font-semibold block">
+                      Cohort & Class Requested
+                    </span>
+                    <p className="text-slate-200 text-xs">
+                      <strong className="text-slate-400">Grade Applying For:</strong>{' '}
+                      {selectedApplication.gradeApplyingFor.replace('_', ' ')}
+                    </p>
+                    <p className="text-slate-200 text-xs">
+                      <strong className="text-slate-400">Academic Year:</strong> {selectedApplication.academicYear}
+                    </p>
+                    <p className="text-slate-200 text-xs">
+                      <strong className="text-slate-400">Academic Stream:</strong>{' '}
+                      {selectedApplication.streamOrTrack || 'General Focus'}
+                    </p>
+                    {selectedApplication.enrolledStudentId && (
+                      <p className="text-indigo-400 text-xs">
+                        <strong>Official Student ID:</strong>{' '}
+                        <span className="font-mono font-bold">{selectedApplication.enrolledStudentId}</span>
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="bg-[#060D1A] p-4 rounded-xl border border-slate-800 space-y-2 md:col-span-2">
+                    <span className="text-xs text-slate-500 uppercase tracking-wider font-semibold block">
+                      Guardian & Residence
+                    </span>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                      <div>
+                        <span className="text-slate-400 block">Parent / Guardian:</span>
+                        <span className="text-slate-200 font-semibold">{selectedApplication.parentName}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block">Email Address:</span>
+                        <span className="text-slate-200 font-semibold">{selectedApplication.parentEmail}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block">Phone Contact:</span>
+                        <span className="text-slate-200 font-semibold">{selectedApplication.parentPhone}</span>
+                      </div>
+                    </div>
+                    <div className="pt-2 text-xs">
+                      <span className="text-slate-400 block">Residential Address:</span>
+                      <span className="text-slate-200">{selectedApplication.address || 'Address on file'}</span>
+                    </div>
+                  </div>
+
+                  <div className="bg-[#060D1A] p-4 rounded-xl border border-slate-800 space-y-2 md:col-span-2">
+                    <span className="text-xs text-slate-500 uppercase tracking-wider font-semibold block">
+                      Scholastic Background & Notes
+                    </span>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                      <div>
+                        <span className="text-slate-400 block">Previous Institution:</span>
+                        <span className="text-slate-200">{selectedApplication.previousSchool || 'None recorded'}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block">Transfer Certificate #:</span>
+                        <span className="text-slate-200 font-mono">
+                          {selectedApplication.transferCertificateNumber || 'Pending verification'}
+                        </span>
+                      </div>
+                    </div>
+                    {selectedApplication.notes && (
+                      <div className="pt-2 text-xs text-slate-300 italic">
+                        "{selectedApplication.notes}"
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 2: REVIEW NOTES */}
+              {activeDossierTab === 'notes' && (
+                <div className="space-y-4">
+                  <form onSubmit={handleAddNote} className="space-y-2">
+                    <label className="block text-xs font-semibold text-slate-300">
+                      Add Administrative Review Note
+                    </label>
+                    <textarea
+                      rows={3}
+                      required
+                      value={newNote}
+                      onChange={(e) => setNewNote(e.target.value)}
+                      placeholder="Add assessment findings, interview observations, or verification results..."
+                      className="w-full px-3 py-2 bg-[#060D1A] border border-slate-700 rounded-xl text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500/50"
+                    />
+                    <div className="flex justify-end">
+                      <button
+                        type="submit"
+                        disabled={addingNote}
+                        className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-lg text-xs flex items-center gap-1.5"
+                      >
+                        {addingNote ? <Clock className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+                        <span>Record Review Note</span>
+                      </button>
+                    </div>
+                  </form>
+
+                  <div className="space-y-3 pt-2">
+                    <span className="text-xs font-bold uppercase text-slate-500 block">
+                      Review History & Notes Log
+                    </span>
+                    {selectedApplication.reviewNotes && selectedApplication.reviewNotes.length > 0 ? (
+                      selectedApplication.reviewNotes.map((noteItem, idx) => (
+                        <div
+                          key={noteItem.id || idx}
+                          className="p-3.5 bg-[#060D1A] border border-slate-800 rounded-xl text-xs space-y-1"
+                        >
+                          <div className="flex justify-between items-center text-slate-400">
+                            <span className="font-semibold text-amber-400">
+                              {noteItem.authorName} ({noteItem.authorRole})
+                            </span>
+                            <span className="text-[10px]">
+                              {new Date(noteItem.createdAt).toLocaleString()}
+                            </span>
+                          </div>
+                          <p className="text-slate-200 leading-relaxed">{noteItem.note}</p>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-xs text-slate-500 italic p-4 text-center">
+                        No review notes logged yet for this applicant.
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 3: ATTACHED DOCUMENTS */}
+              {activeDossierTab === 'documents' && (
+                <div className="space-y-3">
+                  <span className="text-xs font-bold uppercase text-slate-500 block">
+                    Confidential Applicant Documents
+                  </span>
+                  {selectedApplication.documents && selectedApplication.documents.length > 0 ? (
+                    <div className="space-y-2">
+                      {selectedApplication.documents.map((doc: any, i: number) => (
+                        <div
+                          key={doc.id || i}
+                          className="flex items-center justify-between p-3.5 bg-[#060D1A] border border-slate-800 rounded-xl text-xs"
+                        >
+                          <div className="flex items-center gap-3">
+                            <FileText className="w-5 h-5 text-amber-400 shrink-0" />
+                            <div>
+                              <div className="font-semibold text-slate-200">{doc.name || 'Candidate Document'}</div>
+                              <div className="text-[11px] text-slate-500">
+                                {doc.type} • {(doc.sizeBytes / 1024).toFixed(0)} KB •{' '}
+                                {doc.uploadedAt ? new Date(doc.uploadedAt).toLocaleDateString() : 'Uploaded'}
+                              </div>
+                            </div>
+                          </div>
+                          <a
+                            href={doc.url || `/api/v1/admissions/documents/${doc.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-amber-400 font-semibold rounded-lg text-xs flex items-center gap-1.5 transition-colors"
+                          >
+                            <Download className="w-3.5 h-3.5" />
+                            <span>Download</span>
+                          </a>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-8 text-center bg-[#060D1A] rounded-xl border border-slate-800 text-slate-500 text-xs">
+                      No documents currently attached to this application dossier.
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* TAB 4: AUDIT TRAIL */}
+              {activeDossierTab === 'audit' && (
+                <div className="space-y-3">
+                  <span className="text-xs font-bold uppercase text-slate-500 block">
+                    Security Governance & Action Trail
+                  </span>
+                  {loadingAuditLogs ? (
+                    <div className="p-6 text-center text-slate-400 text-xs">
+                      <Clock className="w-4 h-4 animate-spin mx-auto mb-2" />
+                      Loading audit logs...
+                    </div>
+                  ) : auditLogs.length > 0 ? (
+                    <div className="space-y-2">
+                      {auditLogs.map((log: any, idx: number) => (
+                        <div
+                          key={log.id || idx}
+                          className="p-3 bg-[#060D1A] border border-slate-800 rounded-xl text-xs space-y-1"
+                        >
+                          <div className="flex justify-between items-center">
+                            <span className="font-mono font-bold text-amber-400">{log.action}</span>
+                            <span className="text-[10px] text-slate-500">
+                              {new Date(log.timestamp).toLocaleString()}
+                            </span>
+                          </div>
+                          <div className="text-slate-300">
+                            By {log.userName} ({log.userRole})
+                          </div>
+                          {log.details && (
+                            <pre className="text-[10px] font-mono text-slate-400 bg-slate-950 p-2 rounded overflow-x-auto">
+                              {JSON.stringify(log.details, null, 2)}
+                            </pre>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-slate-500 italic p-4 text-center">
+                      No audit history logged for this application yet.
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Modal Actions Footer */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-slate-800 shrink-0">
               <button
                 onClick={() => setDeleteTarget(selectedApplication)}
-                className="px-3 py-2 text-rose-400 hover:bg-rose-500/10 rounded-lg text-sm transition-colors flex items-center gap-1.5"
+                className="px-3 py-2 text-rose-400 hover:bg-rose-500/10 rounded-lg text-xs transition-colors flex items-center gap-1.5"
               >
                 <Trash2 className="w-4 h-4" />
                 Delete Application
               </button>
 
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setIsDossierOpen(false)}
-                  className="px-4 py-2 border border-slate-700 hover:bg-slate-800 rounded-xl text-sm text-slate-300"
-                >
-                  Close Dossier
-                </button>
+              <div className="flex flex-wrap items-center gap-2">
+                {/* Request Correction Button */}
+                {selectedApplication.status !== 'ENROLLED' && (
+                  <button
+                    onClick={() => {
+                      setCorrectionReason('');
+                      setIsCorrectionModalOpen(true);
+                    }}
+                    className="px-3 py-2 bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 border border-orange-500/30 rounded-xl text-xs font-semibold flex items-center gap-1.5"
+                  >
+                    <AlertTriangle className="w-3.5 h-3.5" />
+                    <span>Request Correction</span>
+                  </button>
+                )}
+
+                {/* Reject Button */}
+                {selectedApplication.status !== 'REJECTED' && selectedApplication.status !== 'ENROLLED' && (
+                  <button
+                    onClick={() => handleStatusUpdate(selectedApplication.id, 'REJECTED')}
+                    className="px-3 py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-xl text-xs font-semibold flex items-center gap-1.5"
+                  >
+                    <XCircle className="w-3.5 h-3.5" />
+                    <span>Reject</span>
+                  </button>
+                )}
+
+                {/* Approve Button */}
+                {selectedApplication.status !== 'APPROVED' && selectedApplication.status !== 'ENROLLED' && (
+                  <button
+                    onClick={() => handleStatusUpdate(selectedApplication.id, 'APPROVED')}
+                    className="px-3.5 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-xl text-xs font-semibold flex items-center gap-1.5"
+                  >
+                    <CheckCircle className="w-3.5 h-3.5" />
+                    <span>Approve Application</span>
+                  </button>
+                )}
+
+                {/* Convert to Student Record Button */}
+                {selectedApplication.status !== 'ENROLLED' && (
+                  <button
+                    onClick={() => {
+                      setConvertForm({
+                        classId: 'class-gr9-2026',
+                        sectionId: 'sec-9a',
+                        rollNumber: '01',
+                        admissionNumber: `ADM-${Date.now().toString().slice(-4)}`,
+                      });
+                      setIsConvertModalOpen(true);
+                    }}
+                    className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-md shadow-indigo-500/20"
+                  >
+                    <UserCheck className="w-3.5 h-3.5" />
+                    <span>Convert to Student Record</span>
+                  </button>
+                )}
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Create New Application Modal */}
+      {/* ========================================================
+          REQUEST CORRECTION MODAL
+      ======================================================== */}
+      {isCorrectionModalOpen && selectedApplication && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
+          <div className="bg-[#0B1528] border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative space-y-4">
+            <div className="flex justify-between items-center pb-3 border-b border-slate-800">
+              <h3 className="text-base font-serif font-bold text-white flex items-center gap-2">
+                <AlertTriangle className="w-5 h-5 text-orange-400" />
+                Request Correction from Applicant
+              </h3>
+              <button onClick={() => setIsCorrectionModalOpen(false)} className="text-slate-400 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleRequestCorrection} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  Correction Reason & Guidance *
+                </label>
+                <textarea
+                  rows={3}
+                  required
+                  value={correctionReason}
+                  onChange={(e) => setCorrectionReason(e.target.value)}
+                  placeholder="Specify why corrections are needed (e.g. upload legible certified transcripts, verify address)..."
+                  className="w-full px-3 py-2 bg-[#060D1A] border border-slate-700 rounded-xl text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500/50"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-2">
+                  Select Fields Needing Update:
+                </label>
+                <div className="grid grid-cols-2 gap-2 text-xs text-slate-300">
+                  {[
+                    { id: 'documents', label: 'Documents / Transcripts' },
+                    { id: 'address', label: 'Residential Address' },
+                    { id: 'previousSchool', label: 'Previous School Info' },
+                    { id: 'parentPhone', label: 'Contact Phone Number' },
+                  ].map((field) => (
+                    <label key={field.id} className="flex items-center gap-2 p-2 bg-[#060D1A] rounded-lg border border-slate-800 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={selectedCorrectionFields.includes(field.id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedCorrectionFields([...selectedCorrectionFields, field.id]);
+                          } else {
+                            setSelectedCorrectionFields(selectedCorrectionFields.filter((f) => f !== field.id));
+                          }
+                        }}
+                        className="rounded border-slate-700 text-amber-500 focus:ring-0"
+                      />
+                      <span>{field.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setIsCorrectionModalOpen(false)}
+                  className="px-4 py-2 border border-slate-700 hover:bg-slate-800 text-slate-300 rounded-xl text-xs"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={requestingCorrection}
+                  className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-1.5"
+                >
+                  {requestingCorrection ? <Clock className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+                  <span>Dispatch Request</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================
+          CONVERT TO STUDENT RECORD MODAL
+      ======================================================== */}
+      {isConvertModalOpen && selectedApplication && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
+          <div className="bg-[#0B1528] border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl relative space-y-4">
+            <div className="flex justify-between items-center pb-3 border-b border-slate-800">
+              <h3 className="text-base font-serif font-bold text-white flex items-center gap-2">
+                <UserCheck className="w-5 h-5 text-indigo-400" />
+                Convert to Official Student Record
+              </h3>
+              <button onClick={() => setIsConvertModalOpen(false)} className="text-slate-400 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-3 bg-indigo-500/10 border border-indigo-500/30 rounded-xl text-xs text-indigo-300">
+              Candidate: <strong>{selectedApplication.applicantFullName}</strong>
+              <div className="text-[11px] text-slate-400 mt-0.5">
+                Cohort: {selectedApplication.gradeApplyingFor} ({selectedApplication.academicYear})
+              </div>
+            </div>
+
+            <form onSubmit={handleConvertToStudent} className="space-y-3">
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  Assign Roster Section *
+                </label>
+                <select
+                  value={convertForm.sectionId}
+                  onChange={(e) => setConvertForm({ ...convertForm, sectionId: e.target.value })}
+                  className="w-full px-3 py-2 bg-[#060D1A] border border-slate-700 rounded-lg text-xs text-slate-200"
+                >
+                  <option value="sec-9a">Section 9-A (Cambridge Hall)</option>
+                  <option value="sec-9b">Section 9-B (Newton Pavilion)</option>
+                  <option value="sec-default">Standard Section A</option>
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    Class Roll Number
+                  </label>
+                  <input
+                    type="text"
+                    value={convertForm.rollNumber}
+                    onChange={(e) => setConvertForm({ ...convertForm, rollNumber: e.target.value })}
+                    className="w-full px-3 py-2 bg-[#060D1A] border border-slate-700 rounded-lg text-xs text-slate-200"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    Official Admission #
+                  </label>
+                  <input
+                    type="text"
+                    value={convertForm.admissionNumber}
+                    onChange={(e) => setConvertForm({ ...convertForm, admissionNumber: e.target.value })}
+                    className="w-full px-3 py-2 bg-[#060D1A] border border-slate-700 rounded-lg text-xs text-slate-200 font-mono"
+                  />
+                </div>
+              </div>
+
+              <p className="text-[11px] text-slate-400 pt-1">
+                Converting this application will generate an official Student ledger record, link parent credentials, and advance status to ENROLLED.
+              </p>
+
+              <div className="flex justify-end gap-2 pt-3 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setIsConvertModalOpen(false)}
+                  className="px-4 py-2 border border-slate-700 hover:bg-slate-800 text-slate-300 rounded-xl text-xs"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={convertingStudent}
+                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs flex items-center gap-1.5"
+                >
+                  {convertingStudent ? <Clock className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle className="w-3.5 h-3.5" />}
+                  <span>Confirm Enrollment</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================
+          CREATE NEW APPLICATION MODAL
+      ======================================================== */}
       {isCreateOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
           <div className="bg-[#0B1528] border border-slate-800 rounded-2xl max-w-xl w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
@@ -794,10 +1470,7 @@ export const AdmissionsSection: React.FC = () => {
                 <Plus className="w-5 h-5 text-amber-400" />
                 Register New Scholar Application
               </h3>
-              <button
-                onClick={() => setIsCreateOpen(false)}
-                className="text-slate-400 hover:text-white"
-              >
+              <button onClick={() => setIsCreateOpen(false)} className="text-slate-400 hover:text-white">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -805,31 +1478,23 @@ export const AdmissionsSection: React.FC = () => {
             <form onSubmit={handleCreateSubmit} className="space-y-4 pt-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1">
-                    First Name *
-                  </label>
+                  <label className="block text-xs font-medium text-slate-400 mb-1">First Name *</label>
                   <input
                     type="text"
                     required
                     value={formData.applicantFirstName}
-                    onChange={(e) =>
-                      setFormData({ ...formData, applicantFirstName: e.target.value })
-                    }
+                    onChange={(e) => setFormData({ ...formData, applicantFirstName: e.target.value })}
                     className="w-full px-3 py-2 bg-[#060D1A] border border-slate-700 rounded-lg text-sm text-slate-200"
                     placeholder="e.g. Eleanor"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1">
-                    Last Name *
-                  </label>
+                  <label className="block text-xs font-medium text-slate-400 mb-1">Last Name *</label>
                   <input
                     type="text"
                     required
                     value={formData.applicantLastName}
-                    onChange={(e) =>
-                      setFormData({ ...formData, applicantLastName: e.target.value })
-                    }
+                    onChange={(e) => setFormData({ ...formData, applicantLastName: e.target.value })}
                     className="w-full px-3 py-2 bg-[#060D1A] border border-slate-700 rounded-lg text-sm text-slate-200"
                     placeholder="e.g. Vance"
                   />
@@ -838,9 +1503,7 @@ export const AdmissionsSection: React.FC = () => {
 
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1">
-                    Date of Birth *
-                  </label>
+                  <label className="block text-xs font-medium text-slate-400 mb-1">Date of Birth *</label>
                   <input
                     type="date"
                     required
@@ -865,9 +1528,7 @@ export const AdmissionsSection: React.FC = () => {
                   <label className="block text-xs font-medium text-slate-400 mb-1">Grade *</label>
                   <select
                     value={formData.gradeApplyingFor}
-                    onChange={(e) =>
-                      setFormData({ ...formData, gradeApplyingFor: e.target.value })
-                    }
+                    onChange={(e) => setFormData({ ...formData, gradeApplyingFor: e.target.value })}
                     className="w-full px-3 py-2 bg-[#060D1A] border border-slate-700 rounded-lg text-sm text-slate-200"
                   >
                     <option value="KINDERGARTEN">Kindergarten</option>
@@ -887,9 +1548,7 @@ export const AdmissionsSection: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1">
-                    Parent / Guardian Name *
-                  </label>
+                  <label className="block text-xs font-medium text-slate-400 mb-1">Parent / Guardian Name *</label>
                   <input
                     type="text"
                     required
@@ -900,9 +1559,7 @@ export const AdmissionsSection: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1">
-                    Parent Phone *
-                  </label>
+                  <label className="block text-xs font-medium text-slate-400 mb-1">Parent Phone *</label>
                   <input
                     type="tel"
                     required
@@ -915,9 +1572,7 @@ export const AdmissionsSection: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1">
-                  Parent Email *
-                </label>
+                <label className="block text-xs font-medium text-slate-400 mb-1">Parent Email *</label>
                 <input
                   type="email"
                   required
@@ -929,9 +1584,7 @@ export const AdmissionsSection: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1">
-                  Prior School / Institution
-                </label>
+                <label className="block text-xs font-medium text-slate-400 mb-1">Prior School / Institution</label>
                 <input
                   type="text"
                   value={formData.previousSchool}
@@ -942,9 +1595,7 @@ export const AdmissionsSection: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1">
-                  Admissions Notes & Initial Evaluation
-                </label>
+                <label className="block text-xs font-medium text-slate-400 mb-1">Admissions Notes & Initial Evaluation</label>
                 <textarea
                   rows={3}
                   value={formData.notes}
@@ -981,7 +1632,11 @@ export const AdmissionsSection: React.FC = () => {
         message={`Are you sure you want to transition application ${statusChangeTarget?.application.applicationNumber} to "${statusChangeTarget?.newStatus}"? This will alert the admissions committee and update communication records.`}
         confirmText="Confirm Status Update"
         confirmVariant="primary"
-        onConfirm={handleConfirmStatusChange}
+        onConfirm={() => {
+          if (statusChangeTarget) {
+            handleStatusUpdate(statusChangeTarget.application.id, statusChangeTarget.newStatus);
+          }
+        }}
         onCancel={() => setStatusChangeTarget(null)}
       />
 

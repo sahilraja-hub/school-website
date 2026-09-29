@@ -201,14 +201,34 @@ export interface AdmissionDto {
   applicantFullName: string;
   dateOfBirth: string;
   gender: string;
+  bloodGroup?: string | null;
+  nationality?: string | null;
   parentName: string;
+  parentRelationship?: string | null;
   parentEmail: string;
   parentPhone: string;
+  parentOccupation?: string | null;
+  emergencyContact?: string | null;
+  alternatePhone?: string | null;
+  address: string;
+  city?: string | null;
+  state?: string | null;
+  postalCode?: string | null;
+  country?: string | null;
   gradeApplyingFor: string;
   academicYear: string;
+  streamOrTrack?: string | null;
   status: string;
   previousSchool?: string | null;
+  previousGrade?: string | null;
+  previousGpa?: string | null;
+  transferCertificateNumber?: string | null;
+  documents?: any[];
   notes?: string | null;
+  reviewNotes?: any[];
+  correctionRequest?: any;
+  enrolledStudentId?: string | null;
+  enrolledAt?: string | null;
   submittedAt: string;
 }
 
