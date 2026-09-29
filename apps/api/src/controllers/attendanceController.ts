@@ -8,16 +8,25 @@ import { academicRepository } from '../repositories/academicRepository';
 export const listAttendance = async (req: Request, res: Response): Promise<void> => {
   const { page, limit, sectionId, studentId, date, status } = req.query as any;
 
-  // Role constraint: Students and Parents can only access their own student records
   let targetStudentId = studentId;
-  if (req.user?.role === 'STUDENT' && req.user.studentId) {
-    targetStudentId = req.user.studentId;
+
+  // IDOR & Tenancy Protection: Students can only view their own attendance
+  if (req.user?.role === 'STUDENT' && req.user?.id) {
+    const student = await schoolActorsRepository.getStudentByUserId(req.user.id);
+    if (!student) {
+      throw new AuthorizationError('Student profile not found');
+    }
+    // Block IDOR attempt if querying another student's record
+    if (studentId && studentId !== student.id) {
+      throw new AuthorizationError('Forbidden: You can only access your own attendance records');
+    }
+    targetStudentId = student.id;
   }
 
   const result = await attendanceRepository.listAttendance({
     page: page ? parseInt(page, 10) : 1,
     limit: limit ? parseInt(limit, 10) : 20,
-    sectionId,
+    sectionId: req.user?.role === 'STUDENT' ? undefined : sectionId,
     studentId: targetStudentId,
     date,
     status,
@@ -74,7 +83,21 @@ export const recordAttendanceBatch = async (req: Request, res: Response): Promis
 };
 
 export const getAttendanceStats = async (req: Request, res: Response): Promise<void> => {
-  const { sectionId, studentId, startDate, endDate } = req.query as any;
+  let { sectionId, studentId, startDate, endDate } = req.query as any;
+
+  // IDOR Protection: Students can only view their own statistics
+  if (req.user?.role === 'STUDENT' && req.user?.id) {
+    const student = await schoolActorsRepository.getStudentByUserId(req.user.id);
+    if (!student) {
+      throw new AuthorizationError('Student profile not found');
+    }
+    if (studentId && studentId !== student.id) {
+      throw new AuthorizationError('Forbidden: You can only access your own attendance statistics');
+    }
+    studentId = student.id;
+    sectionId = undefined;
+  }
+
   const stats = await attendanceRepository.getStats({ sectionId, studentId, startDate, endDate });
 
   res.json({

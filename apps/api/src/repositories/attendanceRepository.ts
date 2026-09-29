@@ -33,6 +33,19 @@ class AttendanceRepository {
       createdAt: new Date(),
       updatedAt: new Date(),
     });
+
+    const id2 = `att-stud-002-seeded`;
+    this.records.set(id2, {
+      id: id2,
+      studentId: 'stud-002',
+      sectionId: 'sec-10a',
+      date: today,
+      status: 'LATE',
+      remarks: '15 mins tardy',
+      recordedById: 'usr_teacher_001',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
   }
 
   public async listAttendance(query: { page?: number; limit?: number; sectionId?: string; studentId?: string; date?: string; status?: string }) {

@@ -1,236 +1,369 @@
 import React, { useState, useEffect } from 'react';
 import {
-  GraduationCap,
-  Calendar,
+  LayoutDashboard,
+  User,
   CheckCircle2,
-  Clock,
-  BookOpen,
   Award,
+  BookOpen,
+  Calendar,
+  Bell,
   Sparkles,
+  FileText,
+  Menu,
+  X,
+  LogOut,
+  ShieldCheck,
+  ChevronRight,
   TrendingUp,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { api } from '../../services/api';
+import { StudentPortalTab } from './student/types';
+
+// Section components
+import { StudentOverviewSection } from './student/sections/StudentOverviewSection';
+import { StudentProfileSection } from './student/sections/StudentProfileSection';
+import { StudentAttendanceSection } from './student/sections/StudentAttendanceSection';
+import { StudentResultsSection } from './student/sections/StudentResultsSection';
+import { StudentHomeworkSection } from './student/sections/StudentHomeworkSection';
+import { StudentTimetableSection } from './student/sections/StudentTimetableSection';
+import { StudentNoticesSection } from './student/sections/StudentNoticesSection';
+import { StudentEventsSection } from './student/sections/StudentEventsSection';
+import { StudentDocumentsSection } from './student/sections/StudentDocumentsSection';
 
 export const StudentDashboard: React.FC = () => {
-  const { user } = useAuth();
-  const [gradesData, setGradesData] = useState<any>({
-    summary: {
-      overallPercentage: 96,
-      totalGradedAssignments: 2,
-      totalPointsEarned: 144,
-      totalPointsPossible: 150,
-    },
-    records: [
-      {
-        assignmentTitle: 'Lab Report: Two-Dimensional Kinematics & Ballistics',
-        className: 'AP Physics C: Mechanics',
-        classCode: 'PHY-401',
-        pointsEarned: 96,
-        maxPoints: 100,
-        letterGrade: 'A',
-        feedback: 'Exceptional error analysis and mathematical modeling!',
-        dueDate: '2026-10-05',
-      },
-      {
-        assignmentTitle: 'Taylor Series & Convergence Test Assessment',
-        className: 'AP Calculus BC',
-        classCode: 'MTH-402',
-        pointsEarned: 48,
-        maxPoints: 50,
-        letterGrade: 'A',
-        feedback: 'Flawless proof on problem 4.',
-        dueDate: '2026-10-12',
-      },
-    ],
-  });
+  const { user, logout } = useAuth();
+  const [activeTab, setActiveTab] = useState<StudentPortalTab>('overview');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const [attendance, setAttendance] = useState<any>({
-    attendanceRate: 98,
-    totalDays: 45,
-    presentCount: 44,
-    lateCount: 1,
-    absentCount: 0,
-  });
+  // Core Data States
+  const [profile, setProfile] = useState<any>(null);
+  const [attendanceRecords, setAttendanceRecords] = useState<any[]>([]);
+  const [attendanceStats, setAttendanceStats] = useState<any>(null);
+  const [results, setResults] = useState<any[]>([]);
+  const [homework, setHomework] = useState<any[]>([]);
+  const [timetable, setTimetable] = useState<any[]>([]);
+  const [notices, setNotices] = useState<any[]>([]);
+  const [events, setEvents] = useState<any[]>([]);
+  const [documents, setDocuments] = useState<any[]>([]);
+
+  const fetchStudentData = async () => {
+    setLoading(true);
+    try {
+      // 1. Current Student Profile
+      const profRes = await api.get('/students/me');
+      if (profRes.data.success && profRes.data.data) {
+        setProfile(profRes.data.data);
+      }
+    } catch {
+      // Default fallback profile
+      setProfile({
+        id: 'stud-001',
+        userId: 'usr-student-01',
+        admissionNumber: 'ADM-2026-0089',
+        rollNumber: '10-A-01',
+        firstName: user?.firstName || 'Liam',
+        lastName: user?.lastName || 'Vance',
+        fullName: `${user?.firstName || 'Liam'} ${user?.lastName || 'Vance'}`,
+        email: user?.email || 'student@oakridge.edu',
+        dateOfBirth: '2010-04-12',
+        gender: 'Male',
+        bloodGroup: 'O+',
+        emergencyContact: '+1-555-9999',
+        address: '742 Evergreen Terrace',
+        status: 'ACTIVE',
+        className: 'Grade 10',
+        sectionName: 'Section A',
+        roomNumber: 'Room 301',
+        parent: {
+          name: 'David Vance',
+          relationship: 'Father',
+          phone: '+1 (555) 019-2837',
+          email: 'parent@oakridge.edu',
+        },
+      });
+    }
+
+    try {
+      // 2. Attendance & Stats
+      const [attRes, statsRes] = await Promise.allSettled([
+        api.get('/attendance'),
+        api.get('/attendance/stats'),
+      ]);
+
+      if (attRes.status === 'fulfilled' && attRes.value.data.success) {
+        setAttendanceRecords(attRes.value.data.data || []);
+      }
+      if (statsRes.status === 'fulfilled' && statsRes.value.data.success) {
+        setAttendanceStats(statsRes.value.data.data);
+      }
+    } catch {
+      // Handled gracefully with section defaults
+    }
+
+    try {
+      // 3. Results & Gradebook
+      const res = await api.get('/results');
+      if (res.data.success && res.data.data) {
+        setResults(res.data.data);
+      }
+    } catch {
+      // Handled gracefully
+    }
+
+    try {
+      // 4. Homework
+      const res = await api.get('/homework');
+      if (res.data.success && res.data.data) {
+        setHomework(res.data.data);
+      }
+    } catch {
+      // Handled gracefully
+    }
+
+    try {
+      // 5. Timetable
+      const res = await api.get('/timetable');
+      if (res.data.success && res.data.data) {
+        setTimetable(res.data.data);
+      }
+    } catch {
+      // Handled gracefully
+    }
+
+    try {
+      // 6. Notices, Events, Documents
+      const [notRes, evtRes, docRes] = await Promise.allSettled([
+        api.get('/notices'),
+        api.get('/events'),
+        api.get('/documents'),
+      ]);
+
+      if (notRes.status === 'fulfilled' && notRes.value.data.success) {
+        setNotices(notRes.value.data.data || []);
+      }
+      if (evtRes.status === 'fulfilled' && evtRes.value.data.success) {
+        setEvents(evtRes.value.data.data || []);
+      }
+      if (docRes.status === 'fulfilled' && docRes.value.data.success) {
+        setDocuments(docRes.value.data.data || []);
+      }
+    } catch {
+      // Handled gracefully
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchGrades = async () => {
-      try {
-        const res = await api.get('/grades/student');
-        if (res.data.success && res.data.data.records?.length > 0) {
-          setGradesData(res.data.data);
-        }
-      } catch {
-        // Fallback to demo data
-      }
-    };
-    fetchGrades();
+    fetchStudentData();
   }, []);
 
+  const navigationItems = [
+    { id: 'overview' as StudentPortalTab, label: 'Overview', icon: LayoutDashboard },
+    { id: 'profile' as StudentPortalTab, label: 'Scholar Profile', icon: User },
+    { id: 'attendance' as StudentPortalTab, label: 'Attendance', icon: CheckCircle2 },
+    { id: 'results' as StudentPortalTab, label: 'Results & Gradebook', icon: Award },
+    { id: 'homework' as StudentPortalTab, label: 'Coursework & Homework', icon: BookOpen },
+    { id: 'timetable' as StudentPortalTab, label: 'Class Timetable', icon: Calendar },
+    { id: 'notices' as StudentPortalTab, label: 'Circulars & Notices', icon: Bell },
+    { id: 'events' as StudentPortalTab, label: 'Campus Events', icon: Sparkles },
+    { id: 'documents' as StudentPortalTab, label: 'Handbooks & Docs', icon: FileText },
+  ];
+
   return (
-    <div className="min-h-screen bg-slate-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        {/* Student Profile Banner */}
-        <div className="bg-gradient-to-r from-crest-950 via-crest-900 to-slate-900 text-white rounded-2xl p-6 sm:p-8 shadow-lg flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
-          <div className="flex items-center gap-4">
-            <img
-              src={user?.avatarUrl || 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=256&q=80'}
-              alt={user?.firstName}
-              className="w-16 h-16 rounded-2xl object-cover border-2 border-crest-400/50 shadow-md"
-            />
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="bg-gold-500/20 text-gold-400 font-bold px-2 py-0.5 rounded text-[10px] border border-gold-500/30">
-                  {user?.gradeLevel || 'GRADE 11'}
-                </span>
-                <span className="text-xs text-slate-400 font-mono">ID: {user?.studentId || 'OAK-882190'}</span>
-              </div>
-              <h1 className="font-serif text-2xl sm:text-3xl font-bold">
-                {user?.firstName} {user?.lastName}
-              </h1>
-              <p className="text-xs text-slate-300">Oakridge Scholar Portal • Academic Year 2026-2027</p>
-            </div>
+    <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row text-slate-900 selection:bg-crest-600 selection:text-white" data-testid="student-dashboard">
+      {/* Mobile Header */}
+      <div className="md:hidden bg-gradient-to-r from-crest-950 via-crest-900 to-slate-900 text-white p-4 flex items-center justify-between shadow-md sticky top-0 z-40">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-gold-500/20 border border-gold-500/30 flex items-center justify-center font-serif font-bold text-gold-400">
+            OA
           </div>
-
-          {/* Quick GPA & Standing */}
-          <div className="flex items-center gap-4 bg-white/5 border border-white/10 p-3 rounded-xl backdrop-blur-md">
-            <div className="text-center px-3">
-              <span className="text-[10px] uppercase tracking-wider text-slate-400 block">Weighted GPA</span>
-              <span className="font-serif text-2xl font-bold text-gold-400">3.96</span>
-            </div>
-            <div className="h-8 w-px bg-white/10" />
-            <div className="text-center px-3">
-              <span className="text-[10px] uppercase tracking-wider text-slate-400 block">Class Rank</span>
-              <span className="font-serif text-2xl font-bold text-white">Top 3%</span>
-            </div>
+          <div>
+            <h1 className="font-serif font-bold text-base tracking-wide text-white">Oakridge Academy</h1>
+            <p className="text-[10px] text-gold-400 uppercase tracking-widest">Scholar Portal</p>
           </div>
         </div>
-
-        {/* Attendance & Performance Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Attendance Gauge */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-xs font-semibold uppercase text-slate-500">Attendance Standing</span>
-              <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div>
-                <span className="text-3xl font-bold text-slate-900">{attendance.attendanceRate}%</span>
-                <span className="block text-xs text-emerald-600 font-medium">Exemplary Record</span>
-              </div>
-              <div className="text-right text-xs text-slate-500 space-y-1">
-                <div>Present: <span className="font-bold text-slate-800">{attendance.presentCount}</span></div>
-                <div>Tardy: <span className="font-bold text-slate-800">{attendance.lateCount}</span></div>
-                <div>Unexcused: <span className="font-bold text-slate-800">{attendance.absentCount}</span></div>
-              </div>
-            </div>
-
-            {/* Progress bar */}
-            <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
-              <div
-                className="bg-emerald-500 h-2.5 rounded-full transition-all duration-500"
-                style={{ width: `${attendance.attendanceRate}%` }}
-              />
-            </div>
-          </div>
-
-          {/* Academic Courses */}
-          <div className="md:col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-xs font-semibold uppercase text-slate-500">Class Schedule & Teachers</span>
-              <BookOpen className="w-5 h-5 text-crest-700" />
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                <div className="flex justify-between font-bold text-slate-900 mb-1">
-                  <span>PHY-401 • AP Physics C</span>
-                  <span className="text-crest-700">Period 1</span>
-                </div>
-                <p className="text-slate-500">Dr. Evelyn Reed • Lab 304</p>
-              </div>
-
-              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                <div className="flex justify-between font-bold text-slate-900 mb-1">
-                  <span>MTH-402 • AP Calculus BC</span>
-                  <span className="text-crest-700">Period 2</span>
-                </div>
-                <p className="text-slate-500">Dr. Evelyn Reed • Room 210</p>
-              </div>
-
-              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                <div className="flex justify-between font-bold text-slate-900 mb-1">
-                  <span>ENG-301 • World Literature</span>
-                  <span className="text-crest-700">Period 3</span>
-                </div>
-                <p className="text-slate-500">Mrs. Sarah Jenkins • Hall 105</p>
-              </div>
-
-              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                <div className="flex justify-between font-bold text-slate-900 mb-1">
-                  <span>CSC-350 • Robotics & AI</span>
-                  <span className="text-crest-700">Period 4</span>
-                </div>
-                <p className="text-slate-500">Innovation Center • Hub 1</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Gradebook and Evaluated Submissions */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-6">
-          <div className="flex justify-between items-center border-b border-slate-100 pb-4">
-            <div>
-              <h2 className="font-serif text-xl font-bold text-slate-900">Academic Gradebook</h2>
-              <p className="text-xs text-slate-500">Detailed breakdown of graded assignments, letter marks, and teacher commentary.</p>
-            </div>
-            <div className="text-right">
-              <span className="text-xs text-slate-400 block">Term Average</span>
-              <span className="font-serif text-2xl font-bold text-crest-800">{gradesData.summary.overallPercentage}% (A)</span>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            {gradesData.records.map((record: any, idx: number) => (
-              <div
-                key={idx}
-                className="p-4 bg-slate-50 rounded-xl border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
-              >
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono text-[10px] font-bold bg-crest-100 text-crest-800 px-2 py-0.5 rounded">
-                      {record.classCode}
-                    </span>
-                    <h3 className="font-bold text-sm text-slate-900">{record.assignmentTitle}</h3>
-                  </div>
-                  <p className="text-xs text-slate-500">{record.className} • Due: {record.dueDate}</p>
-                  {record.feedback && (
-                    <p className="text-xs text-slate-600 bg-white p-2 rounded border border-slate-200 italic mt-2">
-                      "{record.feedback}"
-                    </p>
-                  )}
-                </div>
-
-                <div className="flex items-center gap-4 shrink-0">
-                  <div className="text-right">
-                    <span className="font-bold text-sm text-slate-900">
-                      {record.pointsEarned} / {record.maxPoints} pts
-                    </span>
-                    <span className="block text-[11px] text-slate-500">
-                      {Math.round((record.pointsEarned / record.maxPoints) * 100)}%
-                    </span>
-                  </div>
-                  <span className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 font-bold text-base flex items-center justify-center">
-                    {record.letterGrade}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <button
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="p-2 rounded-xl bg-white/10 hover:bg-white/20 transition text-white"
+          aria-label="Toggle Navigation"
+        >
+          {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
       </div>
+
+      {/* Desktop Sidebar & Mobile Drawer */}
+      <aside
+        className={`fixed md:sticky top-0 left-0 h-screen w-72 bg-gradient-to-b from-crest-950 via-crest-900 to-slate-900 text-white p-6 z-50 flex flex-col justify-between transition-transform duration-300 md:translate-x-0 ${
+          isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+        } border-r border-crest-800/40 shadow-2xl`}
+      >
+        <div className="space-y-6">
+          {/* Academy Brand */}
+          <div className="flex items-center gap-3.5 pb-4 border-b border-crest-800/60">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-gold-400 to-gold-600 p-0.5 shadow-lg">
+              <div className="w-full h-full rounded-[14px] bg-crest-950 flex items-center justify-center font-serif font-bold text-gold-400 text-lg">
+                OA
+              </div>
+            </div>
+            <div>
+              <h2 className="font-serif font-bold text-base tracking-wider text-white">OAKRIDGE</h2>
+              <p className="text-[10px] text-gold-400 uppercase tracking-widest font-semibold">Scholar Portal</p>
+            </div>
+          </div>
+
+          {/* Scholar Mini Badge */}
+          <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gold-500/20 text-gold-400 font-serif font-bold text-sm flex items-center justify-center border border-gold-500/30">
+              {profile?.firstName?.[0] || 'L'}
+              {profile?.lastName?.[0] || 'V'}
+            </div>
+            <div className="min-w-0 flex-1">
+              <h4 className="font-bold text-xs text-white truncate">
+                {profile?.fullName || `${profile?.firstName || 'Liam'} ${profile?.lastName || 'Vance'}`}
+              </h4>
+              <p className="text-[11px] text-slate-300 truncate">
+                {profile?.className || 'Grade 10'} • {profile?.sectionName || 'Section A'}
+              </p>
+            </div>
+          </div>
+
+          {/* Navigation Links */}
+          <nav className="space-y-1">
+            {navigationItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = activeTab === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    setActiveTab(item.id);
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition ${
+                    isActive
+                      ? 'bg-gradient-to-r from-crest-800 to-crest-700 text-white shadow-md border border-crest-600/50'
+                      : 'text-slate-300 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <Icon className={`w-4 h-4 ${isActive ? 'text-gold-400' : 'text-slate-400'}`} />
+                    <span>{item.label}</span>
+                  </div>
+                  {isActive && <ChevronRight className="w-3.5 h-3.5 text-gold-400" />}
+                </button>
+              );
+            })}
+          </nav>
+        </div>
+
+        {/* Sidebar Footer: Security & Logout */}
+        <div className="pt-4 border-t border-crest-800/60 space-y-3">
+          <div className="flex items-center gap-2 text-[11px] text-emerald-400 bg-emerald-950/40 border border-emerald-800/50 px-3 py-2 rounded-xl">
+            <ShieldCheck className="w-4 h-4 shrink-0" />
+            <span>IDOR-Protected Session</span>
+          </div>
+
+          <button
+            onClick={() => logout()}
+            className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-rose-300 hover:text-white hover:bg-rose-950/50 transition border border-rose-900/30"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>Sign Out</span>
+          </button>
+        </div>
+      </aside>
+
+      {/* Main Content Area */}
+      <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-10 max-w-7xl mx-auto w-full space-y-8">
+        {/* Top Navbar Header */}
+        <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+          <div>
+            <div className="flex items-center gap-2 text-xs text-slate-400 font-medium mb-1">
+              <span>Scholar Portal</span>
+              <span>/</span>
+              <span className="text-crest-800 font-bold capitalize">
+                {navigationItems.find((n) => n.id === activeTab)?.label}
+              </span>
+            </div>
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-slate-900">
+              {navigationItems.find((n) => n.id === activeTab)?.label}
+            </h1>
+          </div>
+
+          <div className="flex items-center gap-3 self-end sm:self-auto">
+            <div className="text-right hidden sm:block">
+              <span className="text-xs font-bold text-slate-900 block">
+                {profile?.fullName || 'Liam Vance'}
+              </span>
+              <span className="text-[11px] text-slate-500 font-mono">
+                {profile?.admissionNumber || 'ADM-2026-0089'}
+              </span>
+            </div>
+            <div className="w-10 h-10 rounded-2xl bg-crest-100 text-crest-800 font-serif font-bold text-sm flex items-center justify-center border border-crest-200">
+              {profile?.firstName?.[0] || 'L'}
+              {profile?.lastName?.[0] || 'V'}
+            </div>
+          </div>
+        </header>
+
+        {/* Active Tab View */}
+        {activeTab === 'overview' && (
+          <StudentOverviewSection
+            profile={profile}
+            attendanceStats={attendanceStats}
+            results={results}
+            homework={homework}
+            timetable={timetable}
+            notices={notices}
+            setActiveTab={setActiveTab}
+          />
+        )}
+
+        {activeTab === 'profile' && <StudentProfileSection profile={profile} />}
+
+        {activeTab === 'attendance' && (
+          <StudentAttendanceSection
+            records={attendanceRecords}
+            stats={attendanceStats}
+            loading={loading}
+          />
+        )}
+
+        {activeTab === 'results' && (
+          <StudentResultsSection results={results} loading={loading} />
+        )}
+
+        {activeTab === 'homework' && (
+          <StudentHomeworkSection
+            homework={homework}
+            onRefresh={fetchStudentData}
+            loading={loading}
+          />
+        )}
+
+        {activeTab === 'timetable' && (
+          <StudentTimetableSection
+            timetable={timetable}
+            profile={profile}
+            loading={loading}
+          />
+        )}
+
+        {activeTab === 'notices' && (
+          <StudentNoticesSection notices={notices} loading={loading} />
+        )}
+
+        {activeTab === 'events' && (
+          <StudentEventsSection events={events} loading={loading} />
+        )}
+
+        {activeTab === 'documents' && (
+          <StudentDocumentsSection documents={documents} loading={loading} />
+        )}
+      </main>
     </div>
   );
 };

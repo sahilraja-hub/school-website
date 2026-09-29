@@ -34,9 +34,19 @@ export const getHomeworkById = async (req: Request, res: Response): Promise<void
   const hw = await homeworkRepository.getHomeworkById(req.params.id);
   if (!hw) throw new NotFoundError('Homework not found');
 
+  let sanitized: any = { ...hw };
+
+  // IDOR & Privacy Protection: Students must NOT see other students' submissions or marks
+  if (req.user?.role === 'STUDENT' && req.user?.id) {
+    const student = await schoolActorsRepository.getStudentByUserId(req.user.id);
+    const mySubmissions = (hw.submissions || []).filter((s: any) => s.studentId === student?.id);
+    sanitized.submissions = mySubmissions;
+    sanitized.mySubmission = mySubmissions[0] || null;
+  }
+
   res.json({
     success: true,
-    data: hw,
+    data: sanitized,
     meta: { requestId: req.id, timestamp: new Date().toISOString() },
   });
 };
@@ -129,7 +139,20 @@ export const deleteHomework = async (req: Request, res: Response): Promise<void>
 };
 
 export const submitHomework = async (req: Request, res: Response): Promise<void> => {
-  const studentId = req.user?.studentId || req.body.studentId;
+  let studentId = req.user?.studentId || req.body.studentId;
+
+  if (req.user?.role === 'STUDENT' && req.user?.id) {
+    const student = await schoolActorsRepository.getStudentByUserId(req.user.id);
+    if (!student) {
+      throw new AuthorizationError('Student profile not found');
+    }
+    // Block student from submitting on behalf of another student (IDOR impersonation)
+    if (req.body.studentId && req.body.studentId !== student.id) {
+      throw new AuthorizationError('Forbidden: You cannot submit homework on behalf of another student');
+    }
+    studentId = student.id;
+  }
+
   const submission = await homeworkRepository.submitHomework({
     homeworkId: req.params.id,
     studentId,

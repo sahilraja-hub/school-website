@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import {
   listStudents,
+  getCurrentStudentProfile,
   getStudentById,
   createStudent,
   updateStudent,
@@ -18,6 +19,9 @@ router.use(authenticate);
 
 // Faculty & Admins can list students (with query validation)
 router.get('/', authorize('ADMIN', 'SUPER_ADMIN', 'TEACHER'), validateRequest({ query: StudentFilterSchema }), asyncHandler(listStudents));
+
+// Current authenticated student profile lookup
+router.get('/me', authorize('STUDENT', 'ADMIN', 'SUPER_ADMIN'), asyncHandler(getCurrentStudentProfile));
 
 // Individual student profile lookup (with param validation)
 router.get('/:id', validateRequest({ params: IdParamSchema }), asyncHandler(getStudentById));

@@ -64,6 +64,18 @@ class HomeworkRepository {
       createdAt: new Date(),
       updatedAt: new Date(),
     });
+
+    const subId2 = 'subm-002';
+    this.submissions.set(subId2, {
+      id: subId2,
+      homeworkId: hwId,
+      studentId: 'stud-002',
+      content: 'Emma Watson homework submission with derivations.',
+      submittedAt: new Date(),
+      status: 'SUBMITTED',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
   }
 
   public async listHomework(query: { page?: number; limit?: number; sectionId?: string; subjectId?: string; search?: string }) {

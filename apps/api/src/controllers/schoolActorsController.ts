@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import { schoolActorsRepository } from '../repositories/schoolActorsRepository';
 import { userRepository } from '../repositories/userRepository';
 import { dtos } from '../types/dtos';
-import { NotFoundError, BadRequestError, AuthenticationError } from '../errors';
+import { NotFoundError, BadRequestError, AuthenticationError, AuthorizationError } from '../errors';
 import { academicRepository } from '../repositories/academicRepository';
 
 // ==========================================
@@ -36,20 +36,45 @@ export const listStudents = async (req: Request, res: Response): Promise<void> =
   });
 };
 
+export const getCurrentStudentProfile = async (req: Request, res: Response): Promise<void> => {
+  if (!req.user?.id) {
+    throw new AuthenticationError('Authentication required');
+  }
+
+  const student = await schoolActorsRepository.getStudentByUserId(req.user.id);
+  if (!student) {
+    throw new NotFoundError('Student profile not found for current user');
+  }
+
+  const section = student.sectionId ? await academicRepository.getSectionById(student.sectionId) : null;
+  const cls = student.classId ? await academicRepository.getClassById(student.classId) : null;
+
+  res.json({
+    success: true,
+    data: {
+      ...dtos.toStudentResponseDto(student),
+      classId: student.classId,
+      sectionId: student.sectionId,
+      className: cls?.name,
+      sectionName: section?.name,
+      roomNumber: section?.roomNumber,
+    },
+    meta: { requestId: req.id, timestamp: new Date().toISOString() },
+  });
+};
+
 export const getStudentById = async (req: Request, res: Response): Promise<void> => {
   const student = await schoolActorsRepository.getStudentById(req.params.id);
   if (!student) {
     throw new NotFoundError('Student not found');
   }
 
-  // If user is STUDENT, check ownership
-  if (req.user?.role === 'STUDENT' && student.userId !== req.user.id) {
-    res.status(403).json({
-      success: false,
-      error: 'Forbidden: You can only view your own student record',
-      code: 'FORBIDDEN',
-    });
-    return;
+  // IDOR Protection: If user is STUDENT, check ownership
+  if (req.user?.role === 'STUDENT' && req.user?.id) {
+    const ownStudent = await schoolActorsRepository.getStudentByUserId(req.user.id);
+    if (!ownStudent || (student.id !== ownStudent.id && student.userId !== req.user.id)) {
+      throw new AuthorizationError('Forbidden: You can only view your own student record');
+    }
   }
 
   res.json({

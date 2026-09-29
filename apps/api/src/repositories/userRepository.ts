@@ -202,6 +202,18 @@ class UserRepository {
         phone: '+1 (555) 019-2834',
       }),
       new InMemoryUser({
+        _id: 'usr-student-02',
+        firstName: 'Emma',
+        lastName: 'Watson',
+        email: 'student2@oakridge.edu',
+        passwordHash: studentHash,
+        role: 'STUDENT',
+        status: 'ACTIVE',
+        studentId: 'OAK-882191',
+        gradeLevel: 'GRADE_10',
+        phone: '+1 (555) 019-2839',
+      }),
+      new InMemoryUser({
         _id: 'usr-parent-01',
         firstName: 'David',
         lastName: 'Vance',

@@ -83,10 +83,19 @@ export const deleteExam = async (req: Request, res: Response): Promise<void> => 
 export const listResults = async (req: Request, res: Response): Promise<void> => {
   const { page, limit, examSubjectId, studentId } = req.query as any;
 
-  // Students can only query their own results
   let targetStudentId = studentId;
-  if (req.user?.role === 'STUDENT' && req.user.studentId) {
-    targetStudentId = req.user.studentId;
+
+  // IDOR Protection: Students can only query their own results
+  if (req.user?.role === 'STUDENT' && req.user?.id) {
+    const student = await schoolActorsRepository.getStudentByUserId(req.user.id);
+    if (!student) {
+      throw new AuthorizationError('Student profile not found');
+    }
+    // Block IDOR query parameter tampering
+    if (studentId && studentId !== student.id) {
+      throw new AuthorizationError('Forbidden: You can only access your own exam results');
+    }
+    targetStudentId = student.id;
   }
 
   const result = await examRepository.listResults({
@@ -109,6 +118,25 @@ export const listResults = async (req: Request, res: Response): Promise<void> =>
         totalPages: result.totalPages,
       },
     },
+  });
+};
+
+export const getResultById = async (req: Request, res: Response): Promise<void> => {
+  const result = await examRepository.getResultById(req.params.id);
+  if (!result) throw new NotFoundError('Exam result not found');
+
+  // IDOR Protection: Students can only view their own result
+  if (req.user?.role === 'STUDENT' && req.user?.id) {
+    const student = await schoolActorsRepository.getStudentByUserId(req.user.id);
+    if (!student || result.studentId !== student.id) {
+      throw new AuthorizationError('Forbidden: You can only access your own exam results');
+    }
+  }
+
+  res.json({
+    success: true,
+    data: result,
+    meta: { requestId: req.id, timestamp: new Date().toISOString() },
   });
 };
 

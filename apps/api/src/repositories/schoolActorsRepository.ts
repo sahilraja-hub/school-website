@@ -74,11 +74,11 @@ class SchoolActorsRepository {
       updatedAt: new Date(),
     });
 
-    // Student
+    // Students
     const studentId = 'stud-001';
     this.students.set(studentId, {
       id: studentId,
-      userId: 'usr_student_001',
+      userId: 'usr-student-01',
       admissionNumber: 'ADM-2026-0089',
       rollNumber: '10-A-01',
       dateOfBirth: '2010-04-12',
@@ -86,6 +86,26 @@ class SchoolActorsRepository {
       bloodGroup: 'O+',
       emergencyContact: '+1-555-9999',
       address: '742 Evergreen Terrace',
+      admissionDate: '2024-06-01',
+      status: 'ACTIVE',
+      parentId,
+      classId: 'cls-10',
+      sectionId: 'sec-10a',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    const studentId2 = 'stud-002';
+    this.students.set(studentId2, {
+      id: studentId2,
+      userId: 'usr-student-02',
+      admissionNumber: 'ADM-2026-0090',
+      rollNumber: '10-A-02',
+      dateOfBirth: '2010-06-18',
+      gender: 'FEMALE',
+      bloodGroup: 'A+',
+      emergencyContact: '+1-555-8888',
+      address: '123 Baker Street',
       admissionDate: '2024-06-01',
       status: 'ACTIVE',
       parentId,
@@ -173,7 +193,12 @@ class SchoolActorsRepository {
 
   public async getStudentByUserId(userId: string) {
     for (const student of this.students.values()) {
-      if (student.userId === userId) {
+      if (
+        student.userId === userId ||
+        (userId === 'usr_student_001' && student.id === 'stud-001') ||
+        (userId === 'usr-student-01' && student.id === 'stud-001') ||
+        (userId === 'usr-student-02' && student.id === 'stud-002')
+      ) {
         return this.getStudentById(student.id);
       }
     }

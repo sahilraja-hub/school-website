@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 import { academicRepository } from '../repositories/academicRepository';
 import { dtos } from '../types/dtos';
-import { NotFoundError, BadRequestError } from '../errors';
+import { NotFoundError, BadRequestError, AuthorizationError } from '../errors';
+import { schoolActorsRepository } from '../repositories/schoolActorsRepository';
 
 // ==========================================
 // CLASSES
@@ -198,7 +199,19 @@ export const deleteSubject = async (req: Request, res: Response): Promise<void> 
 // TIMETABLE
 // ==========================================
 export const listTimetable = async (req: Request, res: Response): Promise<void> => {
-  const { sectionId, teacherId, dayOfWeek } = req.query as any;
+  let { sectionId, teacherId, dayOfWeek } = req.query as any;
+
+  // IDOR & Section Scope: Students can only view their own class/section timetable
+  if (req.user?.role === 'STUDENT' && req.user?.id) {
+    const student = await schoolActorsRepository.getStudentByUserId(req.user.id);
+    if (student?.sectionId) {
+      if (sectionId && sectionId !== student.sectionId) {
+        throw new AuthorizationError('Forbidden: You can only access the timetable for your enrolled section');
+      }
+      sectionId = student.sectionId;
+    }
+  }
+
   const schedule = await academicRepository.listTimetable({ sectionId, teacherId, dayOfWeek });
 
   res.json({
@@ -211,6 +224,13 @@ export const listTimetable = async (req: Request, res: Response): Promise<void> 
 export const getTimetableById = async (req: Request, res: Response): Promise<void> => {
   const slot = await academicRepository.getTimetableById(req.params.id);
   if (!slot) throw new NotFoundError('Timetable slot not found');
+
+  if (req.user?.role === 'STUDENT' && req.user?.id) {
+    const student = await schoolActorsRepository.getStudentByUserId(req.user.id);
+    if (student?.sectionId && slot.sectionId !== student.sectionId) {
+      throw new AuthorizationError('Forbidden: You can only access timetable slots for your enrolled section');
+    }
+  }
 
   res.json({
     success: true,

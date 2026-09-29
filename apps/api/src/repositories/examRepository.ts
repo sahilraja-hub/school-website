@@ -85,6 +85,18 @@ class ExamRepository {
       createdAt: new Date(),
       updatedAt: new Date(),
     });
+
+    const resId2 = 'res-002';
+    this.results.set(resId2, {
+      id: resId2,
+      examSubjectId: esId,
+      studentId: 'stud-002',
+      marksObtained: 88.0,
+      grade: 'A',
+      remarks: 'Strong understanding of derivatives and integration principles.',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
   }
 
   // --- Exams ---
@@ -180,6 +192,26 @@ class ExamRepository {
     );
 
     return { items: enriched, total, page, limit, totalPages };
+  }
+
+  public async getResultById(id: string) {
+    const r = this.results.get(id);
+    if (!r) return null;
+    const student = await schoolActorsRepository.getStudentById(r.studentId);
+    const examSubject = this.examSubjects.get(r.examSubjectId);
+    const subject = examSubject ? await academicRepository.getSubjectById(examSubject.subjectId) : null;
+    const exam = examSubject ? this.exams.get(examSubject.examId) : null;
+
+    return {
+      ...r,
+      studentName: student?.user?.firstName ? `${student.user.firstName} ${student.user.lastName}` : undefined,
+      subjectName: subject?.name,
+      examName: exam?.name,
+      maxMarks: examSubject?.maxMarks || 100,
+      passMarks: examSubject?.passMarks || 40,
+      isPassed: r.marksObtained >= (examSubject?.passMarks || 40),
+      percentage: Number(((r.marksObtained / (examSubject?.maxMarks || 100)) * 100).toFixed(1)),
+    };
   }
 
   public async recordResult(data: Omit<IResultRecord, 'id' | 'createdAt' | 'updatedAt'>) {
