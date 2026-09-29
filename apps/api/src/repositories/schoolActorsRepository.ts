@@ -57,11 +57,11 @@ class SchoolActorsRepository {
   }
 
   private seedDefaults() {
-    // Parent
+    // Parents
     const parentId = 'par-001';
     this.parents.set(parentId, {
       id: parentId,
-      userId: 'usr_parent_001',
+      userId: 'usr-parent-01',
       occupation: 'Senior Systems Architect',
       relationship: 'FATHER',
       emergencyContact: '+1-555-9999',
@@ -69,7 +69,23 @@ class SchoolActorsRepository {
       city: 'Springfield',
       state: 'IL',
       postalCode: '62704',
-      studentIds: ['stud-001'],
+      studentIds: ['stud-001', 'stud-003'],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    const parentId2 = 'par-002';
+    this.parents.set(parentId2, {
+      id: parentId2,
+      userId: 'usr-parent-02',
+      occupation: 'Biomedical Engineer',
+      relationship: 'FATHER',
+      emergencyContact: '+1-555-8888',
+      address: '123 Baker Street',
+      city: 'Springfield',
+      state: 'IL',
+      postalCode: '62704',
+      studentIds: ['stud-002'],
       createdAt: new Date(),
       updatedAt: new Date(),
     });
@@ -108,9 +124,29 @@ class SchoolActorsRepository {
       address: '123 Baker Street',
       admissionDate: '2024-06-01',
       status: 'ACTIVE',
-      parentId,
+      parentId: parentId2,
       classId: 'cls-10',
       sectionId: 'sec-10a',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    const studentId3 = 'stud-003';
+    this.students.set(studentId3, {
+      id: studentId3,
+      userId: 'usr-student-03',
+      admissionNumber: 'ADM-2026-0091',
+      rollNumber: '10-B-01',
+      dateOfBirth: '2011-09-22',
+      gender: 'MALE',
+      bloodGroup: 'O+',
+      emergencyContact: '+1-555-9999',
+      address: '742 Evergreen Terrace',
+      admissionDate: '2025-06-01',
+      status: 'ACTIVE',
+      parentId,
+      classId: 'cls-10',
+      sectionId: 'sec-10b',
       createdAt: new Date(),
       updatedAt: new Date(),
     });
@@ -262,7 +298,11 @@ class SchoolActorsRepository {
 
   public async getParentByUserId(userId: string) {
     for (const parent of this.parents.values()) {
-      if (parent.userId === userId) {
+      if (
+        parent.userId === userId ||
+        (parent.userId === 'usr-parent-01' && userId === 'usr_parent_001') ||
+        (parent.userId === 'usr_parent_001' && userId === 'usr-parent-01')
+      ) {
         return this.getParentById(parent.id);
       }
     }

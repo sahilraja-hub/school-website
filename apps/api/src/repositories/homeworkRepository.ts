@@ -76,6 +76,18 @@ class HomeworkRepository {
       createdAt: new Date(),
       updatedAt: new Date(),
     });
+
+    const subId3 = 'subm-003';
+    this.submissions.set(subId3, {
+      id: subId3,
+      homeworkId: hwId,
+      studentId: 'stud-003',
+      content: 'Lucas Vance homework calculations and answers.',
+      submittedAt: new Date(),
+      status: 'SUBMITTED',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
   }
 
   public async listHomework(query: { page?: number; limit?: number; sectionId?: string; subjectId?: string; search?: string }) {

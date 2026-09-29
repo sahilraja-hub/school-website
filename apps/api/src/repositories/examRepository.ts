@@ -97,6 +97,18 @@ class ExamRepository {
       createdAt: new Date(),
       updatedAt: new Date(),
     });
+
+    const resId3 = 'res-003';
+    this.results.set(resId3, {
+      id: resId3,
+      examSubjectId: esId,
+      studentId: 'stud-003',
+      marksObtained: 91.5,
+      grade: 'A',
+      remarks: 'Impressive analytical reasoning and geometric proofs.',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
   }
 
   // --- Exams ---

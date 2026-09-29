@@ -212,6 +212,19 @@ export const listTimetable = async (req: Request, res: Response): Promise<void> 
     }
   }
 
+  // IDOR & Section Scope: Parents can only view timetable for their linked children's sections
+  if (req.user?.role === 'PARENT' && req.user?.id) {
+    const parent = await schoolActorsRepository.getParentByUserId(req.user.id);
+    const children = await Promise.all((parent?.studentIds || []).map((sId: string) => schoolActorsRepository.getStudentById(sId)));
+    const allowedSections = children.map((c) => c?.sectionId).filter(Boolean);
+    if (sectionId && !allowedSections.includes(sectionId)) {
+      throw new AuthorizationError('Forbidden: You can only access timetable for your linked children enrolled sections');
+    }
+    if (!sectionId && allowedSections.length > 0) {
+      sectionId = allowedSections[0];
+    }
+  }
+
   const schedule = await academicRepository.listTimetable({ sectionId, teacherId, dayOfWeek });
 
   res.json({
@@ -229,6 +242,15 @@ export const getTimetableById = async (req: Request, res: Response): Promise<voi
     const student = await schoolActorsRepository.getStudentByUserId(req.user.id);
     if (student?.sectionId && slot.sectionId !== student.sectionId) {
       throw new AuthorizationError('Forbidden: You can only access timetable slots for your enrolled section');
+    }
+  }
+
+  if (req.user?.role === 'PARENT' && req.user?.id) {
+    const parent = await schoolActorsRepository.getParentByUserId(req.user.id);
+    const children = await Promise.all((parent?.studentIds || []).map((sId: string) => schoolActorsRepository.getStudentById(sId)));
+    const allowedSections = children.map((c) => c?.sectionId).filter(Boolean);
+    if (!allowedSections.includes(slot.sectionId)) {
+      throw new AuthorizationError('Forbidden: You can only access timetable slots for your linked children enrolled sections');
     }
   }
 

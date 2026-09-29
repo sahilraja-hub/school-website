@@ -44,6 +44,13 @@ export const getHomeworkById = async (req: Request, res: Response): Promise<void
     sanitized.mySubmission = mySubmissions[0] || null;
   }
 
+  // IDOR & Privacy Protection: Parents must NOT see unrelated students' submissions
+  if (req.user?.role === 'PARENT' && req.user?.id) {
+    const parent = await schoolActorsRepository.getParentByUserId(req.user.id);
+    const linkedIds = parent?.studentIds || [];
+    sanitized.submissions = (hw.submissions || []).filter((s: any) => linkedIds.includes(s.studentId));
+  }
+
   res.json({
     success: true,
     data: sanitized,

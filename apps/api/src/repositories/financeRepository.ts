@@ -95,6 +95,38 @@ class FinanceRepository {
       createdAt: new Date(),
       updatedAt: new Date(),
     });
+
+    const invId2 = 'inv-002';
+    this.invoices.set(invId2, {
+      id: invId2,
+      studentId: 'stud-002',
+      feeStructureId: feeId,
+      invoiceNumber: 'INV-2026-00453',
+      amount: 4500.00,
+      paidAmount: 4500.00,
+      balance: 0.00,
+      status: 'PAID',
+      dueDate: '2026-09-01',
+      notes: 'Semester 1 Tuition Fee Paid in Full',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    const invId3 = 'inv-003';
+    this.invoices.set(invId3, {
+      id: invId3,
+      studentId: 'stud-003',
+      feeStructureId: feeId,
+      invoiceNumber: 'INV-2026-00454',
+      amount: 4500.00,
+      paidAmount: 2000.00,
+      balance: 2500.00,
+      status: 'PARTIALLY_PAID',
+      dueDate: '2026-11-15',
+      notes: 'Installment 1 Received; Installment 2 Pending',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
   }
 
   // --- Fee Structures ---

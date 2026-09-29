@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 import { financeRepository } from '../repositories/financeRepository';
 import { dtos } from '../types/dtos';
-import { NotFoundError, BadRequestError } from '../errors';
+import { NotFoundError, BadRequestError, AuthorizationError } from '../errors';
+import { schoolActorsRepository } from '../repositories/schoolActorsRepository';
 
 // ==========================================
 // FEE STRUCTURES
@@ -44,10 +45,29 @@ export const createFeeStructure = async (req: Request, res: Response): Promise<v
 export const listInvoices = async (req: Request, res: Response): Promise<void> => {
   const { page, limit, studentId, status, search } = req.query as any;
 
-  // Students can only access their own invoices
   let targetStudentId = studentId;
-  if (req.user?.role === 'STUDENT' && req.user.studentId) {
-    targetStudentId = req.user.studentId;
+
+  // Students can only access their own invoices
+  if (req.user?.role === 'STUDENT' && req.user?.id) {
+    const student = await schoolActorsRepository.getStudentByUserId(req.user.id);
+    if (studentId && studentId !== student?.id) {
+      throw new AuthorizationError('Forbidden: You can only view your own invoices');
+    }
+    targetStudentId = student?.id;
+  }
+
+  // Parents can only access invoices for their linked children
+  if (req.user?.role === 'PARENT' && req.user?.id) {
+    const parent = await schoolActorsRepository.getParentByUserId(req.user.id);
+    const linkedIds = parent?.studentIds || [];
+    if (studentId) {
+      if (!linkedIds.includes(studentId)) {
+        throw new AuthorizationError('Forbidden: You can only view invoices of your linked children');
+      }
+      targetStudentId = studentId;
+    } else {
+      targetStudentId = linkedIds[0];
+    }
   }
 
   const result = await financeRepository.listInvoices({
@@ -79,13 +99,20 @@ export const getInvoiceById = async (req: Request, res: Response): Promise<void>
   if (!invoice) throw new NotFoundError('Invoice not found');
 
   // Enforce student tenancy
-  if (req.user?.role === 'STUDENT' && req.user.studentId && invoice.studentId !== req.user.studentId) {
-    res.status(403).json({
-      success: false,
-      error: 'Forbidden: You can only view your own invoices',
-      code: 'FORBIDDEN',
-    });
-    return;
+  if (req.user?.role === 'STUDENT' && req.user?.id) {
+    const student = await schoolActorsRepository.getStudentByUserId(req.user.id);
+    if (student && invoice.studentId !== student.id) {
+      throw new AuthorizationError('Forbidden: You can only view your own invoices');
+    }
+  }
+
+  // Enforce parent tenancy
+  if (req.user?.role === 'PARENT' && req.user?.id) {
+    const parent = await schoolActorsRepository.getParentByUserId(req.user.id);
+    const linkedIds = parent?.studentIds || [];
+    if (!linkedIds.includes(invoice.studentId)) {
+      throw new AuthorizationError('Forbidden: You can only view invoices of your linked children');
+    }
   }
 
   res.json({
@@ -120,6 +147,17 @@ export const listPayments = async (req: Request, res: Response): Promise<void> =
 };
 
 export const recordPayment = async (req: Request, res: Response): Promise<void> => {
+  const inv = await financeRepository.getInvoiceById(req.body.invoiceId);
+  if (!inv) throw new NotFoundError('Invoice not found');
+
+  if (req.user?.role === 'PARENT' && req.user?.id) {
+    const parent = await schoolActorsRepository.getParentByUserId(req.user.id);
+    const linkedIds = parent?.studentIds || [];
+    if (!linkedIds.includes(inv.studentId)) {
+      throw new AuthorizationError('Forbidden: You can only pay invoices of your linked children');
+    }
+  }
+
   try {
     const payment = await financeRepository.recordPayment(req.body);
     res.status(201).json({

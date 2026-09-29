@@ -77,6 +77,14 @@ export const getStudentById = async (req: Request, res: Response): Promise<void>
     }
   }
 
+  // IDOR Protection: If user is PARENT, check that requested student is a linked child
+  if (req.user?.role === 'PARENT' && req.user?.id) {
+    const parent = await schoolActorsRepository.getParentByUserId(req.user.id);
+    if (!parent || !(parent.studentIds || []).includes(student.id)) {
+      throw new AuthorizationError('Forbidden: You can only access student records of your linked children');
+    }
+  }
+
   res.json({
     success: true,
     data: dtos.toStudentResponseDto(student),
@@ -181,15 +189,61 @@ export const listParents = async (req: Request, res: Response): Promise<void> =>
   });
 };
 
+export const getCurrentParentProfile = async (req: Request, res: Response): Promise<void> => {
+  if (!req.user?.id) {
+    throw new AuthenticationError('Authentication required');
+  }
+
+  const parent = await schoolActorsRepository.getParentByUserId(req.user.id);
+  if (!parent) {
+    throw new NotFoundError('Parent profile not found for current user');
+  }
+
+  // Enrich linked children details
+  const children = await Promise.all(
+    (parent.studentIds || []).map(async (studentId: string) => {
+      const student = await schoolActorsRepository.getStudentById(studentId);
+      if (!student) return null;
+      const cls = student.classId ? await academicRepository.getClassById(student.classId) : null;
+      const sec = student.sectionId ? await academicRepository.getSectionById(student.sectionId) : null;
+      return {
+        ...dtos.toStudentResponseDto(student),
+        classId: student.classId,
+        sectionId: student.sectionId,
+        className: cls?.name,
+        sectionName: sec?.name,
+        roomNumber: sec?.roomNumber,
+      };
+    })
+  );
+
+  res.json({
+    success: true,
+    data: {
+      ...dtos.toParentResponseDto(parent),
+      children: children.filter(Boolean),
+    },
+    meta: { requestId: req.id, timestamp: new Date().toISOString() },
+  });
+};
+
 export const getParentById = async (req: Request, res: Response): Promise<void> => {
   const parent = await schoolActorsRepository.getParentById(req.params.id);
   if (!parent) {
     throw new NotFoundError('Parent not found');
   }
 
+  // IDOR Protection: If role is PARENT, verify ownership
+  if (req.user?.role === 'PARENT' && req.user?.id) {
+    const ownParent = await schoolActorsRepository.getParentByUserId(req.user.id);
+    if (!ownParent || ownParent.id !== parent.id) {
+      throw new AuthorizationError('Forbidden: You can only view your own parent record');
+    }
+  }
+
   res.json({
     success: true,
-    data: parent,
+    data: dtos.toParentResponseDto(parent),
     meta: { requestId: req.id, timestamp: new Date().toISOString() },
   });
 };

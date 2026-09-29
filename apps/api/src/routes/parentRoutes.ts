@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import {
   listParents,
+  getCurrentParentProfile,
   getParentById,
   createParent,
   updateParent,
@@ -13,6 +14,9 @@ import { CreateParentSchema, UpdateParentSchema } from '@school/shared';
 const router = Router();
 
 router.use(authenticate);
+
+// Current parent profile and linked children
+router.get('/me', authorize('PARENT', 'ADMIN', 'SUPER_ADMIN'), asyncHandler(getCurrentParentProfile));
 
 // Staff can list parents
 router.get('/', authorize('ADMIN', 'SUPER_ADMIN', 'TEACHER'), asyncHandler(listParents));

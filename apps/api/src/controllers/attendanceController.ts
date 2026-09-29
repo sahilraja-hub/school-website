@@ -23,6 +23,23 @@ export const listAttendance = async (req: Request, res: Response): Promise<void>
     targetStudentId = student.id;
   }
 
+  // IDOR & Tenancy Protection: Parents can only view attendance for their linked children
+  if (req.user?.role === 'PARENT' && req.user?.id) {
+    const parent = await schoolActorsRepository.getParentByUserId(req.user.id);
+    if (!parent) {
+      throw new AuthorizationError('Parent profile not found');
+    }
+    const linkedIds = parent.studentIds || [];
+    if (studentId) {
+      if (!linkedIds.includes(studentId)) {
+        throw new AuthorizationError('Forbidden: You can only access attendance records of your linked children');
+      }
+      targetStudentId = studentId;
+    } else {
+      targetStudentId = linkedIds[0];
+    }
+  }
+
   const result = await attendanceRepository.listAttendance({
     page: page ? parseInt(page, 10) : 1,
     limit: limit ? parseInt(limit, 10) : 20,
@@ -95,6 +112,23 @@ export const getAttendanceStats = async (req: Request, res: Response): Promise<v
       throw new AuthorizationError('Forbidden: You can only access your own attendance statistics');
     }
     studentId = student.id;
+    sectionId = undefined;
+  }
+
+  // IDOR Protection: Parents can only view attendance statistics for their linked children
+  if (req.user?.role === 'PARENT' && req.user?.id) {
+    const parent = await schoolActorsRepository.getParentByUserId(req.user.id);
+    if (!parent) {
+      throw new AuthorizationError('Parent profile not found');
+    }
+    const linkedIds = parent.studentIds || [];
+    if (studentId) {
+      if (!linkedIds.includes(studentId)) {
+        throw new AuthorizationError('Forbidden: You can only access attendance statistics of your linked children');
+      }
+    } else {
+      studentId = linkedIds[0];
+    }
     sectionId = undefined;
   }
 

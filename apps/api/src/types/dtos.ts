@@ -514,6 +514,27 @@ export const dtos = {
     };
   },
 
+  toParentResponseDto(parent: any): ParentResponseDto {
+    const user = parent.user || {};
+    return {
+      id: parent.id,
+      userId: parent.userId,
+      firstName: user.firstName || '',
+      lastName: user.lastName || '',
+      fullName: `${user.firstName || ''} ${user.lastName || ''}`.trim(),
+      email: user.email || '',
+      phone: user.phone ?? null,
+      occupation: parent.occupation ?? null,
+      relationship: parent.relationship,
+      emergencyContact: parent.emergencyContact,
+      address: parent.address ?? null,
+      city: parent.city ?? null,
+      state: parent.state ?? null,
+      postalCode: parent.postalCode ?? null,
+      children: parent.children || [],
+    };
+  },
+
   toClassDto(cls: any): ClassDto {
     return {
       id: cls.id,

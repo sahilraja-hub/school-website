@@ -98,6 +98,23 @@ export const listResults = async (req: Request, res: Response): Promise<void> =>
     targetStudentId = student.id;
   }
 
+  // IDOR Protection: Parents can only query results for their linked children
+  if (req.user?.role === 'PARENT' && req.user?.id) {
+    const parent = await schoolActorsRepository.getParentByUserId(req.user.id);
+    if (!parent) {
+      throw new AuthorizationError('Parent profile not found');
+    }
+    const linkedIds = parent.studentIds || [];
+    if (studentId) {
+      if (!linkedIds.includes(studentId)) {
+        throw new AuthorizationError('Forbidden: You can only access exam results of your linked children');
+      }
+      targetStudentId = studentId;
+    } else {
+      targetStudentId = linkedIds[0];
+    }
+  }
+
   const result = await examRepository.listResults({
     page: page ? parseInt(page, 10) : 1,
     limit: limit ? parseInt(limit, 10) : 20,
@@ -130,6 +147,14 @@ export const getResultById = async (req: Request, res: Response): Promise<void> 
     const student = await schoolActorsRepository.getStudentByUserId(req.user.id);
     if (!student || result.studentId !== student.id) {
       throw new AuthorizationError('Forbidden: You can only access your own exam results');
+    }
+  }
+
+  // IDOR Protection: Parents can only view results of their linked children
+  if (req.user?.role === 'PARENT' && req.user?.id) {
+    const parent = await schoolActorsRepository.getParentByUserId(req.user.id);
+    if (!parent || !(parent.studentIds || []).includes(result.studentId)) {
+      throw new AuthorizationError('Forbidden: You can only access exam results of your linked children');
     }
   }
 
