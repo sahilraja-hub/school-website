@@ -353,7 +353,7 @@ describe('Phase 14 — Complete Admissions Workflow Test Suite', () => {
       fireEvent.click(screen.getByRole('button', { name: /^track$/i }));
 
       await waitFor(() => {
-        expect(screen.getByText(/Officially Enrolled as Oakridge Scholar!/i)).toBeInTheDocument();
+        expect(screen.getByText(/Officially Enrolled as (Oakridge|RBSRPS) Scholar!/i)).toBeInTheDocument();
         expect(screen.getByText(/STU-2026-8812/i)).toBeInTheDocument();
       });
     });

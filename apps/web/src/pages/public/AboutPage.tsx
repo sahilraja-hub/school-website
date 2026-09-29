@@ -21,22 +21,26 @@ import {
   Globe2,
   Calendar,
   Sparkles,
+  Phone,
+  Mail,
+  MapPin,
+  GraduationCap,
 } from 'lucide-react';
 
 export const AboutPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8 text-left">
       <SEO
-        title="About Oakridge International Academy — History, Values & Leadership"
-        description="Founded in 1988, Oakridge International Academy is a premier preparatory school dedicated to intellectual curiosity, moral courage, and global leadership."
-        keywords="About Oakridge Academy, school history, IB world school, Cambridge campus, leadership governance"
+        title="About Us — R.B.S Residential Public School, Mahua, Vaishali"
+        description="Established in 2008-2009, R.B.S Residential Public School (RBSRPS) is a premier CBSE-affiliated Senior Secondary (+2) institution in Mahua, Vaishali, Bihar, delivering academic distinction and moral character."
+        keywords="About R.B.S Public School, RBSRPS Mahua, CBSE School Vaishali, Ram Bachan Singh, Tribhuwan Singh, Om Narayan, School History Mahua"
       />
 
       <div className="max-w-7xl mx-auto space-y-14">
         {/* Breadcrumb Navigation */}
         <Breadcrumb
           items={[
-            { label: 'About Oakridge' },
+            { label: 'About Us' },
           ]}
         />
 
@@ -44,90 +48,138 @@ export const AboutPage: React.FC = () => {
         <div className="relative rounded-3xl overflow-hidden bg-crest-950 text-white p-8 sm:p-12 lg:p-16 border border-crest-900 shadow-2xl">
           <div className="relative z-10 max-w-3xl space-y-4">
             <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="gold" size="sm">Founded in 1988</Badge>
+              <Badge variant="gold" size="sm">Established 2008 – 2009</Badge>
               <Badge variant="outline" size="sm" className="text-crest-200 border-crest-700">
-                IB World School Accredited
+                CBSE Affiliated up to +2 (Senior Secondary)
               </Badge>
+              <Badge variant="gold" size="sm">Mahua, Vaishali (Bihar)</Badge>
             </div>
             <h1 className="font-serif text-3xl sm:text-5xl font-bold text-white tracking-tight">
-              A Tradition of Academic Brilliance & Ethical Leadership
+              A Legacy of Quality Education & Sanskar in Vaishali
             </h1>
             <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-              For over three decades, Oakridge International Academy has stood on the steadfast conviction that education must cultivate not only sharp, agile intellects, but compassionate and morally grounded global citizens.
+              Founded under the visionary patronage of Sri Ram Bachan Singh, R.B.S. Residential Public School has stood as a beacon of learning, moral fortitude, and all-round development for students across Bihar.
             </p>
           </div>
         </div>
 
-        {/* Head of School Feature Section */}
-        <div className="bg-white rounded-3xl p-8 sm:p-12 shadow-card border border-slate-200 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-          <div className="lg:col-span-4 flex flex-col items-center text-center">
-            <div className="relative w-48 h-56 rounded-2xl overflow-hidden shadow-card border-2 border-gold-300 mb-4 bg-slate-900">
-              <img
-                src="/images/principal.jpg"
-                alt="Dr. Eleanor Vance, Principal"
-                className="w-full h-full object-cover object-top"
-              />
+        {/* Leadership Feature Section: Director & Principal */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Director Card */}
+          <div className="bg-white rounded-3xl p-8 sm:p-10 shadow-card border border-slate-200 flex flex-col justify-between space-y-6">
+            <div className="space-y-4">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 rounded-2xl bg-crest-900 text-gold-400 flex items-center justify-center font-serif text-2xl font-bold border-2 border-gold-400">
+                  RBS
+                </div>
+                <div>
+                  <span className="text-xs uppercase font-bold tracking-widest text-gold-600">Founder & Director</span>
+                  <h3 className="font-serif text-2xl font-bold text-slate-900">Sri Ram Bachan Singh</h3>
+                  <p className="text-xs text-slate-500">R.B.S. Residential Public School</p>
+                </div>
+              </div>
+              <p className="text-slate-600 text-sm sm:text-base leading-relaxed italic border-l-2 border-gold-400 pl-4">
+                "Our guiding motto has always been 'Fulfilling dreams, one at a time.' We established this institution to provide rural and semi-urban youth with education that equals the finest national standards, infusing scientific inquiry with cultural values."
+              </p>
+              <p className="text-slate-600 text-sm leading-relaxed">
+                Under his leadership, R.B.S. has grown from a humble beginning into a premier Senior Secondary CBSE institution with cutting-edge laboratories, dedicated residential hostels, and an expansive bus network.
+              </p>
             </div>
-            <h3 className="font-serif text-xl font-bold text-slate-900">Dr. Eleanor Vance, Ph.D.</h3>
-            <p className="text-xs font-semibold text-crest-700 uppercase tracking-wide">Head of School & Principal</p>
-            <p className="text-xs text-slate-400 mt-0.5">Ph.D. Educational Leadership, Harvard University</p>
+            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+              <span>Mahua Campus, Vaishali</span>
+              <span className="font-semibold text-crest-700">Patepur Road, Mahua</span>
+            </div>
           </div>
 
-          <div className="lg:col-span-8 space-y-4 text-slate-600 text-sm sm:text-base leading-relaxed border-t lg:border-t-0 lg:border-l border-slate-100 lg:pl-10 pt-6 lg:pt-0">
-            <span className="text-xs uppercase font-bold tracking-widest text-gold-600">Executive Welcome</span>
-            <h3 className="font-serif text-2xl sm:text-3xl font-bold text-slate-900 leading-snug">
-              "Igniting Purpose and Integrity in Every Scholar"
-            </h3>
-            <p>
-              Welcome to Oakridge. Here, our 40-acre campus is alive with intellectual curiosity. Whether students are conducting genetic CRISPR research, performing classical concertos in our auditorium, or debating international policy in model plenary sessions, they do so supported by master educators who know and mentor them as individuals.
-            </p>
-            <p>
-              We believe true education is transformative. It teaches young men and women to question critically, act courageously, and lead with empathy.
-            </p>
-            <div className="pt-2 flex items-center gap-4">
+          {/* Principal Card */}
+          <div className="bg-white rounded-3xl p-8 sm:p-10 shadow-card border border-slate-200 flex flex-col justify-between space-y-6">
+            <div className="space-y-4">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 rounded-2xl bg-crest-900 text-gold-400 flex items-center justify-center font-serif text-2xl font-bold border-2 border-gold-400">
+                  TS
+                </div>
+                <div>
+                  <span className="text-xs uppercase font-bold tracking-widest text-gold-600">Principal</span>
+                  <h3 className="font-serif text-2xl font-bold text-slate-900">Mr. Tribhuwan Singh</h3>
+                  <p className="text-xs text-slate-500">M.A., B.Ed. • Head of Institution</p>
+                </div>
+              </div>
+              <p className="text-slate-600 text-sm sm:text-base leading-relaxed italic border-l-2 border-crest-700 pl-4">
+                "Education is not merely the accumulation of facts; it is the ignition of character, intellectual independence, and empathy. At RBSRPS, we walk beside every student on their personal journey to excellence."
+              </p>
+              <p className="text-slate-600 text-sm leading-relaxed">
+                With a passion for innovative pedagogy and student discipline, Mr. Singh ensures that every pupil receives individualized attention, robust board exam preparation, and vibrant co-curricular exposure.
+              </p>
+            </div>
+            <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
               <Link to="/principal">
                 <Button variant="primary" size="sm" rightIcon={<ArrowRight className="w-3.5 h-3.5" />}>
-                  Read Full Principal's Welcome
+                  Read Principal's Full Address
                 </Button>
               </Link>
               <Link to="/faculty">
                 <Button variant="ghost" size="sm">
-                  Meet Our Faculty Directory
+                  View Faculty
                 </Button>
               </Link>
             </div>
+          </div>
+        </div>
+
+        {/* Vision & Mission Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="bg-gradient-to-br from-crest-900 to-crest-950 text-white rounded-3xl p-8 sm:p-10 shadow-card border border-crest-800 space-y-4">
+            <div className="w-12 h-12 rounded-xl bg-gold-400/20 text-gold-400 flex items-center justify-center">
+              <Compass className="w-6 h-6" />
+            </div>
+            <span className="text-xs uppercase font-bold tracking-widest text-gold-400">Our Vision</span>
+            <h3 className="font-serif text-2xl font-bold text-white">Inspiring Excellence & Nation Building</h3>
+            <p className="text-slate-300 text-sm leading-relaxed">
+              To evolve as a center of educational excellence that empowers young learners with critical thinking, ethical grounding, and scientific capability, enabling them to excel globally while remaining steadfastly anchored in Indian heritage and values.
+            </p>
+          </div>
+
+          <div className="bg-white rounded-3xl p-8 sm:p-10 shadow-card border border-slate-200 space-y-4">
+            <div className="w-12 h-12 rounded-xl bg-crest-50 text-crest-700 flex items-center justify-center">
+              <Award className="w-6 h-6" />
+            </div>
+            <span className="text-xs uppercase font-bold tracking-widest text-crest-700">Our Mission</span>
+            <h3 className="font-serif text-2xl font-bold text-slate-900">Holistic Formation of the Child</h3>
+            <p className="text-slate-600 text-sm leading-relaxed">
+              To deliver experiential, activity-based CBSE education, foster a secure residential and day-schooling environment, nurture physical and emotional wellness, and instill lifelong values of truth, perseverance, and social service.
+            </p>
           </div>
         </div>
 
         {/* Core Pillars */}
         <div className="space-y-8">
           <div className="text-center max-w-2xl mx-auto space-y-2">
-            <Badge variant="primary" size="sm">Our Guiding Virtues</Badge>
-            <h2 className="font-serif text-3xl font-bold text-slate-900">The Four Pillars of Oakridge</h2>
-            <p className="text-slate-600 text-sm">The foundational virtues that guide our pedagogical framework.</p>
+            <Badge variant="primary" size="sm">Guiding Pillars</Badge>
+            <h2 className="font-serif text-3xl font-bold text-slate-900">The Four Pillars of RBSRPS</h2>
+            <p className="text-slate-600 text-sm">The foundational strengths that distinguish our campus experience.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {[
               {
                 icon: BookOpen,
-                title: 'Academic Rigor',
-                desc: 'Pursuing intellectual excellence with relentless curiosity, discipline, and scholarly integrity.',
+                title: 'CBSE Curriculum Excellence',
+                desc: 'Comprehensive syllabus delivery from Nursery to Class 12 (+2 Science, Commerce, and Arts) with strong board exam focus.',
               },
               {
                 icon: Shield,
-                title: 'Moral Character',
-                desc: 'Cultivating honesty, accountability, and the moral courage to advocate for truth and social justice.',
+                title: 'Moral Values & Sanskar',
+                desc: 'Instilling discipline, mutual respect, patriotism, and traditional Indian cultural ethos in daily school life.',
               },
               {
-                icon: Compass,
-                title: 'Global Vision',
-                desc: 'Embracing multicultural viewpoints, foreign language immersion, and active ecological stewardship.',
+                icon: Building,
+                title: 'Residential Care & Boarding',
+                desc: 'Clean, supervised separate hostels for boys and girls with nutritious food, evening study hours, and sports coaching.',
               },
               {
-                icon: Heart,
-                title: 'Empathetic Service',
-                desc: 'Fostering compassion through mandatory 100+ hours of sustained community service and outreach.',
+                icon: Sparkles,
+                title: 'Modern Infrastructure',
+                desc: 'Smart digital classrooms, high-tech Science & Computer laboratories, rich library, and fleet of safe GPS-tracked school buses.',
               },
             ].map((pillar, idx) => {
               const Icon = pillar.icon;
@@ -147,71 +199,71 @@ export const AboutPage: React.FC = () => {
         {/* Milestone Timeline */}
         <div className="bg-white p-8 sm:p-12 rounded-3xl border border-slate-200 shadow-card space-y-8">
           <div className="text-center max-w-2xl mx-auto space-y-2">
-            <h3 className="font-serif text-2xl sm:text-3xl font-bold text-slate-900">Campus Heritage & Milestones</h3>
-            <p className="text-xs sm:text-sm text-slate-500">Over three decades of institutional growth and innovation.</p>
+            <h3 className="font-serif text-2xl sm:text-3xl font-bold text-slate-900">Institutional Heritage & Milestones</h3>
+            <p className="text-xs sm:text-sm text-slate-500">Our journey of sustained educational commitment in Vaishali, Bihar.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 pt-4">
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
-              <span className="font-serif text-2xl font-bold text-crest-800">1988</span>
-              <h5 className="font-bold text-sm text-slate-900">Academy Founded</h5>
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+              <span className="font-serif text-2xl font-bold text-crest-800">2008</span>
+              <h5 className="font-bold text-sm text-slate-900">School Inception</h5>
               <p className="text-xs text-slate-600 leading-relaxed">
-                Established with 65 inaugural scholars and 8 faculty members in historic Founder’s Hall.
+                Founded by Sri Ram Bachan Singh in Mahua with foundational grades and a resolute commitment to quality learning.
               </p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
-              <span className="font-serif text-2xl font-bold text-crest-800">2004</span>
-              <h5 className="font-bold text-sm text-slate-900">IB Accreditation</h5>
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+              <span className="font-serif text-2xl font-bold text-crest-800">2012</span>
+              <h5 className="font-bold text-sm text-slate-900">Campus Expansion</h5>
               <p className="text-xs text-slate-600 leading-relaxed">
-                Authorized as an International Baccalaureate (IB) World School offering the prestigious Diploma.
+                Inauguration of modernized Science Laboratories (Physics, Chemistry, Biology) and Computer Learning Center.
               </p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
-              <span className="font-serif text-2xl font-bold text-crest-800">2016</span>
-              <h5 className="font-bold text-sm text-slate-900">STEM Innovation Wing</h5>
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+              <span className="font-serif text-2xl font-bold text-crest-800">2018</span>
+              <h5 className="font-bold text-sm text-slate-900">CBSE +2 Affiliation</h5>
               <p className="text-xs text-slate-600 leading-relaxed">
-                Opening of the 14,000 sq. ft. robotics and biotechnology research wing.
+                Accredited by CBSE New Delhi up to Senior Secondary (+2) Level for Science and Commerce streams.
               </p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
               <span className="font-serif text-2xl font-bold text-gold-600">2026</span>
-              <h5 className="font-bold text-sm text-slate-900">Global Campus Expansion</h5>
+              <h5 className="font-bold text-sm text-slate-900">Digital Smart Campus</h5>
               <p className="text-xs text-slate-600 leading-relaxed">
-                LEED Gold sustainable campus expansion and international research fellowship center.
+                Deployment of interactive smart boards, expanded residential blocks, and modern sports facilities.
               </p>
             </div>
           </div>
         </div>
 
-        {/* Accreditations & Honors */}
+        {/* Accreditations & Key Information */}
         <div className="bg-crest-950 text-white rounded-3xl p-8 sm:p-12 text-center space-y-6 border border-crest-900">
-          <span className="text-xs uppercase font-bold tracking-widest text-gold-400">Accreditations & Global Honors</span>
+          <span className="text-xs uppercase font-bold tracking-widest text-gold-400">Affiliation & Key Information</span>
           <h2 className="font-serif text-2xl sm:text-3xl font-bold max-w-xl mx-auto">
-            Internationally Certified Standards of Academic Excellence
+            Recognized by CBSE New Delhi & Government Authorities
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-4 max-w-4xl mx-auto text-xs sm:text-sm text-slate-300">
             <div className="bg-white/5 border border-white/10 rounded-2xl p-5 flex flex-col items-center">
               <Award className="w-6 h-6 text-gold-400 mb-2" />
-              <span className="font-bold text-white">IB World School</span>
-              <span className="text-[11px] text-slate-400">Diploma & Middle Years</span>
+              <span className="font-bold text-white">CBSE Affiliated</span>
+              <span className="text-[11px] text-slate-400">Senior Secondary (+2)</span>
             </div>
             <div className="bg-white/5 border border-white/10 rounded-2xl p-5 flex flex-col items-center">
               <Shield className="w-6 h-6 text-crest-400 mb-2" />
-              <span className="font-bold text-white">Cognia Accredited</span>
-              <span className="text-[11px] text-slate-400">Quality Assured</span>
+              <span className="font-bold text-white">Co-Educational</span>
+              <span className="text-[11px] text-slate-400">Pre-Primary to 12th</span>
             </div>
             <div className="bg-white/5 border border-white/10 rounded-2xl p-5 flex flex-col items-center">
               <Building className="w-6 h-6 text-emerald-400 mb-2" />
-              <span className="font-bold text-white">NAIS Member</span>
-              <span className="text-[11px] text-slate-400">National Association</span>
+              <span className="font-bold text-white">Residential Hostel</span>
+              <span className="text-[11px] text-slate-400">Boys & Girls Boarding</span>
             </div>
             <div className="bg-white/5 border border-white/10 rounded-2xl p-5 flex flex-col items-center">
               <Users className="w-6 h-6 text-sky-400 mb-2" />
-              <span className="font-bold text-white">AP Capstone</span>
-              <span className="text-[11px] text-slate-400">College Board Certified</span>
+              <span className="font-bold text-white">Safe Bus Fleet</span>
+              <span className="text-[11px] text-slate-400">Covering Mahua & Vaishali</span>
             </div>
           </div>
         </div>

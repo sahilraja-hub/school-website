@@ -59,28 +59,28 @@ export const AdmissionsPage: React.FC = () => {
     dateOfBirth: '2012-05-15',
     gender: 'FEMALE',
     bloodGroup: 'O+',
-    nationality: 'United States',
+    nationality: 'Indian',
     // 2. Parent Information
     parentName: '',
-    parentRelationship: 'Parent / Mother',
+    parentRelationship: 'Parent / Father',
     parentEmail: '',
     parentPhone: '',
-    parentOccupation: 'Software Architect',
+    parentOccupation: 'Business / Professional',
     // 3. Address
     address: '',
-    city: 'Cambridge',
-    state: 'MA',
-    postalCode: '02138',
-    country: 'United States',
+    city: 'Mahua',
+    state: 'Bihar',
+    postalCode: '844122',
+    country: 'India',
     // 4. Previous School
     previousSchool: '',
     previousGrade: 'Grade 8',
-    previousGpa: '3.9',
+    previousGpa: '8.8 CGPA',
     transferCertificateNumber: '',
     // 5. Class Requested & Contact Details
     gradeApplyingFor: 'GRADE_9' as GradeLevel,
     academicYear: '2026-2027',
-    streamOrTrack: 'STEM & Robotics Focus',
+    streamOrTrack: 'CBSE Science Stream (PCM/PCB)',
     emergencyContact: '',
     alternatePhone: '',
     // 6. Documents & Notes
@@ -344,7 +344,7 @@ export const AdmissionsPage: React.FC = () => {
           status: 'APPROVED',
           submittedAt: '2026-09-10T09:00:00Z',
           updatedAt: '2026-09-22T16:00:00Z',
-          notes: 'Accepted for Fall 2026 cohort. Welcome to Oakridge Academy!',
+          notes: 'Accepted for Session 2026-2027 cohort. Welcome to R.B.S. Residential Public School!',
         });
       } else if (upper === 'ADM-2026-1150') {
         setTrackingResult({
@@ -369,7 +369,7 @@ export const AdmissionsPage: React.FC = () => {
           enrolledStudentId: 'STU-2026-8812',
           submittedAt: '2026-09-02T08:30:00Z',
           updatedAt: '2026-09-25T10:00:00Z',
-          notes: 'Officially enrolled in Oakridge High School Class 10-A.',
+          notes: 'Officially enrolled in R.B.S. Public School Class 10-A.',
         });
       } else {
         setTrackingError(
@@ -440,9 +440,9 @@ export const AdmissionsPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8 text-left">
       <SEO
-        title="Admissions & Online Candidate Application 2026-2027"
-        description="Comprehensive admission guide, eligibility matrix, required documents, and online application portal for Oakridge International Academy."
-        keywords="Oakridge admissions, apply online, school application status, tuition fees, scholarships 2026, grade eligibility"
+        title="Admissions & Online Registration 2026-2027 — R.B.S. Residential Public School"
+        description="Comprehensive admission guide, eligibility matrix, required documents, and online application portal for R.B.S Residential Public School, Mahua, Vaishali."
+        keywords="RBS School admissions, apply online RBSRPS, school application status, school admission Mahua Vaishali, CBSE registration 2026"
       />
 
       <div className="max-w-5xl mx-auto space-y-8">
@@ -787,8 +787,8 @@ export const AdmissionsPage: React.FC = () => {
                   <span>Character & Dean Interview</span>
                 </div>
                 <p className="text-xs text-slate-600 leading-relaxed">
-                  Oakridge prioritizes integrity, intellectual curiosity, and community service. Candidates selected for Stage 3
-                  participate in a 25-minute conversational dialogue with an Academic Dean to assess academic interests and passions.
+                  R.B.S Residential Public School prioritizes integrity, intellectual curiosity, and moral character. Candidates selected for Stage 3
+                  participate in a conversational dialogue with the Principal or Academic Counselor to assess academic interests and passions.
                 </p>
               </div>
             </div>
@@ -927,7 +927,7 @@ export const AdmissionsPage: React.FC = () => {
                     Application Submitted Successfully!
                   </h3>
                   <p className="text-slate-600 text-sm max-w-md mx-auto">
-                    Thank you for applying to Oakridge International Academy. Our Admissions Committee has securely
+                    Thank you for applying to R.B.S Residential Public School, Mahua. Our Admissions Committee has securely
                     received your credentials and queued your candidate packet for Stage 3 evaluation.
                   </p>
                 </div>
@@ -1767,7 +1767,7 @@ export const AdmissionsPage: React.FC = () => {
                     <div className="flex items-center gap-3">
                       <UserCheck className="w-6 h-6 text-indigo-600 shrink-0" />
                       <div>
-                        <strong>Officially Enrolled as Oakridge Scholar!</strong>
+                        <strong>Officially Enrolled as RBSRPS Scholar!</strong>
                         <div className="text-xs text-indigo-700">
                           Student ID: <span className="font-mono font-bold">{trackingResult.enrolledStudentId || 'STU-2026-ACTIVE'}</span>
                         </div>

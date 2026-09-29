@@ -526,7 +526,7 @@ describe('PHASE 16 — Media and Gallery Management Frontend Test Suite', () => 
       );
 
       await waitFor(() => {
-        expect(screen.getByText(/a glimpse into the oakridge experience/i)).toBeInTheDocument();
+        expect(screen.getByText(/a glimpse into the (oakridge|r\.b\.s\.) experience/i)).toBeInTheDocument();
       });
 
       expect(screen.getByText('Founder Hall Clock Tower')).toBeInTheDocument();

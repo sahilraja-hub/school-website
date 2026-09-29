@@ -136,11 +136,11 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
         <div className="flex h-18 items-center border-b border-navy-800 px-6">
           <div className="flex items-center space-x-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gold-500/15 border border-gold-500/30 text-gold-400 font-serif font-bold text-xl shadow-inner">
-              O
+              R
             </div>
             <div>
               <h2 className="font-serif text-sm font-bold tracking-tight text-white">
-                Oakridge Academy
+                R.B.S Public School
               </h2>
               <div className="flex items-center space-x-1.5">
                 <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400" />

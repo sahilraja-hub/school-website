@@ -247,7 +247,7 @@ describe('Phase 12 — Student Portal UI & Section Suite', () => {
       });
 
       // Verify academy brand & user greeting
-      expect(screen.getAllByText(/OAKRIDGE/i).length).toBeGreaterThan(0);
+      expect(screen.getAllByText(/RBSRPS|OAKRIDGE|R\.B\.S/i).length).toBeGreaterThan(0);
       expect(screen.getAllByText(/Scholar Portal/i).length).toBeGreaterThan(0);
       expect(screen.getByTestId('student-overview-section')).toBeInTheDocument();
     });

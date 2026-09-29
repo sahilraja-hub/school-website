@@ -216,9 +216,9 @@ export const NoticesPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8 text-left">
       <SEO
-        title="Official School Notices & Circulars"
-        description="View official notices, academic circulars, examination schedules, and community alerts from Oakridge International Academy."
-        keywords="Oakridge notices, school circulars, exam schedule, academic announcements"
+        title="Official Notices & Circulars — R.B.S Residential Public School"
+        description="View official notices, academic circulars, CBSE examination schedules, holiday calendars, and alerts from R.B.S Residential Public School, Mahua, Vaishali."
+        keywords="RBS School notices, RBSRPS circulars, CBSE exam schedule Mahua, school announcements Vaishali"
       />
 
       <div className="max-w-6xl mx-auto space-y-10">

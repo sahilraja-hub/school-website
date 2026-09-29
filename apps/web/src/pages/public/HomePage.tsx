@@ -21,6 +21,8 @@ import {
   Mail,
   Camera,
   Trophy,
+  Bus,
+  Home,
 } from 'lucide-react';
 import {
   Badge,
@@ -51,19 +53,19 @@ export const HomePage: React.FC = () => {
           setAnnouncements([
             {
               id: '1',
-              title: 'Admissions Cycle 2026-2027: Early Action Deadlines & Registration',
-              content: 'Early Action scholarship consideration closes on November 1st, 2026. Submit required transcripts via the admissions portal.',
+              title: 'Admissions Open for Session 2026-2027: Pre-Primary to Class XII',
+              content: 'Online registration for the upcoming academic session is now live. Parents can register online or visit our school campus on Patepur Road, Mahua.',
               category: 'URGENT',
               isPinned: true,
               authorId: 'admin1',
-              authorName: 'Office of the Registrar',
+              authorName: 'R.B.S Admissions Office',
               targetRoles: ['ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
               publishDate: new Date().toISOString(),
             },
             {
               id: '2',
-              title: 'Fall Semester Mid-Term Examination Schedule Released',
-              content: 'The official schedule for mid-term assessments is now published on student and parent portals. Please review examination venues.',
+              title: 'CBSE Pre-Board Examination Timetable & Revision Modules Released',
+              content: 'Class X and Class XII CBSE pre-board evaluation timetable is now published. Examination hall admit cards are accessible via the Student Portal.',
               category: 'ACADEMIC',
               isPinned: true,
               authorId: 'admin2',
@@ -73,12 +75,12 @@ export const HomePage: React.FC = () => {
             },
             {
               id: '3',
-              title: 'Annual STEM & Robotics Innovation Expo 2026',
-              content: 'Over 40 student-led research initiatives, competitive AI models, and robotics demonstrations will be showcased in the Grand Hall.',
+              title: 'Annual Sports & Cultural Meet 2026 at R.B.S Campus Grounds',
+              content: 'Inter-house athletic competitions, track races, and cultural recitals will be celebrated across our main sports pavilion.',
               category: 'EVENT',
               isPinned: false,
               authorId: 'teacher1',
-              authorName: 'Sarah Montgomery',
+              authorName: 'Sports Department',
               targetRoles: ['ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
               publishDate: new Date(Date.now() - 172800000).toISOString(),
             },
@@ -95,9 +97,9 @@ export const HomePage: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen text-left">
       <SEO
-        title="Excellence in Global Preparatory Education"
-        description="Oakridge International Academy is a premier college-preparatory institution in Cambridge. Empowering Kindergarten through Grade 12 scholars through IB & AP Capstone curricula, world-class STEM discovery, and ethical leadership."
-        keywords="Oakridge International Academy, preparatory school, IB world school, Cambridge campus, private school admissions 2026, AP capstone"
+        title="R.B.S Residential Public School, Mahua | Top CBSE School in Vaishali"
+        description="R.B.S Residential Public School (RBSRPS), Patepur Road, Mahua, Vaishali, Bihar. Affiliated to CBSE New Delhi (+2 Level). Est. 2008. Dedicated to fulfilling dreams, one at a time."
+        keywords="R.B.S Residential Public School, RBSRPS Mahua, Best CBSE school in Mahua, Top School in Vaishali, Bihar CBSE school, school with hostel Mahua"
       />
 
       {/* 1. HERO SECTION */}
@@ -106,7 +108,7 @@ export const HomePage: React.FC = () => {
         <div className="absolute inset-0 z-0">
           <img
             src="/images/campus-hero.jpg"
-            alt="Oakridge International Academy Campus Quad and Historic Clock Tower"
+            alt="R.B.S Residential Public School Mahua Campus Grounds"
             className="w-full h-full object-cover object-center opacity-45 scale-105 transform hover:scale-100 transition-transform duration-1000 ease-out"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/85 to-transparent" />
@@ -117,18 +119,18 @@ export const HomePage: React.FC = () => {
           <div className="max-w-3xl space-y-6">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-crest-600/30 border border-crest-400/30 text-crest-300 text-xs sm:text-sm font-medium backdrop-blur-md">
               <Sparkles className="w-4 h-4 text-gold-400" />
-              <span>Admissions for 2026-2027 Academic Year Are Open</span>
+              <span>Admissions Open For Session 2026-2027 (Pre-Primary to +2)</span>
             </div>
 
             <h1 className="font-serif text-4xl sm:text-6xl font-bold tracking-tight text-white leading-tight">
-              Where Curious Minds Become{' '}
+              Fulfilling Dreams,{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-crest-400 via-sky-300 to-gold-400">
-                Global Leaders
+                One at a Time
               </span>.
             </h1>
 
             <p className="text-base sm:text-lg text-slate-300 leading-relaxed font-light">
-              Oakridge International Academy unites rigorous International Baccalaureate & AP Capstone academics, cutting-edge STEM discovery, and moral leadership to empower scholars from Kindergarten through Grade 12.
+              Welcome to <strong>R.B.S Residential Public School (RBSRPS)</strong>, one of the premier CBSE institutions in Mahua, Vaishali. Since 2008, we have nurtured inquiring minds with academic rigor, Indian moral values, digital smart classrooms, and safe residential hostel facilities.
             </p>
 
             <div className="flex flex-wrap items-center gap-4 pt-4">
@@ -138,7 +140,7 @@ export const HomePage: React.FC = () => {
                   size="lg"
                   rightIcon={<ArrowRight className="w-4 h-4" />}
                 >
-                  Apply for Admission
+                  Online Admission Form
                 </Button>
               </Link>
               <Link to="/academics">
@@ -147,7 +149,7 @@ export const HomePage: React.FC = () => {
                   size="lg"
                   className="text-white border-white/30 bg-white/10 hover:bg-white/20 backdrop-blur-md"
                 >
-                  Explore Academic Pathways
+                  Explore CBSE Curriculum
                 </Button>
               </Link>
             </div>
@@ -155,16 +157,16 @@ export const HomePage: React.FC = () => {
             {/* Quick Badges */}
             <div className="pt-8 border-t border-slate-800/80 flex flex-wrap items-center gap-6 text-xs sm:text-sm text-slate-300">
               <div className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-gold-400" />
-                <span>Top 1% Global IB School</span>
+                <Award className="w-4 h-4 text-gold-400" />
+                <span>Affiliated to CBSE, New Delhi (+2 Level)</span>
               </div>
               <div className="flex items-center gap-2">
-                <Globe2 className="w-4 h-4 text-crest-400" />
-                <span>38+ Student Nationalities</span>
+                <Home className="w-4 h-4 text-crest-400" />
+                <span>Separate Boys & Girls Hostel</span>
               </div>
               <div className="flex items-center gap-2">
-                <Award className="w-4 h-4 text-emerald-400" />
-                <span>100% University Acceptance</span>
+                <Bus className="w-4 h-4 text-emerald-400" />
+                <span>Dedicated Safe Bus Fleet</span>
               </div>
             </div>
           </div>
@@ -176,19 +178,19 @@ export const HomePage: React.FC = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-white rounded-3xl shadow-elevated p-6 sm:p-8 border border-slate-200">
           <div className="flex flex-col items-center sm:items-start p-2">
             <span className="font-serif text-3xl sm:text-4xl font-extrabold text-crest-800">100%</span>
-            <span className="text-xs sm:text-sm font-medium text-slate-500 mt-1">University Matriculation</span>
+            <span className="text-xs sm:text-sm font-medium text-slate-500 mt-1">CBSE Board Success Rate</span>
           </div>
           <div className="flex flex-col items-center sm:items-start p-2 border-l border-slate-100">
-            <span className="font-serif text-3xl sm:text-4xl font-extrabold text-crest-800">1 : 8</span>
-            <span className="text-xs sm:text-sm font-medium text-slate-500 mt-1">Faculty-to-Scholar Ratio</span>
+            <span className="font-serif text-3xl sm:text-4xl font-extrabold text-crest-800">18+</span>
+            <span className="text-xs sm:text-sm font-medium text-slate-500 mt-1">Years of Legacy (Est. 2008)</span>
           </div>
           <div className="flex flex-col items-center sm:items-start p-2 border-l border-slate-100">
-            <span className="font-serif text-3xl sm:text-4xl font-extrabold text-crest-800">35+</span>
-            <span className="text-xs sm:text-sm font-medium text-slate-500 mt-1">AP & IB Capstone Courses</span>
+            <span className="font-serif text-3xl sm:text-4xl font-extrabold text-crest-800">Nursery to +2</span>
+            <span className="text-xs sm:text-sm font-medium text-slate-500 mt-1">Science, Commerce & Arts</span>
           </div>
           <div className="flex flex-col items-center sm:items-start p-2 border-l border-slate-100">
-            <span className="font-serif text-3xl sm:text-4xl font-extrabold text-gold-600">$4.2M</span>
-            <span className="text-xs sm:text-sm font-medium text-slate-500 mt-1">Annual Merit Scholarships</span>
+            <span className="font-serif text-3xl sm:text-4xl font-extrabold text-gold-600">Smart Labs</span>
+            <span className="text-xs sm:text-sm font-medium text-slate-500 mt-1">Digital Classrooms & Science Labs</span>
           </div>
         </div>
       </section>
@@ -197,12 +199,12 @@ export const HomePage: React.FC = () => {
       <section className="py-20 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="text-center max-w-3xl mx-auto space-y-3">
-            <Badge variant="primary" size="sm">Our Founding Heritage Since 1988</Badge>
+            <Badge variant="primary" size="sm">Our Founding Legacy (Est. 2008 – 2009)</Badge>
             <h2 className="font-serif text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">
-              An Educational Legacy Rooted in Excellence & Integrity
+              Welcome to R.B.S Residential Public School, Mahua
             </h2>
             <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-              For over three decades, Oakridge International Academy has stood as a beacon of scholastic rigor and moral character, cultivating inquisitive scholars who lead with purposeful empathy.
+              Every parent aspires to provide high quality education for their children, and choosing the right school is vital. At R.B.S, we build a culture of diligence, sincerity, and accountability to foster lifelong passion for learning.
             </p>
           </div>
 
@@ -215,12 +217,12 @@ export const HomePage: React.FC = () => {
                 </div>
                 <h3 className="font-serif text-2xl font-bold text-slate-900">Our Vision</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  To be globally recognized as the benchmark institution for holistic education—where intellectual mastery, compassionate ethics, and creative innovation empower young minds to shape humanity’s greatest frontiers.
+                  To emerge as a school which not only imbibes new ideas and knowledge among talented young minds but also sensitizes them towards social responsibilities they have as young citizens of India.
                 </p>
               </div>
               <div className="pt-6 border-t border-slate-100 mt-6 flex items-center gap-2 text-xs font-semibold text-crest-700">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                <span>Global Consciousness • Moral Courage • Scientific Truth</span>
+                <span>Leadership Qualities • Indian Values • Excellence-Oriented Learning</span>
               </div>
             </Card>
 
@@ -232,19 +234,19 @@ export const HomePage: React.FC = () => {
                 </div>
                 <h3 className="font-serif text-2xl font-bold text-slate-900">Our Mission</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  We empower a diverse community of lifelong learners through individualized academic mentorship, university-grade research opportunities, and vibrant artistic expression, cultivating leaders equipped to solve complex global challenges.
+                  To nurture the enormous talent of students by providing an inspiring ambience where they strive with diligence and dedication, equipped with strength and modern skills to thrive in a competitive world.
                 </p>
               </div>
               <div className="pt-6 border-t border-slate-100 mt-6 flex items-center gap-2 text-xs font-semibold text-gold-700">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                <span>Intellectual Rigor • Inclusivity • Civic Responsibility</span>
+                <span>Quality Education • Intellectual Empowerment • Transparent Governance</span>
               </div>
             </Card>
           </div>
         </div>
       </section>
 
-      {/* 4. PRINCIPAL'S MESSAGE PREVIEW */}
+      {/* 4. PRINCIPAL & DIRECTOR'S MESSAGE PREVIEW */}
       <section className="py-20 bg-white border-t border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
@@ -255,12 +257,13 @@ export const HomePage: React.FC = () => {
                 <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-slate-200 bg-slate-900">
                   <img
                     src="/images/principal.jpg"
-                    alt="Dr. Eleanor Vance, Principal of Oakridge International Academy"
+                    alt="Mr. Tribhuwan Singh, Principal of R.B.S Residential Public School"
                     className="w-full h-96 sm:h-[450px] object-cover object-top"
                   />
                   <div className="p-4 bg-slate-950/90 text-white border-t border-slate-800 text-left">
-                    <h4 className="font-serif text-base font-bold">Dr. Eleanor Vance, Ph.D.</h4>
-                    <p className="text-xs text-gold-400">Head of School & Executive Principal</p>
+                    <h4 className="font-serif text-base font-bold">Mr. Tribhuwan Singh</h4>
+                    <p className="text-xs text-gold-400">Principal & Academic Head</p>
+                    <p className="text-[11px] text-slate-400 mt-0.5">R.B.S Residential Public School, Mahua</p>
                   </div>
                 </div>
               </div>
@@ -269,25 +272,30 @@ export const HomePage: React.FC = () => {
             {/* Message Column */}
             <div className="lg:col-span-7 space-y-6">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold-100 text-gold-800 text-xs font-bold uppercase tracking-wider">
-                <Quote className="w-3.5 h-3.5" /> Welcome from the Principal
+                <Quote className="w-3.5 h-3.5" /> Leadership Perspective
               </div>
 
               <h2 className="font-serif text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight leading-snug">
-                "We do not merely prepare students for university; we prepare them for a life of purpose."
+                "Where we fulfill dreams, one at a time."
               </h2>
 
               <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-                Welcome to Oakridge. In an era marked by rapid technological and societal change, the true measure of education lies in cultivating resilient intellect, moral discernment, and the courage to advocate for positive progress.
+                "I take immense pleasure in welcoming you all to R.B.S Mahua, an educational institution that strives to make every child an active learner and a responsible global citizen. We ensure children grow up in a safe, sound, and disciplined academic environment."
               </p>
 
-              <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-                Our faculty of distinguished researchers and master educators partner closely with every family to ensure scholars discover their distinctive passions—whether in theoretical physics, orchestral performance, or social entrepreneurship.
-              </p>
+              <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-700 space-y-2">
+                <p>
+                  <strong>Director's Address (Sri Ram Bachan Singh):</strong> "As we join hands in this noble journey, our pedagogical team is committed to providing an environment that empowers students to explore, grow, and fly higher."
+                </p>
+                <p className="text-slate-500 italic">
+                  Managing Director: Mr. Om Narayan
+                </p>
+              </div>
 
               <div className="pt-2 flex flex-wrap items-center gap-4">
                 <Link to="/principal">
                   <Button variant="primary" rightIcon={<ArrowRight className="w-4 h-4" />}>
-                    Read Dr. Vance's Full Message
+                    Read Full Messages
                   </Button>
                 </Link>
                 <Link to="/about">
@@ -301,16 +309,16 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 5. ACADEMIC DIVISIONS & STEM INNOVATION */}
+      {/* 5. ACADEMIC CONTINUUM & CBSE CURRICULUM */}
       <section className="py-20 bg-slate-50 border-t border-slate-200/70">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
           <div className="text-center max-w-3xl mx-auto space-y-3">
-            <span className="text-xs uppercase font-bold tracking-widest text-crest-600">Academic Continuum</span>
+            <span className="text-xs uppercase font-bold tracking-widest text-crest-600">CBSE Curriculum Pathway</span>
             <h2 className="font-serif text-3xl sm:text-4xl font-bold text-slate-900">
-              Intellectual Journeys Tailored to Every Age
+              Comprehensive Education from Pre-Primary to +2 Level
             </h2>
             <p className="text-slate-600 text-sm sm:text-base">
-              A cohesive K-12 academic pathway fostering foundational curiosity, disciplined inquiry, and scholarly independence.
+              Affiliated to the Central Board of Secondary Education (CBSE), New Delhi, adhering to NCF guidelines.
             </p>
           </div>
 
@@ -319,16 +327,16 @@ export const HomePage: React.FC = () => {
             <Card className="p-8 border-slate-200 hover:shadow-xl transition-all flex flex-col justify-between">
               <div className="space-y-4">
                 <div className="w-12 h-12 rounded-xl bg-crest-100 text-crest-700 flex items-center justify-center font-bold text-lg">
-                  KG-5
+                  NUR-V
                 </div>
-                <h3 className="font-serif text-xl font-bold text-slate-900">Primary Academy</h3>
+                <h3 className="font-serif text-xl font-bold text-slate-900">Pre-Primary & Primary</h3>
                 <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
-                  Focuses on literacy, foundational mathematical reasoning, inquiry-based science, and emotional intelligence in a secure, joyful setting.
+                  Focus on language development, foundational numeracy, environmental awareness, and activity-based learning in a nurturing atmosphere.
                 </p>
               </div>
               <div className="pt-6 border-t border-slate-100 mt-6">
                 <Link to="/academics" className="flex items-center justify-between text-xs sm:text-sm font-semibold text-crest-700 hover:text-crest-900">
-                  <span>Explore Primary Stage</span>
+                  <span>Explore Primary Wing</span>
                   <ChevronRight className="w-4 h-4" />
                 </Link>
               </div>
@@ -338,11 +346,11 @@ export const HomePage: React.FC = () => {
             <Card className="p-8 border-slate-200 hover:shadow-xl transition-all flex flex-col justify-between">
               <div className="space-y-4">
                 <div className="w-12 h-12 rounded-xl bg-gold-100 text-gold-700 flex items-center justify-center font-bold text-lg">
-                  6-8
+                  VI-VIII
                 </div>
                 <h3 className="font-serif text-xl font-bold text-slate-900">Middle School</h3>
                 <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
-                  Deepens analytical writing, advanced algebra, lab science, world languages, and athletic leadership during pivotal developmental years.
+                  Strengthening analytical science, mathematics, computer literacy, social studies, and linguistic proficiency with laboratory practice.
                 </p>
               </div>
               <div className="pt-6 border-t border-slate-100 mt-6">
@@ -357,50 +365,50 @@ export const HomePage: React.FC = () => {
             <Card className="p-8 border-slate-200 hover:shadow-xl transition-all flex flex-col justify-between">
               <div className="space-y-4">
                 <div className="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-lg">
-                  9-12
+                  IX-XII
                 </div>
-                <h3 className="font-serif text-xl font-bold text-slate-900">Senior High & AP/IB</h3>
+                <h3 className="font-serif text-xl font-bold text-slate-900">Secondary & +2 Level</h3>
                 <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
-                  Rigorous AP and IB curriculum, college counseling, capstone thesis defense, and global exchange opportunities that prepare students for world-leading universities.
+                  Rigorous CBSE board preparation across Science (PCM/PCB), Commerce, and Arts streams with career counseling and competitive test guidance.
                 </p>
               </div>
               <div className="pt-6 border-t border-slate-100 mt-6">
                 <Link to="/academics" className="flex items-center justify-between text-xs sm:text-sm font-semibold text-crest-700 hover:text-crest-900">
-                  <span>Explore Senior High</span>
+                  <span>Explore +2 Streams</span>
                   <ChevronRight className="w-4 h-4" />
                 </Link>
               </div>
             </Card>
           </div>
 
-          {/* STEM Lab Feature */}
+          {/* Smart Classrooms & Labs */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-white p-6 sm:p-10 rounded-3xl border border-slate-200 shadow-card">
             <div className="lg:col-span-6 space-y-5">
-              <Badge variant="primary" size="sm">Campus Innovation Center</Badge>
+              <Badge variant="primary" size="sm">Modern Infrastructure</Badge>
               <h3 className="font-serif text-2xl sm:text-3xl font-bold text-slate-900">
-                Pioneering Next-Generation STEM & Robotics
+                Smart Digital Classrooms & Modern Laboratories
               </h3>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                In our newly expanded 14,000 sq. ft. Robotics Innovation Hub and Biotechnology Labs, students build autonomous rovers, engineer clean energy solutions, and conduct collegiate-level scientific inquiry.
+                R.B.S provides aesthetically planned, well-ventilated classrooms with multimedia digital projection, reducing routine classroom monotony and making education exciting.
               </p>
               <div className="space-y-2 text-xs sm:text-sm text-slate-700 font-medium">
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>CRISPR molecular biology and biochemical research suites</span>
+                  <span>Fully equipped Physics, Chemistry, and Biology laboratories</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>Autonomous FIRST Robotics championship arena and CNC shop</span>
+                  <span>Advanced Computer Lab with high-speed internet & coding tools</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>Dual Advanced Placement Capstone and IB Diploma tracks</span>
+                  <span>Separate Residential Hostels for Boys and Girls</span>
                 </div>
               </div>
               <div className="pt-2">
-                <Link to="/academics">
+                <Link to="/facilities">
                   <Button variant="primary" size="sm" rightIcon={<ArrowRight className="w-3.5 h-3.5" />}>
-                    View Complete Curriculum
+                    Explore All Campus Facilities
                   </Button>
                 </Link>
               </div>
@@ -409,7 +417,7 @@ export const HomePage: React.FC = () => {
             <div className="lg:col-span-6 rounded-2xl overflow-hidden shadow-card border border-slate-200">
               <img
                 src="/images/stem-lab.jpg"
-                alt="Students collaborating in Oakridge STEM Lab"
+                alt="R.B.S Science & Computer Lab"
                 className="w-full h-72 sm:h-84 object-cover"
               />
             </div>
@@ -422,9 +430,9 @@ export const HomePage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
             <div>
-              <span className="text-xs uppercase font-bold tracking-widest text-crest-600">Campus Environment</span>
+              <span className="text-xs uppercase font-bold tracking-widest text-crest-600">Campus Facilities</span>
               <h2 className="font-serif text-3xl sm:text-4xl font-bold text-slate-900 mt-1">
-                World-Class Learning Sanctuaries
+                State-of-the-Art Infrastructure in Mahua
               </h2>
             </div>
             <Link to="/facilities">
@@ -440,18 +448,18 @@ export const HomePage: React.FC = () => {
               <div className="h-56 overflow-hidden">
                 <img
                   src="/images/library.jpg"
-                  alt="Alexander Media Library"
+                  alt="R.B.S Central Library"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
               </div>
               <div className="p-6 space-y-2 flex-1 flex flex-col justify-between">
                 <div>
-                  <Badge variant="primary" size="sm">Academic Commons</Badge>
+                  <Badge variant="primary" size="sm">Knowledge Hub</Badge>
                   <h3 className="font-serif text-lg font-bold text-slate-900 mt-2">
-                    Alexander Media Library
+                    Rich Central Library
                   </h3>
                   <p className="text-xs text-slate-600 leading-relaxed mt-1">
-                    Two-story learning commons with 45,000+ catalogued volumes, collaborative pods, and digital research archives.
+                    Vast collection of academic textbooks, reference journals, encyclopedias, and quiet reading areas to foster scholarship.
                   </p>
                 </div>
                 <div className="pt-3 border-t border-slate-200 text-xs font-semibold text-crest-700">
@@ -468,18 +476,18 @@ export const HomePage: React.FC = () => {
               <div className="h-56 overflow-hidden">
                 <img
                   src="/images/athletics.jpg"
-                  alt="Championship Athletic Complex"
+                  alt="Sports & Playgrounds"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
               </div>
               <div className="p-6 space-y-2 flex-1 flex flex-col justify-between">
                 <div>
-                  <Badge variant="success" size="sm">Athletics & Track</Badge>
+                  <Badge variant="success" size="sm">Sports & Physical Fitness</Badge>
                   <h3 className="font-serif text-lg font-bold text-slate-900 mt-2">
-                    Championship Stadium
+                    Athletics & Sports Grounds
                   </h3>
                   <p className="text-xs text-slate-600 leading-relaxed mt-1">
-                    Olympic Mondo blue running track, FIFA-standard turf soccer stadium, and floodlit 2,500-seat grandstand.
+                    Large playgrounds for cricket, football, volleyball, badminton, and yoga sessions promoting active physical health.
                   </p>
                 </div>
                 <div className="pt-3 border-t border-slate-200 text-xs font-semibold text-crest-700">
@@ -496,18 +504,18 @@ export const HomePage: React.FC = () => {
               <div className="h-56 overflow-hidden">
                 <img
                   src="/images/campus-hero.jpg"
-                  alt="Historic Cambridge Quad"
+                  alt="Hostel & Transportation"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
               </div>
               <div className="p-6 space-y-2 flex-1 flex flex-col justify-between">
                 <div>
-                  <Badge variant="gold" size="sm">Campus Grounds</Badge>
+                  <Badge variant="gold" size="sm">Residential & Transit</Badge>
                   <h3 className="font-serif text-lg font-bold text-slate-900 mt-2">
-                    Historic Cambridge Quad
+                    Hostel & Bus Fleet
                   </h3>
                   <p className="text-xs text-slate-600 leading-relaxed mt-1">
-                    Iconic Gothic architecture quad, outdoor amphitheater, clock tower carillon, and sustainable gardens.
+                    Secure residential boarding for outstation scholars and dedicated bus fleet connecting Mahua, Patepur, and Vaishali.
                   </p>
                 </div>
                 <div className="pt-3 border-t border-slate-200 text-xs font-semibold text-crest-700">
@@ -522,68 +530,8 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 7. FACULTY PREVIEW */}
+      {/* 8. LATEST NOTICES & UPCOMING EVENTS */}
       <section className="py-20 bg-slate-50 border-t border-slate-200/70">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
-            <div>
-              <span className="text-xs uppercase font-bold tracking-widest text-crest-600">Faculty Leadership</span>
-              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-slate-900 mt-1">
-                Mentored by World-Class Educators
-              </h2>
-            </div>
-            <Link to="/faculty">
-              <Button variant="outline" size="sm" rightIcon={<ArrowRight className="w-3.5 h-3.5" />}>
-                View Faculty Directory
-              </Button>
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              {
-                name: 'Dr. Arthur Pendelton',
-                role: 'Chair of Advanced Physics',
-                degree: 'Ph.D. MIT',
-                dept: 'STEM',
-              },
-              {
-                name: 'Sarah Montgomery',
-                role: 'Head of Mathematics & Robotics',
-                degree: 'M.S. Princeton',
-                dept: 'STEM',
-              },
-              {
-                name: 'Dr. Marcus Sterling',
-                role: 'Chair of World History',
-                degree: 'Ph.D. Oxford',
-                dept: 'Humanities',
-              },
-              {
-                name: 'Julian Hayes',
-                role: 'Director of Orchestral Arts',
-                degree: 'M.M. Juilliard',
-                dept: 'Fine Arts',
-              },
-            ].map((f, i) => (
-              <Card key={i} className="p-6 border-slate-200 text-center space-y-3">
-                <Avatar name={f.name} size="xl" className="mx-auto" />
-                <div>
-                  <h4 className="font-serif text-base font-bold text-slate-900">{f.name}</h4>
-                  <p className="text-xs text-crest-700 font-medium">{f.role}</p>
-                  <p className="text-[11px] text-slate-400 mt-0.5">{f.degree}</p>
-                </div>
-                <Badge variant="outline" size="sm" className="mx-auto">
-                  {f.dept}
-                </Badge>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 8. LATEST NOTICES & UPCOMING EVENTS (COMBINED INTELLIGENCE HUB) */}
-      <section className="py-20 bg-white border-t border-slate-200/70">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
             {/* Notices Column */}
@@ -600,7 +548,7 @@ export const HomePage: React.FC = () => {
 
               <div className="space-y-4">
                 {announcements.map((n) => (
-                  <div key={n.id} className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2 hover:border-crest-300 transition-colors">
+                  <div key={n.id} className="p-5 rounded-2xl bg-white border border-slate-200 space-y-2 hover:border-crest-300 transition-colors">
                     <div className="flex items-center justify-between text-xs">
                       <Badge variant={n.category === 'URGENT' ? 'danger' : 'primary'} size="sm">
                         {n.category}
@@ -619,7 +567,7 @@ export const HomePage: React.FC = () => {
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div>
                   <span className="text-xs uppercase font-bold tracking-widest text-crest-600">Calendar</span>
-                  <h3 className="font-serif text-2xl font-bold text-slate-900 mt-0.5">Upcoming Dates</h3>
+                  <h3 className="font-serif text-2xl font-bold text-slate-900 mt-0.5">Important Dates</h3>
                 </div>
                 <Link to="/events" className="text-xs font-semibold text-crest-700 hover:underline">
                   Full Calendar →
@@ -629,25 +577,25 @@ export const HomePage: React.FC = () => {
               <div className="space-y-4">
                 {[
                   {
+                    day: '15',
+                    month: 'OCT',
+                    title: 'Parent-Teacher Meeting (PTM)',
+                    time: '9:30 AM IST',
+                    loc: 'Main School Auditorium',
+                  },
+                  {
+                    day: '28',
+                    month: 'OCT',
+                    title: 'Diwali & Chhath Puja Celebration',
+                    time: '10:00 AM IST',
+                    loc: 'R.B.S Campus Quad',
+                  },
+                  {
                     day: '14',
-                    month: 'OCT',
-                    title: 'Admissions Open House & Forum',
-                    time: '9:00 AM PST',
-                    loc: 'Founder’s Hall',
-                  },
-                  {
-                    day: '22',
-                    month: 'OCT',
-                    title: 'Regional Robotics Invitational',
-                    time: '10:00 AM PST',
-                    loc: 'STEM Center',
-                  },
-                  {
-                    day: '05',
                     month: 'NOV',
-                    title: 'Philharmonia Gala Concert',
-                    time: '7:00 PM PST',
-                    loc: 'Auditorium',
+                    title: 'Children’s Day & Science Exhibition',
+                    time: '8:30 AM IST',
+                    loc: 'Science & Computer Labs',
                   },
                 ].map((e, idx) => (
                   <div key={idx} className="flex items-center gap-4 p-4 rounded-2xl bg-white border border-slate-200 shadow-subtle hover:border-gold-300 transition-colors">
@@ -667,82 +615,20 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 9. PHOTO GALLERY PREVIEW */}
-      <section className="py-20 bg-slate-50 border-t border-slate-200/70">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
-            <div>
-              <span className="text-xs uppercase font-bold tracking-widest text-crest-600">Visual Chronicle</span>
-              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-slate-900 mt-1">
-                Life on the Cambridge Grounds
-              </h2>
-            </div>
-            <Link to="/gallery">
-              <Button variant="outline" size="sm" rightIcon={<ArrowRight className="w-3.5 h-3.5" />}>
-                View Complete Gallery
-              </Button>
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Link to="/gallery" className="group relative rounded-2xl overflow-hidden shadow-subtle h-60">
-              <img
-                src="/images/campus-hero.jpg"
-                alt="Historic Quad"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold">
-                Historic Quad →
-              </div>
-            </Link>
-            <Link to="/gallery" className="group relative rounded-2xl overflow-hidden shadow-subtle h-60">
-              <img
-                src="/images/stem-lab.jpg"
-                alt="Genetics Lab"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold">
-                STEM Lab →
-              </div>
-            </Link>
-            <Link to="/gallery" className="group relative rounded-2xl overflow-hidden shadow-subtle h-60">
-              <img
-                src="/images/library.jpg"
-                alt="Media Commons"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold">
-                Alexander Library →
-              </div>
-            </Link>
-            <Link to="/gallery" className="group relative rounded-2xl overflow-hidden shadow-subtle h-60">
-              <img
-                src="/images/athletics.jpg"
-                alt="Championship Track"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold">
-                Athletics Complex →
-              </div>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* 10. ADMISSIONS CTA BANNER */}
+      {/* 9. ADMISSIONS CTA BANNER */}
       <section className="bg-gradient-to-r from-crest-950 via-crest-900 to-slate-950 text-white py-20 border-t border-crest-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
-          <Badge variant="gold" size="sm">Admissions Open For 2026-2027</Badge>
+          <Badge variant="gold" size="sm">Admissions Open For Session 2026-2027</Badge>
           <h2 className="font-serif text-3xl sm:text-5xl font-bold max-w-2xl mx-auto leading-tight">
-            Begin Your Scholar's Extraordinary Journey Today
+            Enroll in R.B.S Residential Public School Today
           </h2>
           <p className="text-slate-300 max-w-xl mx-auto text-sm sm:text-base font-light leading-relaxed">
-            Submit your online candidate application in minutes or schedule an executive campus tour with our admissions committee.
+            Give your child the gift of quality CBSE education, moral character, and holistic development. Apply online or visit our campus.
           </p>
           <div className="flex flex-wrap justify-center items-center gap-4 pt-4">
             <Link to="/admissions">
-              <Button variant="gold" size="lg" rightIcon={<ArrowRight className="w-4 h-4" />}>
-                Start Online Application
+              <Button variant="gold" size="lg" rightIcon={<ArrowRight className="w-4 h-4" />} id="cta-apply-btn">
+                Online Admission Registration
               </Button>
             </Link>
             <Link to="/contact">
@@ -750,15 +636,16 @@ export const HomePage: React.FC = () => {
                 variant="outline"
                 size="lg"
                 className="text-white border-white/20 bg-white/10 hover:bg-white/20"
+                id="cta-contact-btn"
               >
-                Book a Campus Tour
+                Contact & Directions
               </Button>
             </Link>
           </div>
         </div>
       </section>
 
-      {/* 11. QUICK CONTACT & VISIT SECTION */}
+      {/* 10. QUICK CONTACT & VISIT SECTION */}
       <section className="py-16 bg-white border-t border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -768,7 +655,7 @@ export const HomePage: React.FC = () => {
               </div>
               <div className="space-y-1">
                 <h4 className="font-serif text-base font-bold text-slate-900">Campus Location</h4>
-                <p className="text-xs text-slate-600">450 Academy Way, Cambridge Campus, Seattle, WA 98101</p>
+                <p className="text-xs text-slate-600">Ababakarpur Kowahi - Mukundpur - Mahua Rd, Mahua Ram Rae, Bihar 844122</p>
               </div>
             </div>
 
@@ -778,7 +665,7 @@ export const HomePage: React.FC = () => {
               </div>
               <div className="space-y-1">
                 <h4 className="font-serif text-base font-bold text-slate-900">Direct Inquiries</h4>
-                <p className="text-xs text-slate-600">+1 (800) 555-OAKRIDGE • admissions@oakridge.edu</p>
+                <p className="text-xs text-slate-600">+91 70503 49159 / +91 9199678159 &bull; info@rbsschool.com</p>
               </div>
             </div>
 
@@ -787,8 +674,8 @@ export const HomePage: React.FC = () => {
                 <Clock className="w-6 h-6" />
               </div>
               <div className="space-y-1">
-                <h4 className="font-serif text-base font-bold text-slate-900">Academic Office Hours</h4>
-                <p className="text-xs text-slate-600">Monday - Friday: 8:00 AM – 4:30 PM PST</p>
+                <h4 className="font-serif text-base font-bold text-slate-900">Office Working Hours</h4>
+                <p className="text-xs text-slate-600">Monday - Saturday: 8:00 AM – 3:30 PM IST</p>
               </div>
             </div>
           </div>

@@ -41,23 +41,23 @@ export const ContactPage: React.FC = () => {
     toast({
       type: 'success',
       title: 'Inquiry Dispatched',
-      message: 'Thank you for reaching out. An admissions counselor will respond within 24 business hours.',
+      message: 'Thank you for reaching out to R.B.S. Residential Public School. Our admissions team will respond shortly.',
     });
   };
 
   return (
     <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8 text-left">
       <SEO
-        title="Contact Campus — Admissions & Inquiries"
-        description="Connect with Oakridge International Academy. Find campus directions, administrative direct lines, office hours, and book private campus walkthroughs."
-        keywords="Contact Oakridge Academy, campus visit, admissions office phone, school directions Cambridge"
+        title="Contact Us — R.B.S Residential Public School, Mahua, Vaishali"
+        description="Get in touch with R.B.S. Residential Public School, Mahua, Vaishali, Bihar 844122. Campus address, telephone direct lines, admission desk (+91 70503 49159), and interactive Google map."
+        keywords="Contact RBS School Mahua, RBSRPS Vaishali phone number, RBS Public School address, CBSE school Mahua contact"
       />
 
       <div className="max-w-7xl mx-auto space-y-12">
         {/* Breadcrumb Navigation */}
         <Breadcrumb
           items={[
-            { label: 'Contact & Campus Visit' },
+            { label: 'Contact Us' },
           ]}
         />
 
@@ -67,14 +67,14 @@ export const ContactPage: React.FC = () => {
             <div className="flex items-center gap-2">
               <Badge variant="gold" size="sm">Get In Touch</Badge>
               <Badge variant="outline" size="sm" className="text-crest-200 border-crest-700">
-                Cambridge Campus
+                Mahua Campus, Vaishali
               </Badge>
             </div>
             <h1 className="font-serif text-3xl sm:text-5xl font-bold text-white tracking-tight">
-              We Welcome Your Inquiries
+              We Welcome Your Questions & Visits
             </h1>
             <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-              Whether you are an inquiring prospective family, alumni returning to grounds, or an academic partner, our administrative teams are here to assist you.
+              Whether you are seeking admission for the upcoming academic session, inquiring about hostel and transport services, or seeking guidance from our academic office, our administrative staff is at your service.
             </p>
           </div>
         </div>
@@ -89,22 +89,24 @@ export const ContactPage: React.FC = () => {
               </div>
               <h3 className="font-serif text-base font-bold text-slate-900">Campus Address</h3>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                450 Academy Way, Cambridge Campus<br />
-                Seattle, WA 98101, United States
+                <strong>R.B.S Residential Public School</strong><br />
+                Ababakarpur Kowahi - Mukundpur - Mahua Rd,<br />
+                Mahua Ram Rae, Vaishali, Bihar – 844122<br />
+                (Patepur Road, Mahua)
               </p>
-              <p className="text-[11px] text-slate-400">Visitors must check in at Founder’s Hall Reception Desk.</p>
+              <p className="text-[11px] text-slate-400">Visitors are welcome at the Administrative Office Reception Desk.</p>
             </Card>
 
             <Card className="p-6 border-slate-200 space-y-3">
               <div className="w-10 h-10 rounded-xl bg-gold-100 text-gold-700 flex items-center justify-center">
                 <Phone className="w-5 h-5" />
               </div>
-              <h3 className="font-serif text-base font-bold text-slate-900">Telephone Direct Lines</h3>
+              <h3 className="font-serif text-base font-bold text-slate-900">Direct Telephone Hotlines</h3>
               <ul className="space-y-1.5 text-xs text-slate-600">
-                <li><strong className="text-slate-800">Admissions Desk:</strong> +1 (800) 555-OAKRIDGE</li>
-                <li><strong className="text-slate-800">Office of the Registrar:</strong> +1 (555) 019-2810</li>
-                <li><strong className="text-slate-800">Head of School Suite:</strong> +1 (555) 019-2801</li>
-                <li><strong className="text-slate-800">Health Clinic (Urgent):</strong> +1 (555) 019-2890</li>
+                <li><strong className="text-slate-800">Admissions & Help Desk:</strong> +91 70503 49159</li>
+                <li><strong className="text-slate-800">Administrative Office:</strong> +91 9199678159</li>
+                <li><strong className="text-slate-800">Hostel & Boarding Wardens:</strong> +91 70503 49159</li>
+                <li><strong className="text-slate-800">Email:</strong> info@rbsschool.com / info@rbsschool.in</li>
               </ul>
             </Card>
 
@@ -112,10 +114,10 @@ export const ContactPage: React.FC = () => {
               <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
                 <Clock className="w-5 h-5" />
               </div>
-              <h3 className="font-serif text-base font-bold text-slate-900">Reception & Office Hours</h3>
-              <p className="text-xs text-slate-600">
-                Monday through Friday: 8:00 AM – 4:30 PM PST<br />
-                Saturday Campus Tours (Reservation Only): 9:30 AM & 1:00 PM<br />
+              <h3 className="font-serif text-base font-bold text-slate-900">School Office Hours</h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Monday to Saturday: 8:00 AM – 4:00 PM IST<br />
+                Principal Consultation Hours: 10:00 AM – 1:00 PM<br />
                 Sunday: Closed for Campus Maintenance
               </p>
             </Card>
@@ -126,10 +128,10 @@ export const ContactPage: React.FC = () => {
             <div className="space-y-2 border-b border-slate-100 pb-4">
               <Badge variant="primary" size="sm">Electronic Inquiry Form</Badge>
               <h2 className="font-serif text-2xl sm:text-3xl font-bold text-slate-900">
-                Send a Direct Message to Admissions
+                Send a Message to Our Admissions Desk
               </h2>
               <p className="text-xs sm:text-sm text-slate-500">
-                Fill out the form below and an academic counselor will reply within 24 business hours.
+                Fill out the form below and an academic counselor will connect with you via phone or email.
               </p>
             </div>
 
@@ -138,13 +140,13 @@ export const ContactPage: React.FC = () => {
                 <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
                   <CheckCircle2 className="w-8 h-8" />
                 </div>
-                <h3 className="font-serif text-xl font-bold text-slate-900">Inquiry Received</h3>
+                <h3 className="font-serif text-xl font-bold text-slate-900">Inquiry Received Successfully</h3>
                 <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto">
-                  Thank you for connecting with Oakridge International Academy. A formal confirmation and prospective scholar package has been dispatched to <strong>{formData.email}</strong>.
+                  Thank you for reaching out to R.B.S. Residential Public School, Mahua. Our admissions team has registered your query and will contact <strong>{formData.phone || formData.email}</strong>.
                 </p>
                 <div className="pt-2">
                   <Button variant="outline" size="sm" onClick={() => setSubmitted(false)}>
-                    Submit Another Inquiry
+                    Send Another Message
                   </Button>
                 </div>
               </div>
@@ -152,55 +154,56 @@ export const ContactPage: React.FC = () => {
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <Input
-                    label="Your Full Name"
-                    placeholder="e.g. Katherine Sterling"
+                    label="Parent / Student Full Name"
+                    placeholder="e.g. Ramesh Kumar"
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   />
                   <Input
-                    label="Email Address"
-                    type="email"
-                    placeholder="k.sterling@example.com"
+                    label="Contact Phone Number"
+                    type="tel"
+                    placeholder="+91 98765 43210"
                     required
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <Input
-                    label="Phone Number"
-                    type="tel"
-                    placeholder="+1 (555) 000-0000"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    label="Email Address"
+                    type="email"
+                    placeholder="parent@example.com"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   />
                   <div className="space-y-1.5 text-left">
                     <label className="block text-xs font-semibold text-slate-700">
-                      Department of Interest
+                      Inquiry Department
                     </label>
                     <select
                       value={formData.department}
                       onChange={(e) => setFormData({ ...formData, department: e.target.value })}
                       className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-crest-500 focus:border-crest-500"
                     >
-                      <option value="Admissions Office">Admissions Office (Candidate Applications)</option>
-                      <option value="Office of the Registrar">Office of the Registrar (Records & Transcripts)</option>
-                      <option value="Principal's Office">Office of the Head of School</option>
-                      <option value="Athletics Department">Athletics & Summer Camps</option>
+                      <option value="Admissions Office">New Admissions (Pre-Primary to 12th)</option>
+                      <option value="Hostel & Boarding">Hostel / Residential Boarding</option>
+                      <option value="Transport Department">School Bus & Transport Service</option>
+                      <option value="Office of the Principal">Principal's Office</option>
+                      <option value="Accounts & Fees">Fee Counter & Accounts</option>
                     </select>
                   </div>
                 </div>
 
                 <Textarea
-                  label="Inquiry or Message Details"
-                  placeholder="Tell us about your student's current grade, academic interests, or your requested tour date..."
+                  label="Inquiry / Message Details"
+                  placeholder="Specify the class for admission, student's previous school, hostel requirement, or any query..."
                   rows={4}
                   required
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  helperText="All inquiries are treated with strict confidentiality."
+                  helperText="Your personal details will remain strictly confidential."
                 />
 
                 <Button
@@ -210,10 +213,42 @@ export const ContactPage: React.FC = () => {
                   className="w-full sm:w-auto"
                   leftIcon={<Send className="w-4 h-4" />}
                 >
-                  Send Inquiry to Admissions
+                  Submit Inquiry
                 </Button>
               </form>
             )}
+          </div>
+        </div>
+
+        {/* Embedded Interactive Google Map */}
+        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-card space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
+            <div>
+              <h3 className="font-serif text-xl font-bold text-slate-900">Campus Location on Google Maps</h3>
+              <p className="text-xs text-slate-500">
+                Patepur Road, Mahua Ram Rae, Vaishali, Bihar – 844122
+              </p>
+            </div>
+            <a
+              href="https://maps.google.com/?q=R.B.S.+Residential+Public+School+Mahua+Vaishali"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs font-semibold text-crest-700 hover:text-crest-900 flex items-center gap-1"
+            >
+              <MapPin className="w-4 h-4" /> Open in Google Maps
+            </a>
+          </div>
+          <div className="rounded-2xl overflow-hidden border border-slate-200 h-80 sm:h-96 w-full">
+            <iframe
+              title="R.B.S. Residential Public School Campus Map"
+              src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d14365.514279933417!2d85.4049548!3d25.824068!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0xbda04015f692db63!2sR.B.S.%20Residential%20Public%20School!5e0!3m2!1sen!2sin!4v1670170742078!5m2!1sen!2sin"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen={true}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
           </div>
         </div>
       </div>

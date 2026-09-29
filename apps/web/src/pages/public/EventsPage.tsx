@@ -60,13 +60,13 @@ const mockEvents: SchoolEvent[] = [
   },
   {
     id: 'ev-3',
-    title: 'Oakridge Philharmonia Symphony Autumn Gala Concert',
+    title: 'Annual Cultural Festival & Classical Music Evening',
     category: 'Arts',
     date: { day: '05', month: 'NOV', year: '2026' },
-    time: '7:00 PM – 9:15 PM PST',
-    location: 'Performing Arts Auditorium',
-    audience: 'Academy Families & Alumni',
-    description: 'Conducted by Maestro Julian Hayes featuring works by Dvořák, Tchaikovsky, and original orchestral compositions composed by our IB Music scholars.',
+    time: '5:00 PM – 8:00 PM IST',
+    location: 'Main School Auditorium',
+    audience: 'Students, Parents & Community',
+    description: 'Annual cultural presentation featuring student performances in classical Indian vocal music, instrumental orchestra, folk dances, and Hindi drama.',
   },
   {
     id: 'ev-4',
@@ -76,7 +76,7 @@ const mockEvents: SchoolEvent[] = [
     time: '6:30 PM Kickoff PST',
     location: 'Championship Athletics Stadium',
     audience: 'Students, Alumni & Supporters',
-    description: 'The Oakridge Lions take on the St. Jude Titans in our historic annual rivalry match under stadium floodlights. Halftime drumline showcase.',
+    description: 'The RBSRPS senior cricket team takes on Vaishali District Champions in our annual inter-school tournament match. Exciting athletic showcase.',
   },
   {
     id: 'ev-5',
@@ -168,9 +168,9 @@ export const EventsPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8 text-left">
       <SEO
-        title="School Calendar & Upcoming Events"
-        description="Stay updated with Oakridge International Academy events: Admissions Open House, STEM Robotics tournaments, concerts, athletics games, and parent conferences."
-        keywords="Oakridge events, school calendar, open house, academic events, athletics schedule"
+        title="School Calendar & Upcoming Events — R.B.S Residential Public School"
+        description="Stay updated with R.B.S Residential Public School events: Admissions Open House, Science exhibition, Sports meet, and parent-teacher meetings."
+        keywords="RBS School events, school calendar Mahua, sports meet Vaishali, RBSRPS annual function"
       />
 
       <div className="max-w-7xl mx-auto space-y-10">
@@ -195,7 +195,7 @@ export const EventsPage: React.FC = () => {
               Campus Calendar & Community Events
             </h1>
             <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-              Discover lectures, theatrical performances, athletics meets, and admissions forums that define student life at Oakridge. Filter by category or pin events directly to your schedule.
+              Discover academic exhibitions, cultural performances, athletic meets, and admissions events that define student life at R.B.S Residential Public School. Filter by category or pin events directly to your schedule.
             </p>
           </div>
         </div>
@@ -326,7 +326,7 @@ export const EventsPage: React.FC = () => {
             <span className="text-xs font-bold text-gold-400 uppercase tracking-wider">Never Miss a Date</span>
             <h3 className="font-serif text-2xl font-bold">Synchronize with Google or iCal</h3>
             <p className="text-xs sm:text-sm text-slate-300">
-              Subscribe to the real-time Oakridge Academy master calendar directly onto your mobile or desktop calendar feed.
+              Subscribe to the real-time R.B.S. Residential Public School master calendar directly onto your mobile or desktop calendar feed.
             </p>
           </div>
           <Button

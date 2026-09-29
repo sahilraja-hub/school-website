@@ -18,23 +18,26 @@ import {
   ArrowRight,
   ShieldCheck,
   CheckCircle2,
+  Phone,
+  MapPin,
+  Clock,
 } from 'lucide-react';
 
 export const PrincipalMessagePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8 text-left">
       <SEO
-        title="Principal's Message — Dr. Eleanor Vance"
-        description="Read the official welcome message from Dr. Eleanor Vance, Principal of Oakridge International Academy. Discover our educational philosophy and commitment to moral leadership and intellectual excellence."
-        keywords="Oakridge Principal, Dr Eleanor Vance, Head of School, Oakridge Academy message, educational philosophy"
+        title="Principal's Message — Mr. Tribhuwan Singh | R.B.S Residential Public School"
+        description="Official message from Mr. Tribhuwan Singh, Principal of R.B.S. Residential Public School, Mahua, Vaishali. Discover our educational philosophy and commitment to academic excellence and moral character."
+        keywords="Principal RBS School Mahua, Tribhuwan Singh, Head of School message, RBSRPS Vaishali, CBSE Principal Mahua"
       />
 
       <div className="max-w-6xl mx-auto space-y-10">
         {/* Breadcrumb Navigation */}
         <Breadcrumb
           items={[
-            { label: 'About Oakridge', href: '/about' },
-            { label: "Principal's Welcome" },
+            { label: 'About Us', href: '/about' },
+            { label: "Principal's Message" },
           ]}
         />
 
@@ -45,41 +48,44 @@ export const PrincipalMessagePage: React.FC = () => {
             {/* Left Header */}
             <div className="lg:col-span-7 space-y-5">
               <div className="flex flex-wrap items-center gap-2">
-                <Badge variant="gold" size="sm">Office of the Head of School</Badge>
+                <Badge variant="gold" size="sm">Office of the Principal</Badge>
                 <Badge variant="outline" size="sm" className="text-crest-200 border-crest-700">
-                  Leadership
+                  CBSE Affiliated Senior Secondary
                 </Badge>
               </div>
               <h1 className="font-serif text-3xl sm:text-5xl font-bold text-white tracking-tight leading-tight">
-                "Cultivating Minds, Inspiring Character, Shaping the Future."
+                "Fulfilling Dreams, One Student at a Time."
               </h1>
               <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-xl">
-                A warm welcome from Dr. Eleanor Vance, Head of School at Oakridge International Academy. Here, every scholar is nurtured to lead with integrity, think critically, and innovate fearlessly.
+                A warm welcome from Mr. Tribhuwan Singh, Principal of R.B.S. Residential Public School, Mahua, Vaishali. Here, every child is nurtured to learn with enthusiasm, act with integrity, and achieve their highest potential.
               </p>
               <div className="pt-2 flex flex-wrap items-center gap-4 text-xs text-slate-300">
                 <span className="flex items-center gap-1.5">
-                  <Award className="w-4 h-4 text-gold-400" /> Ph.D. Harvard University
+                  <Award className="w-4 h-4 text-gold-400" /> M.A., B.Ed.
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <ShieldCheck className="w-4 h-4 text-crest-400" /> 26+ Years Academic Leadership
+                  <ShieldCheck className="w-4 h-4 text-crest-400" /> Over Two Decades of Pedagogical Leadership
                 </span>
               </div>
             </div>
 
-            {/* Right Portrait */}
+            {/* Right Portrait / Badge */}
             <div className="lg:col-span-5 flex justify-center">
-              <div className="relative group">
+              <div className="relative group max-w-sm w-full">
                 <div className="absolute -inset-2 bg-gradient-to-r from-gold-500 to-crest-500 rounded-3xl blur-lg opacity-40 group-hover:opacity-60 transition duration-300" />
-                <div className="relative rounded-2xl overflow-hidden border-2 border-gold-400/40 shadow-2xl bg-slate-900">
-                  <img
-                    src="/images/principal.jpg"
-                    alt="Dr. Eleanor Vance, Principal of Oakridge International Academy"
-                    className="w-full h-80 sm:h-96 object-cover object-top"
-                  />
-                  <div className="p-4 bg-slate-900/90 backdrop-blur-sm border-t border-slate-800 text-left">
-                    <h3 className="font-serif text-base font-bold text-white">Dr. Eleanor Vance</h3>
-                    <p className="text-xs text-gold-400">Head of School & Executive Principal</p>
-                    <p className="text-[11px] text-slate-400 mt-0.5">Oakridge International Academy</p>
+                <div className="relative rounded-2xl overflow-hidden border-2 border-gold-400/40 shadow-2xl bg-crest-900 text-center p-8 space-y-4">
+                  <div className="w-24 h-24 rounded-full bg-gold-400/20 border-2 border-gold-400 text-gold-400 mx-auto flex items-center justify-center font-serif text-3xl font-bold">
+                    TS
+                  </div>
+                  <div>
+                    <h3 className="font-serif text-xl font-bold text-white">Mr. Tribhuwan Singh</h3>
+                    <p className="text-xs text-gold-400 font-semibold mt-1">Principal & Academic Head</p>
+                    <p className="text-xs text-slate-300 mt-1">R.B.S. Residential Public School</p>
+                    <p className="text-[11px] text-slate-400">Mahua, Vaishali, Bihar</p>
+                  </div>
+                  <div className="pt-2 border-t border-crest-800 text-xs text-slate-300 space-y-1">
+                    <p>Affiliated to CBSE, New Delhi (+2)</p>
+                    <p className="text-gold-400 font-mono text-[11px]">+91 70503 49159</p>
                   </div>
                 </div>
               </div>
@@ -93,81 +99,81 @@ export const PrincipalMessagePage: React.FC = () => {
             <div className="flex items-center gap-3 text-crest-700 border-b border-slate-100 pb-4">
               <Quote className="w-8 h-8 opacity-40" />
               <span className="font-serif italic text-base sm:text-lg font-semibold">
-                An Open Letter to Our Students, Families, and Global Community
+                Principal's Address to Students, Parents, and Patrons
               </span>
             </div>
 
             <div className="space-y-5 text-sm sm:text-base leading-relaxed">
               <p className="font-medium text-slate-900 text-lg">
-                Dear Students, Families, and Valued Friends,
+                Dear Parents, Guardians, and Esteemed Students,
               </p>
 
               <p>
-                Welcome to Oakridge International Academy. It is an extraordinary honor to welcome you to a community where academic brilliance is indivisible from moral courage and humanitarian empathy.
+                It is my privilege and distinct honor to welcome you to R.B.S Residential Public School, Mahua, Vaishali. Since our establishment in 2008–2009 under the stewardship of our Director, Sri Ram Bachan Singh, RBSRPS has been relentlessly dedicated to creating an environment where young minds blossom into responsible, self-reliant, and morally upright citizens.
               </p>
 
               <p>
-                When our founders laid the cornerstone of Oakridge in 1988, they envisioned an institution that would transcend traditional rote instruction. Today, our 40-acre Cambridge campus is alive with young scholars engaged in collegiate-level scientific inquiry, defending capstone theses in our humanities forums, composing original symphonic movements, and demonstrating athletic resilience on our championship fields.
+                As Swami Vivekananda said, <em>"Education is the manifestation of the perfection already in man."</em> At R.B.S., we view education not as rote instruction, but as an awakening of inner talent, scientific curiosity, and ethical conviction. Our purpose is to help each student discover their individual strength and nurture it to fruition.
               </p>
 
               <div className="p-6 my-6 bg-crest-50/70 border-l-4 border-crest-700 rounded-r-2xl space-y-2">
                 <p className="font-serif italic text-crest-950 font-semibold text-base sm:text-lg">
-                  "Education is not merely the acquisition of credentials; it is the deliberate cultivation of wisdom, ethical discernment, and a lifelong thirst for truth."
+                  "Education is the greatest tool for social change. We nurture every child not merely to pass examinations, but to navigate the complexities of the modern world with courage, empathy, and honor."
                 </p>
-                <p className="text-xs text-crest-800 font-medium">— Dr. Eleanor Vance</p>
+                <p className="text-xs text-crest-800 font-medium">— Mr. Tribhuwan Singh, Principal</p>
               </div>
 
               <h2 className="font-serif text-xl sm:text-2xl font-bold text-slate-900 pt-3">
-                Our Educational Philosophy in Action
+                Our Educational Commitments at RBSRPS
               </h2>
 
               <p>
-                At Oakridge, we balance the rigor of the International Baccalaureate (IB) and Advanced Placement (AP) curricula with individualized mentorship. With an intentional 1:8 faculty-to-scholar ratio, our world-class educators do not merely teach subjects—they mentor human beings.
+                Following the CBSE curriculum and National Curriculum Framework, we combine strong conceptual teaching in Mathematics, Science, and Social Studies with digital smart classrooms, modern laboratories, and regular co-curricular competitions.
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-3">
                 <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1.5">
                   <div className="flex items-center gap-2 text-crest-800 font-bold text-sm">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Intellectual Rigor
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Rigorous CBSE +2 Education
                   </div>
                   <p className="text-xs text-slate-600">
-                    Dual AP Capstone & IB Diploma pathways with university-grade research labs.
+                    Comprehensive preparation for 10th and 12th Board examinations in Science, Commerce, and Arts.
                   </p>
                 </div>
                 <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1.5">
                   <div className="flex items-center gap-2 text-crest-800 font-bold text-sm">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Global Citizenship
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Character & Sanskar
                   </div>
                   <p className="text-xs text-slate-600">
-                    Over 100 hours of community service and exchange delegations across 14 nations.
+                    Daily morning assembly, moral teachings, cultural heritage celebrations, and mutual respect.
                   </p>
                 </div>
                 <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1.5">
                   <div className="flex items-center gap-2 text-crest-800 font-bold text-sm">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Whole-Person Wellness
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Hands-on Science & Computers
                   </div>
                   <p className="text-xs text-slate-600">
-                    Dedicated pastoral care, collegiate athletic facilities, and fine arts centers.
+                    Well-equipped laboratories for Physics, Chemistry, and Biology plus high-speed computer training.
                   </p>
                 </div>
                 <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1.5">
                   <div className="flex items-center gap-2 text-crest-800 font-bold text-sm">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Ethical Innovation
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Safe Residential Care & Sports
                   </div>
                   <p className="text-xs text-slate-600">
-                    Ethics in AI, sustainability leadership, and civic responsibility frameworks.
+                    Dedicated hostel facilities for boys and girls, athletic coaching, cricket, volleyball, and yoga.
                   </p>
                 </div>
               </div>
 
               <p>
-                Whether you are exploring our admissions process for the upcoming academic cycle or already a cherished member of our academy family, I invite you to walk our halls, observe our vibrant laboratories, and witness first-hand the spark of curiosity that defines an Oakridge scholar.
+                I warmly invite parents to visit our campus, observe our classrooms, meet our passionate educators, and experience how R.B.S Residential Public School shapes promising futures.
               </p>
 
               <div className="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
-                  <p className="font-serif text-lg font-bold text-slate-900">Dr. Eleanor Vance, Ph.D.</p>
-                  <p className="text-xs text-slate-500">Head of School • Oakridge International Academy</p>
+                  <p className="font-serif text-lg font-bold text-slate-900">Mr. Tribhuwan Singh</p>
+                  <p className="text-xs text-slate-500">Principal • R.B.S. Residential Public School, Mahua</p>
                 </div>
                 <Link to="/contact">
                   <Button variant="outline" size="sm" leftIcon={<Mail className="w-4 h-4" />}>
@@ -183,39 +189,39 @@ export const PrincipalMessagePage: React.FC = () => {
             {/* Quick Profile Card */}
             <Card className="border-slate-200">
               <CardContent className="p-6 space-y-4">
-                <h3 className="font-serif text-lg font-bold text-slate-900">Executive Credentials</h3>
+                <h3 className="font-serif text-lg font-bold text-slate-900">Institutional Highlights</h3>
                 <ul className="space-y-3 text-xs text-slate-600">
                   <li className="flex items-start gap-2.5">
                     <GraduationCap className="w-4 h-4 text-crest-600 shrink-0 mt-0.5" />
-                    <span>Ph.D. in Educational Leadership & Policy, Harvard University</span>
+                    <span>Affiliated to CBSE New Delhi up to Senior Secondary (+2) Level</span>
                   </li>
                   <li className="flex items-start gap-2.5">
                     <BookOpen className="w-4 h-4 text-crest-600 shrink-0 mt-0.5" />
-                    <span>M.A. in Curriculum Development, Stanford University</span>
+                    <span>Streams: Science (PCM/PCB), Commerce, and Arts</span>
                   </li>
                   <li className="flex items-start gap-2.5">
                     <Award className="w-4 h-4 text-gold-500 shrink-0 mt-0.5" />
-                    <span>Recipient of National Distinguished Principal Award (2021)</span>
+                    <span>Consistently Outstanding 10th & 12th Board Results</span>
                   </li>
                   <li className="flex items-start gap-2.5">
                     <ShieldCheck className="w-4 h-4 text-crest-600 shrink-0 mt-0.5" />
-                    <span>Chairperson, International Baccalaureate Regional Review Board</span>
+                    <span>Established 2008 – 2009 with Strong Cultural Heritage</span>
                   </li>
                 </ul>
               </CardContent>
             </Card>
 
-            {/* Office Hours & Appointments */}
+            {/* Parent & Visitor Audiences */}
             <Card className="border-slate-200 bg-crest-50/40">
               <CardContent className="p-6 space-y-3">
-                <h3 className="font-serif text-base font-bold text-crest-950">Parent & Visitor Audiences</h3>
+                <h3 className="font-serif text-base font-bold text-crest-950">Parent & Visitor Appointments</h3>
                 <p className="text-xs text-slate-600 leading-relaxed">
-                  Dr. Vance holds weekly open office forums for registered academy parents and prospective scholarship candidates every Thursday morning.
+                  The Principal and administrative counselors meet parents on working days between 10:00 AM and 1:00 PM for academic consultation and admission discussions.
                 </p>
                 <div className="pt-2">
                   <Link to="/contact">
                     <Button variant="primary" size="sm" className="w-full">
-                      Request an Appointment
+                      Schedule a Campus Visit
                     </Button>
                   </Link>
                 </div>
@@ -225,14 +231,14 @@ export const PrincipalMessagePage: React.FC = () => {
             {/* Next Steps CTA */}
             <div className="p-6 rounded-2xl bg-gradient-to-br from-crest-900 to-crest-950 text-white space-y-3">
               <span className="text-xs font-bold text-gold-400 uppercase tracking-wider">Admissions 2026-2027</span>
-              <h4 className="font-serif text-lg font-bold">Ready to Join Our Community?</h4>
+              <h4 className="font-serif text-lg font-bold">Enroll at RBSRPS Mahua</h4>
               <p className="text-xs text-slate-300 leading-relaxed">
-                Experience our academic culture firsthand during our upcoming Campus Open House.
+                Admissions open for Nursery to Class 11 (+2 Science & Commerce). Secure your child's academic future today.
               </p>
               <div className="pt-2 flex flex-col gap-2">
                 <Link to="/admissions">
                   <Button variant="gold" size="sm" className="w-full" rightIcon={<ArrowRight className="w-3.5 h-3.5" />}>
-                    Begin Application
+                    Begin Admission Registration
                   </Button>
                 </Link>
                 <Link to="/facilities">

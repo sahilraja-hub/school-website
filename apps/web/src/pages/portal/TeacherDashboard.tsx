@@ -239,11 +239,11 @@ export const TeacherDashboard: React.FC = () => {
         <div className="p-6 border-b border-white/10">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-amber-600 flex items-center justify-center text-slate-950 font-serif font-bold text-lg shadow-lg shadow-amber-500/20">
-              O
+              R
             </div>
             <div>
               <span className="font-serif font-bold text-white text-base tracking-wide block">
-                Oakridge Academy
+                R.B.S Public School
               </span>
               <span className="text-[11px] text-amber-400 font-semibold tracking-wider uppercase block">
                 Faculty Portal

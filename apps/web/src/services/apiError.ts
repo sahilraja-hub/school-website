@@ -67,7 +67,7 @@ export const parseApiError = (error: unknown): ApiError => {
     // Network timeout or connection drop
     if (error.code === 'ECONNABORTED' || error.message === 'Network Error' || !error.response) {
       return new ApiError(
-        'Unable to reach Oakridge Academy servers. Please check your internet connection.',
+        'Unable to reach R.B.S. Residential Public School servers. Please check your internet connection.',
         'NETWORK_ERROR',
         0,
         [],

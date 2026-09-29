@@ -30,57 +30,57 @@ interface GalleryItem {
 const defaultGalleryItems: GalleryItem[] = [
   {
     id: 'g1',
-    title: 'Historic Cambridge Quad Autumn Morning',
+    title: 'RBS School Main Academic Block & Campus Grounds',
     category: 'Campus',
     image: '/images/campus-hero.jpg',
-    date: 'Fall Term',
-    caption: 'Students conversing between morning lectures in front of Founder’s Hall clock tower.',
-    altText: 'Oakridge campus central quadrangle with stone arch and student walkways',
+    date: 'Mahua Campus',
+    caption: 'Students assembling outside the main academic wing on Patepur Road, Mahua for morning assembly.',
+    altText: 'RBS Residential Public School main campus building and grounds in Mahua Vaishali',
   },
   {
     id: 'g2',
-    title: 'Advanced Bio-Genetics Research Session',
+    title: 'Senior Secondary CBSE Science Practical Session',
     category: 'Science',
     image: '/images/stem-lab.jpg',
-    date: 'Spring Research Symposium',
-    caption: 'Grade 11 IB Biology scholars conducting CRISPR electrophoresis gel analysis under laminar hoods.',
-    altText: 'Scholars in STEM lab conducting gel electrophoresis analysis',
+    date: 'Science Laboratory',
+    caption: 'Class 11 & 12 scholars performing titration and physics optics experiments in the composite laboratory.',
+    altText: 'Students conducting science practical experiments at RBS Public School',
   },
   {
     id: 'g3',
-    title: 'Alexander Media Library Learning Pods',
+    title: 'Central Library & Reading Commons',
     category: 'Campus',
     image: '/images/library.jpg',
-    date: 'Academic Term',
-    caption: 'Scholars collaborating in our double-height timber commons overlooking the campus botanical preserve.',
-    altText: 'Alexander Media Library modern timber architecture learning commons',
+    date: 'School Library',
+    caption: 'Scholars referencing NCERT textbooks, journals, and competitive exam guides in the reading room.',
+    altText: 'Students reading in the central library of RBS Residential Public School',
   },
   {
     id: 'g4',
-    title: 'Varsity Invitational Track & Field Final',
+    title: 'Annual Sports Day & Athletics Competition',
     category: 'Sports',
     image: '/images/athletics.jpg',
-    date: 'State Championship',
-    caption: 'The Oakridge Lions 4x400m relay squad securing the regional gold medal on our Olympic Mondotrack.',
-    altText: 'Track and field sprint relay athletes in competition',
+    date: 'Annual Sports Meet',
+    caption: 'Track relay race finals and volleyball championship during the annual inter-house sports festival.',
+    altText: 'Track and field sprint race at RBS School Mahua sports meet',
   },
   {
     id: 'g5',
-    title: 'Executive Welcome & Mentorship Forum',
+    title: 'Principal & Faculty Academic Guidance Session',
     category: 'Events',
     image: '/images/principal.jpg',
-    date: 'Baccalaureate Week',
-    caption: 'Head of School Dr. Eleanor Vance addressing graduating seniors in the university archives collection.',
-    altText: 'Head of school welcoming senior scholars in archive hall',
+    date: 'Academic Conclave',
+    caption: 'Principal Mr. Tribhuwan Singh counseling board exam candidates on effective study habits and exam strategy.',
+    altText: 'Principal Mr Tribhuwan Singh addressing students at RBS School',
   },
   {
     id: 'g6',
-    title: 'Autonomous Robotics Testing Arena',
+    title: 'Computer Learning Center & Smart Class',
     category: 'Science',
     image: '/images/stem-lab.jpg',
-    date: 'FIRST Regional',
-    caption: 'Robotics engineering team assembling the autonomous vision-guidance chassis for national competition.',
-    altText: 'Autonomous robot on competition course with sensor arrays',
+    date: 'Digital Education',
+    caption: 'Students learning computer programming, IT applications, and interactive digital concepts.',
+    altText: 'Computer laboratory session at RBS Residential Public School',
   },
 ];
 
@@ -111,7 +111,7 @@ export const GalleryPage: React.FC = () => {
               image: m.variants?.large?.url || m.variants?.medium?.url || m.url,
               date: new Date(m.createdAt).toLocaleDateString(undefined, { month: 'short', year: 'numeric' }),
               caption: m.caption || m.title || 'Curated campus photography archive.',
-              altText: m.altText || m.title || 'Oakridge International Academy media photography',
+              altText: m.altText || m.title || 'R.B.S Residential Public School media photography',
             }));
 
           if (apiItems.length > 0) {
@@ -129,10 +129,10 @@ export const GalleryPage: React.FC = () => {
   const categories = [
     { id: 'ALL', label: 'All Photographs' },
     { id: 'Campus', label: 'Campus & Architecture' },
-    { id: 'Science', label: 'Science & Innovation' },
-    { id: 'Sports', label: 'Athletics & Teams' },
-    { id: 'Arts', label: 'Fine Arts & Music' },
-    { id: 'Events', label: 'Academic Events' },
+    { id: 'Science', label: 'Science & Computer Labs' },
+    { id: 'Sports', label: 'Sports & Athletics' },
+    { id: 'Arts', label: 'Cultural & Arts' },
+    { id: 'Events', label: 'School Events & Functions' },
   ];
 
   const filteredItems = selectedCategory === 'ALL'
@@ -142,17 +142,17 @@ export const GalleryPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8 text-left">
       <SEO
-        title="Photo Gallery & Campus Life"
-        description="Experience daily life at Oakridge International Academy through our curated photography showcase: academic laboratories, athletics, arts, and historic campus grounds."
-        keywords="Oakridge photo gallery, school pictures, campus photography, student life images"
+        title="Photo Gallery & Campus Life — R.B.S Residential Public School"
+        description="Explore daily life at R.B.S Residential Public School, Mahua, Vaishali: smart classrooms, science labs, sports tournaments, hostel life, and cultural celebrations."
+        keywords="RBS School photo gallery, campus pictures Mahua, RBSRPS Vaishali gallery, school events photos"
       />
 
       <div className="max-w-7xl mx-auto space-y-10">
         {/* Breadcrumb Navigation */}
         <Breadcrumb
           items={[
-            { label: 'Campus Life', href: '/about' },
-            { label: 'Photo & Media Gallery' },
+            { label: 'About Us', href: '/about' },
+            { label: 'Photo Gallery' },
           ]}
         />
 
@@ -162,13 +162,13 @@ export const GalleryPage: React.FC = () => {
             <span className="bg-crest-100 text-crest-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1.5">
               <Camera className="w-3.5 h-3.5" /> Visual Chronicle
             </span>
-            <Badge variant="gold" size="sm">High-Resolution Photography</Badge>
+            <Badge variant="gold" size="sm">Life at RBSRPS</Badge>
           </div>
           <h1 className="font-serif text-3xl sm:text-5xl font-bold text-slate-900">
-            A Glimpse into the Oakridge Experience
+            A Glimpse into the R.B.S. Experience
           </h1>
           <p className="text-slate-600 text-sm sm:text-base max-w-3xl leading-relaxed">
-            From breakthrough laboratory discoveries to championship athletic celebrations, explore visual moments of inspiration and camaraderie across our 40-acre campus.
+            From classroom discussions and practical laboratory experiments to sports celebrations and cultural festivals, explore snapshots of student life at our Mahua campus.
           </p>
         </div>
 
@@ -271,14 +271,14 @@ export const GalleryPage: React.FC = () => {
         <div className="p-8 sm:p-12 rounded-3xl bg-crest-950 text-white flex flex-col md:flex-row items-center justify-between gap-6 border border-crest-900 shadow-xl">
           <div className="space-y-2 max-w-xl text-left">
             <span className="text-xs font-bold text-gold-400 uppercase tracking-wider">Campus Admissions</span>
-            <h3 className="font-serif text-2xl font-bold">Experience Oakridge in Person</h3>
+            <h3 className="font-serif text-2xl font-bold">Experience RBSRPS in Person</h3>
             <p className="text-xs sm:text-sm text-slate-300">
-              Photographs convey only a fraction of our vibrant community spirit. We invite you to join us for an in-person guided tour.
+              Photographs convey only a fraction of our vibrant school community. We welcome parents and students to visit our campus in Mahua for an in-person walkthrough.
             </p>
           </div>
-          <Link to="/admissions">
+          <Link to="/contact">
             <Button variant="gold" rightIcon={<ArrowRight className="w-4 h-4" />}>
-              Schedule Admissions Visit
+              Visit Campus in Mahua
             </Button>
           </Link>
         </div>

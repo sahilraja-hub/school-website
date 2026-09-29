@@ -178,10 +178,10 @@ export const StudentDashboard: React.FC = () => {
       <div className="md:hidden bg-gradient-to-r from-crest-950 via-crest-900 to-slate-900 text-white p-4 flex items-center justify-between shadow-md sticky top-0 z-40">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-gold-500/20 border border-gold-500/30 flex items-center justify-center font-serif font-bold text-gold-400">
-            OA
+            RBS
           </div>
           <div>
-            <h1 className="font-serif font-bold text-base tracking-wide text-white">Oakridge Academy</h1>
+            <h1 className="font-serif font-bold text-base tracking-wide text-white">R.B.S Public School</h1>
             <p className="text-[10px] text-gold-400 uppercase tracking-widest">Scholar Portal</p>
           </div>
         </div>
@@ -204,12 +204,12 @@ export const StudentDashboard: React.FC = () => {
           {/* Academy Brand */}
           <div className="flex items-center gap-3.5 pb-4 border-b border-crest-800/60">
             <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-gold-400 to-gold-600 p-0.5 shadow-lg">
-              <div className="w-full h-full rounded-[14px] bg-crest-950 flex items-center justify-center font-serif font-bold text-gold-400 text-lg">
-                OA
+              <div className="w-full h-full rounded-[14px] bg-crest-950 flex items-center justify-center font-serif font-bold text-gold-400 text-sm">
+                RBS
               </div>
             </div>
             <div>
-              <h2 className="font-serif font-bold text-base tracking-wider text-white">OAKRIDGE</h2>
+              <h2 className="font-serif font-bold text-base tracking-wider text-white">RBSRPS MAHUA</h2>
               <p className="text-[10px] text-gold-400 uppercase tracking-widest font-semibold">Scholar Portal</p>
             </div>
           </div>

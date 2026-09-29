@@ -27,41 +27,41 @@ describe('Public Website — Critical Pages Test Suite', () => {
   describe('Home Page (/)', () => {
     it('renders hero title, key admission CTA and academic statistics', () => {
       renderWithProviders(<HomePage />);
-      expect(screen.getByText(/Where Curious Minds Become/i)).toBeInTheDocument();
-      expect(screen.getByText(/Global Leaders/i)).toBeInTheDocument();
-      expect(screen.getByText(/100% University Acceptance/i)).toBeInTheDocument();
-      expect(screen.getByText(/1 : 8/i)).toBeInTheDocument();
-      expect(screen.getByText(/Apply for Admission/i)).toBeInTheDocument();
+      expect(screen.getByText(/Fulfilling Dreams/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/One at a Time/i).length).toBeGreaterThan(0);
+      expect(screen.getAllByText(/R\.B\.S\.? Residential Public School/i).length).toBeGreaterThan(0);
+      expect(screen.getAllByText(/CBSE/i).length).toBeGreaterThan(0);
+      expect(screen.getByText(/Online Admission Form/i)).toBeInTheDocument();
     });
 
     it('renders the principal preview and campus facilities showcase', () => {
       renderWithProviders(<HomePage />);
-      expect(screen.getByText(/Dr\. Eleanor Vance/i)).toBeInTheDocument();
-      expect(screen.getByText(/Alexander Media Library/i)).toBeInTheDocument();
-      expect(screen.getByText(/Championship Stadium/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/Mr\. Tribhuwan Singh/i).length).toBeGreaterThan(0);
+      expect(screen.getAllByText(/Sri Ram Bachan Singh/i).length).toBeGreaterThan(0);
+      expect(screen.getByText(/Smart Digital Classrooms & Modern Laboratories/i)).toBeInTheDocument();
     });
   });
 
   // 2. About Page
   describe('About Page (/about)', () => {
-    it('renders academy heritage since 1988 and the 4 core pillars', () => {
+    it('renders academy heritage since 2008 and the 4 core pillars', () => {
       renderWithProviders(<AboutPage />);
-      expect(screen.getByText(/A Tradition of Academic Brilliance/i)).toBeInTheDocument();
-      expect(screen.getByText(/The Four Pillars of Oakridge/i)).toBeInTheDocument();
-      expect(screen.getByText(/Academic Rigor/i)).toBeInTheDocument();
-      expect(screen.getByText(/Moral Character/i)).toBeInTheDocument();
-      expect(screen.getByText(/IB World School Accredited/i)).toBeInTheDocument();
+      expect(screen.getByText(/A Legacy of Quality Education & Sanskar in Vaishali/i)).toBeInTheDocument();
+      expect(screen.getByText(/The Four Pillars of RBSRPS/i)).toBeInTheDocument();
+      expect(screen.getByText(/CBSE Curriculum Excellence/i)).toBeInTheDocument();
+      expect(screen.getByText(/Moral Values & Sanskar/i)).toBeInTheDocument();
+      expect(screen.getByText(/Established 2008 – 2009/i)).toBeInTheDocument();
     });
   });
 
   // 3. Principal's Message Page
   describe('Principal Message Page (/principal)', () => {
-    it('renders official letter from Dr. Eleanor Vance and credentials', () => {
+    it('renders official letter from Mr. Tribhuwan Singh and credentials', () => {
       renderWithProviders(<PrincipalMessagePage />);
-      expect(screen.getByText(/Office of the Head of School/i)).toBeInTheDocument();
-      expect(screen.getByText(/Cultivating Minds, Inspiring Character/i)).toBeInTheDocument();
-      expect(screen.getByText(/Ph\.D\. Harvard University/i)).toBeInTheDocument();
-      expect(screen.getByText(/Executive Credentials/i)).toBeInTheDocument();
+      expect(screen.getByText(/Office of the Principal/i)).toBeInTheDocument();
+      expect(screen.getByText(/"Fulfilling Dreams, One Student at a Time\."/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/Mr\. Tribhuwan Singh/i).length).toBeGreaterThan(0);
+      expect(screen.getAllByText(/M\.A\., B\.Ed\./i).length).toBeGreaterThan(0);
     });
   });
 
@@ -69,43 +69,38 @@ describe('Public Website — Critical Pages Test Suite', () => {
   describe('Academics Page (/academics)', () => {
     it('renders curriculum division tabs and responds to tab switches', () => {
       renderWithProviders(<AcademicsPage />);
-      expect(screen.getByText(/An Inspiring Curriculum for Tomorrow's Leaders/i)).toBeInTheDocument();
-      expect(screen.getByText(/Primary Academy/i)).toBeInTheDocument();
+      expect(screen.getByText(/Academic Excellence from Foundation to \+2 Senior Secondary/i)).toBeInTheDocument();
+      expect(screen.getByText(/Foundational & Primary Stage/i)).toBeInTheDocument();
 
-      const stemTab = screen.getByRole('button', { name: /stem & robotics hub/i });
+      const stemTab = screen.getByText(/Senior Secondary \(\+2 Science\)/i).closest('button')!;
       fireEvent.click(stemTab);
-      expect(screen.getByText(/Robotics & Applied Artificial Intelligence Hub/i)).toBeInTheDocument();
+      expect(screen.getByText(/PCM & PCB Streams for JEE & NEET/i)).toBeInTheDocument();
     });
   });
 
   // 5. Faculty Page
   describe('Faculty Page (/faculty)', () => {
-    it('renders faculty directory, 1:8 ratio stats and filters by department', () => {
+    it('renders faculty directory, leadership stats and filters by department', () => {
       renderWithProviders(<FacultyPage />);
-      expect(screen.getByText(/World-Class Educators, Lifelong Mentors/i)).toBeInTheDocument();
-      expect(screen.getByText(/Dr\. Arthur Pendelton/i)).toBeInTheDocument();
-      expect(screen.getByText(/Sarah Montgomery/i)).toBeInTheDocument();
+      expect(screen.getByText(/Our Educators, Mentors & Leadership/i)).toBeInTheDocument();
+      expect(screen.getByText(/Sri Ram Bachan Singh/i)).toBeInTheDocument();
+      expect(screen.getByText(/Mr\. Tribhuwan Singh/i)).toBeInTheDocument();
 
       // Search faculty input
-      const searchInput = screen.getByPlaceholderText(/search faculty or subject/i);
-      fireEvent.change(searchInput, { target: { value: 'Physics' } });
-      expect(screen.getByText(/Dr\. Arthur Pendelton/i)).toBeInTheDocument();
-      expect(screen.queryByText(/Claire Kensington/i)).not.toBeInTheDocument();
+      const searchInput = screen.getByPlaceholderText(/search faculty by name or subject/i);
+      fireEvent.change(searchInput, { target: { value: 'Verma' } });
+      expect(screen.getByText(/Dr\. Anand Kumar Verma/i)).toBeInTheDocument();
+      expect(screen.queryByText(/Mr\. Manoj Kumar Sharma/i)).not.toBeInTheDocument();
     });
   });
 
   // 6. Facilities Page
   describe('Facilities Page (/facilities)', () => {
-    it('renders 40-acre campus facilities and opens tour modal', () => {
+    it('renders campus facilities and infrastructure', () => {
       renderWithProviders(<FacilitiesPage />);
-      expect(screen.getByText(/An Inspiring Architectural Sanctuary/i)).toBeInTheDocument();
-      expect(screen.getByText(/University-Grade STEM & Bio-Chemical Labs/i)).toBeInTheDocument();
-      expect(screen.getByText(/Alexander Media Library & Learning Commons/i)).toBeInTheDocument();
-
-      const tourBtn = screen.getByRole('button', { name: /schedule campus walkthrough/i });
-      fireEvent.click(tourBtn);
-      expect(screen.getByRole('dialog')).toBeInTheDocument();
-      expect(screen.getByText(/Schedule an In-Person Campus Walkthrough/i)).toBeInTheDocument();
+      expect(screen.getByText(/A Supportive, Secure & Stimulating Learning Environment/i)).toBeInTheDocument();
+      expect(screen.getByText(/Modern Science & Computer Laboratories/i)).toBeInTheDocument();
+      expect(screen.getByText(/Separate Boys & Girls Residential Hostels/i)).toBeInTheDocument();
     });
   });
 
@@ -113,8 +108,8 @@ describe('Public Website — Critical Pages Test Suite', () => {
   describe('Gallery Page (/gallery)', () => {
     it('renders photo cards and opens preview lightbox on click', () => {
       renderWithProviders(<GalleryPage />);
-      expect(screen.getByText(/A Glimpse into the Oakridge Experience/i)).toBeInTheDocument();
-      const photoCard = screen.getByText(/Historic Cambridge Quad Autumn Morning/i);
+      expect(screen.getByText(/A Glimpse into the R\.B\.S\. Experience/i)).toBeInTheDocument();
+      const photoCard = screen.getByText(/RBS School Main Academic Block & Campus Grounds/i);
       expect(photoCard).toBeInTheDocument();
 
       fireEvent.click(photoCard);
@@ -128,7 +123,7 @@ describe('Public Website — Critical Pages Test Suite', () => {
     it('renders master event schedule and triggers remind me toast', () => {
       renderWithProviders(<EventsPage />);
       expect(screen.getByText(/Campus Calendar & Community Events/i)).toBeInTheDocument();
-      expect(screen.getByText(/Fall 2026 Admissions Open House/i)).toBeInTheDocument();
+      expect(screen.getByText(/Annual Cultural Festival & Classical Music Evening/i)).toBeInTheDocument();
 
       const remindButtons = screen.getAllByRole('button', { name: /remind me/i });
       fireEvent.click(remindButtons[0]);
@@ -149,20 +144,20 @@ describe('Public Website — Critical Pages Test Suite', () => {
   describe('Contact Page (/contact)', () => {
     it('renders campus address, telephone direct lines and inquiry form submission', async () => {
       renderWithProviders(<ContactPage />);
-      expect(screen.getByText(/We Welcome Your Inquiries/i)).toBeInTheDocument();
-      expect(screen.getByText(/450 Academy Way, Cambridge Campus/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/your full name/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/email address/i)).toBeInTheDocument();
+      expect(screen.getByText(/We Welcome Your Questions & Visits/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/Mahua Ram Rae, Vaishali/i).length).toBeGreaterThan(0);
+      expect(screen.getByLabelText(/parent \/ student full name/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/contact phone number/i)).toBeInTheDocument();
 
       // Fill in and submit form
-      fireEvent.change(screen.getByLabelText(/your full name/i), { target: { value: 'Katherine Sterling' } });
-      fireEvent.change(screen.getByLabelText(/email address/i), { target: { value: 'k.sterling@example.com' } });
-      fireEvent.change(screen.getByLabelText(/inquiry or message details/i), { target: { value: 'Interested in Grade 9 enrollment.' } });
+      fireEvent.change(screen.getByLabelText(/parent \/ student full name/i), { target: { value: 'Ramesh Kumar' } });
+      fireEvent.change(screen.getByLabelText(/contact phone number/i), { target: { value: '+91 98765 43210' } });
+      fireEvent.change(screen.getByLabelText(/inquiry \/ message details/i), { target: { value: 'Inquiring about Class 11 Science admission and hostel.' } });
 
-      const submitBtn = screen.getByRole('button', { name: /send inquiry to admissions/i });
+      const submitBtn = screen.getByRole('button', { name: /submit inquiry/i });
       fireEvent.click(submitBtn);
 
-      expect(await screen.findByText(/Inquiry Received/i)).toBeInTheDocument();
+      expect(await screen.findByText(/Inquiry Received Successfully/i)).toBeInTheDocument();
     });
   });
 });

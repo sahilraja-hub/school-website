@@ -52,12 +52,12 @@ export const Navbar: React.FC = () => {
             <span className="inline-flex items-center gap-1 bg-gold-500/20 text-gold-400 font-semibold px-2 py-0.5 rounded-full text-[11px] border border-gold-500/30">
               <Sparkles className="w-3 h-3 text-gold-400" /> Admissions Open
             </span>
-            <span className="hidden md:inline text-slate-400">Applications now accepted for 2026-2027 Academic Cohort.</span>
+            <span className="hidden md:inline text-slate-400">CBSE Affiliated up to +2 Level • Mahua, Vaishali • Est. 2008</span>
           </div>
 
           <div className="flex items-center gap-4 text-[11px]">
             <span className="flex items-center gap-1 text-slate-400">
-              <PhoneCall className="w-3 h-3 text-crest-400" /> +1 (800) 555-OAKRIDGE
+              <PhoneCall className="w-3 h-3 text-crest-400" /> +91 70503 49159
             </span>
             <span className="hidden lg:inline text-slate-500">|</span>
             {/* Quick One-Click Role Switcher */}
@@ -119,14 +119,14 @@ export const Navbar: React.FC = () => {
             {/* School Crest Brand */}
             <Link to="/" className="flex items-center gap-3 group">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-crest-900 to-crest-700 p-2 shadow-md group-hover:scale-105 transition-transform flex items-center justify-center border border-crest-500/20">
-                <img src="/favicon.svg" alt="Oakridge Crest" className="w-8 h-8" />
+                <img src="/favicon.svg" alt="R.B.S Crest" className="w-8 h-8" />
               </div>
               <div className="flex flex-col">
                 <span className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-slate-900 group-hover:text-crest-700 transition-colors">
-                  OAKRIDGE
+                  R.B.S.
                 </span>
                 <span className="text-[10px] sm:text-xs uppercase tracking-widest text-slate-500 font-medium -mt-1">
-                  International Academy
+                  Residential Public School
                 </span>
               </div>
             </Link>
@@ -169,8 +169,8 @@ export const Navbar: React.FC = () => {
                     >
                       <Building2 className="w-4 h-4 text-crest-600" />
                       <div>
-                        <span>About Oakridge</span>
-                        <p className="text-[10px] text-slate-400 font-normal">History & Core Values</p>
+                        <span>About R.B.S Mahua</span>
+                        <p className="text-[10px] text-slate-400 font-normal">History, Mission & Vision</p>
                       </div>
                     </Link>
                     <Link
@@ -181,7 +181,7 @@ export const Navbar: React.FC = () => {
                       <Award className="w-4 h-4 text-gold-500" />
                       <div>
                         <span>Principal's Message</span>
-                        <p className="text-[10px] text-slate-400 font-normal">Welcome from Dr. Vance</p>
+                        <p className="text-[10px] text-slate-400 font-normal">Welcome from Mr. Tribhuwan Singh</p>
                       </div>
                     </Link>
                     <Link
@@ -192,7 +192,7 @@ export const Navbar: React.FC = () => {
                       <Sparkles className="w-4 h-4 text-emerald-600" />
                       <div>
                         <span>Campus & Facilities</span>
-                        <p className="text-[10px] text-slate-400 font-normal">40-Acre Campus Tour</p>
+                        <p className="text-[10px] text-slate-400 font-normal">Smart Classes, Labs & Hostel</p>
                       </div>
                     </Link>
                   </div>
@@ -357,13 +357,13 @@ export const Navbar: React.FC = () => {
               Home
             </Link>
             <div className="pt-1 pb-1">
-              <span className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider block">About Oakridge</span>
+              <span className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider block">About R.B.S School</span>
               <Link
                 to="/about"
                 onClick={() => setMobileMenuOpen(false)}
                 className="block px-3 py-1.5 rounded-lg text-sm text-slate-700 hover:bg-crest-50"
               >
-                • About the Academy
+                • About R.B.S Public School
               </Link>
               <Link
                 to="/principal"

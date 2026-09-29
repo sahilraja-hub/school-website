@@ -12,14 +12,14 @@ export interface SEOProps {
 export const SEO: React.FC<SEOProps> = ({
   title,
   description,
-  keywords = 'Oakridge International Academy, preparatory school, IB world school, academics, STEM, admissions 2026',
+  keywords = 'R.B.S Residential Public School, RBSRPS Mahua, Best CBSE school in Mahua, Top School in Vaishali, Bihar CBSE school, school with hostel Mahua',
   ogType = 'website',
   ogImage = '/images/campus-hero.jpg',
   canonicalUrl,
 }) => {
   useEffect(() => {
     // Update Title
-    const fullTitle = `${title} | Oakridge International Academy`;
+    const fullTitle = `${title} | R.B.S Residential Public School, Mahua`;
     document.title = fullTitle;
 
     // Helper to set or create meta tag

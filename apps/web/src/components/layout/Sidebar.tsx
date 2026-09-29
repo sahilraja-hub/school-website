@@ -87,12 +87,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="h-16 flex items-center justify-between px-4 border-b border-slate-800">
           <Link to="/" className="flex items-center gap-3 overflow-hidden">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-crest-700 to-crest-900 p-2 flex items-center justify-center shrink-0 border border-crest-500/30">
-              <img src="/favicon.svg" alt="Oakridge Crest" className="w-6 h-6" />
+              <img src="/favicon.svg" alt="R.B.S. School Crest" className="w-6 h-6" />
             </div>
             {!collapsed && (
               <div className="flex flex-col truncate">
                 <span className="font-serif text-base font-bold text-white tracking-wide truncate">
-                  OAKRIDGE
+                  R.B.S. SCHOOL
                 </span>
                 <span className="text-[9px] uppercase tracking-widest text-gold-400 font-semibold truncate -mt-1">
                   Portal Console

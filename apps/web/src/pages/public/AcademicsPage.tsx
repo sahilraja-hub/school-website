@@ -1,37 +1,37 @@
 import React, { useState } from 'react';
-import { BookOpen, Microscope, Music, Trophy, ChevronRight, CheckCircle2, ArrowRight } from 'lucide-react';
+import { BookOpen, Microscope, Music, Trophy, ChevronRight, CheckCircle2, ArrowRight, Laptop, Award, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { Breadcrumb } from '../../components/ui';
+import { Breadcrumb, Badge } from '../../components/ui';
 import { SEO } from '../../components/common/SEO';
 
 export const AcademicsPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'curriculum' | 'stem' | 'arts' | 'athletics'>('curriculum');
+  const [activeTab, setActiveTab] = useState<'curriculum' | 'stem' | 'commerce' | 'co-curricular'>('curriculum');
 
   return (
     <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8 text-left">
       <SEO
-        title="Academic Excellence — Curriculum, STEM & Arts"
-        description="Discover Oakridge International Academy's world-class curriculum. From Primary inquiry to AP Capstone and IB Diploma, with state-of-the-art STEM laboratories."
-        keywords="Oakridge academics, IB diploma curriculum, AP capstone courses, STEM education, arts conservatory"
+        title="Academics & CBSE Curriculum — R.B.S. Residential Public School"
+        description="Comprehensive CBSE curriculum from Pre-Primary to Class 12 (+2 Science: PCM/PCB, Commerce, Arts) at R.B.S Residential Public School, Mahua, Vaishali. Smart classrooms, state-of-the-art laboratories, and experiential learning."
+        keywords="RBS School curriculum, CBSE 10th and 12th Mahua, Science Commerce stream Vaishali, RBSRPS academics, Smart class Mahua"
       />
 
       <div className="max-w-7xl mx-auto space-y-12">
         {/* Breadcrumb Navigation */}
         <Breadcrumb
           items={[
-            { label: 'Academic Pathways' },
+            { label: 'Academics & Curriculum' },
           ]}
         />
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto space-y-4">
           <span className="text-xs uppercase font-bold tracking-widest text-crest-600 bg-crest-50 px-3 py-1 rounded-full border border-crest-100">
-            Academics & Enrichment
+            CBSE Curriculum & Holistic Pedagogy
           </span>
           <h1 className="font-serif text-3xl sm:text-5xl font-bold text-slate-900 leading-tight">
-            An Inspiring Curriculum for Tomorrow's Leaders
+            Academic Excellence from Foundation to +2 Senior Secondary
           </h1>
           <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-            Rooted in international inquiry and rigorous intellectual pursuit, our academic divisions support students at every stage from early childhood through college matriculation.
+            Affiliated to the Central Board of Secondary Education (CBSE), New Delhi, R.B.S. Residential Public School prepares students with rigorous conceptual understanding, practical experimentation, and moral character.
           </p>
         </div>
 
@@ -39,10 +39,10 @@ export const AcademicsPage: React.FC = () => {
         <div className="flex justify-center">
           <div className="inline-flex p-1.5 bg-slate-200/80 rounded-xl space-x-1 text-xs sm:text-sm font-semibold">
             {[
-              { id: 'curriculum', label: 'Divisions & Stages', icon: BookOpen },
-              { id: 'stem', label: 'STEM & Robotics Hub', icon: Microscope },
-              { id: 'arts', label: 'Arts Conservatory', icon: Music },
-              { id: 'athletics', label: 'Athletics & Wellness', icon: Trophy },
+              { id: 'curriculum', label: 'Academic Stages (Pre-Primary to 10th)', icon: BookOpen },
+              { id: 'stem', label: 'Senior Secondary (+2 Science)', icon: Microscope },
+              { id: 'commerce', label: 'Senior Secondary (+2 Commerce & Arts)', icon: Laptop },
+              { id: 'co-curricular', label: 'Sports, Arts & Values', icon: Trophy },
             ].map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -69,125 +69,133 @@ export const AcademicsPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm space-y-4">
               <span className="text-xs uppercase font-bold tracking-wider text-crest-600 bg-crest-50 px-2.5 py-1 rounded-full">
-                Kindergarten - Grade 5
+                Nursery to Class 5
               </span>
-              <h3 className="font-serif text-2xl font-bold text-slate-900">Primary Academy</h3>
+              <h3 className="font-serif text-2xl font-bold text-slate-900">Foundational & Primary Stage</h3>
               <p className="text-slate-600 text-sm leading-relaxed">
-                Foundational mastery through inquiry-based learning, Singapore Math, phonics-based literacy, and foreign language immersion.
+                Activity-based learning, phonics, Hindi and English language development, foundational numeracy, and environmental awareness in a warm, caring setting.
               </p>
               <ul className="space-y-2 pt-2 text-xs sm:text-sm text-slate-700">
-                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500" /> Singapore Math Foundations</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500" /> Dual-language French/Spanish tracks</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500" /> Hands-on Maker Space lab</li>
+                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500" /> Playful, experiential learning methods</li>
+                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500" /> Bilingual English & Hindi fluency</li>
+                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500" /> Moral education & sanskar stories</li>
+                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500" /> Introduction to basic computer concepts</li>
               </ul>
             </div>
 
             <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm space-y-4">
               <span className="text-xs uppercase font-bold tracking-wider text-gold-600 bg-gold-50 px-2.5 py-1 rounded-full">
-                Grades 6 - 8
+                Classes 6 to 8
               </span>
-              <h3 className="font-serif text-2xl font-bold text-slate-900">Middle School</h3>
+              <h3 className="font-serif text-2xl font-bold text-slate-900">Middle School Stage</h3>
               <p className="text-slate-600 text-sm leading-relaxed">
-                Strengthening critical analysis, scientific inquiry, essay writing, and collaborative project defense across diverse disciplines.
+                Strengthening analytical reasoning, scientific experimentation, mathematical problem-solving, and third language introduction following NCERT guidelines.
               </p>
               <ul className="space-y-2 pt-2 text-xs sm:text-sm text-slate-700">
-                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500" /> Accelerated Pre-AP tracks</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500" /> Model United Nations & Debate</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500" /> Comprehensive science lab rotations</li>
+                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500" /> Hands-on Science laboratory experiments</li>
+                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500" /> Sanskrit / Third language integration</li>
+                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500" /> Computer applications and typing skills</li>
+                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500" /> Debate, elocution & quiz competitions</li>
               </ul>
             </div>
 
             <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm space-y-4">
               <span className="text-xs uppercase font-bold tracking-wider text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">
-                Grades 9 - 12
+                Classes 9 & 10
               </span>
-              <h3 className="font-serif text-2xl font-bold text-slate-900">Senior High School</h3>
+              <h3 className="font-serif text-2xl font-bold text-slate-900">Secondary Stage (CBSE 10th)</h3>
               <p className="text-slate-600 text-sm leading-relaxed">
-                Preparation for Ivy League and prestigious global universities. Offers 28 AP courses and the distinguished AP Capstone Diploma.
+                Structured preparation for the CBSE All India Secondary School Examination (AISSE) with regular mock tests, concept clearing, and remedial sessions.
               </p>
               <ul className="space-y-2 pt-2 text-xs sm:text-sm text-slate-700">
-                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500" /> 28 AP and Post-AP Electives</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500" /> Dedicated College Counselors</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500" /> Senior Research Capstone Defense</li>
+                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500" /> Mathematics & Science deep conceptual mastery</li>
+                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500" /> Social Science, English & Hindi courses</li>
+                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500" /> Pre-board practice series and evaluation</li>
+                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500" /> Career guidance for +2 stream selection</li>
               </ul>
             </div>
           </div>
         )}
 
-        {/* Tab Content 2: STEM */}
+        {/* Tab Content 2: STEM & +2 Science */}
         {activeTab === 'stem' && (
           <div className="bg-white rounded-2xl p-8 sm:p-12 border border-slate-200 shadow-sm grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div className="space-y-4">
               <span className="text-xs uppercase font-bold tracking-wider text-crest-600 bg-crest-50 px-2.5 py-1 rounded-full">
-                Innovation Center
+                Senior Secondary (+2 Science)
               </span>
-              <h3 className="font-serif text-3xl font-bold text-slate-900">Robotics & Applied Artificial Intelligence Hub</h3>
+              <h3 className="font-serif text-3xl font-bold text-slate-900">PCM & PCB Streams for JEE & NEET</h3>
               <p className="text-slate-600 text-sm leading-relaxed">
-                Our 14,000-square-foot STEM facility offers industrial-grade 3D rapid prototyping, CNC milling machines, and dedicated robotics test arenas. Students partner with local tech mentors to build competitive robots and train ML models.
+                Our Senior Secondary Science division prepares scholars for CBSE Class 12 Board examinations as well as competitive entrance tests including JEE Main/Advanced and NEET. Equipped with dedicated Physics, Chemistry, and Biology laboratories.
               </p>
               <div className="grid grid-cols-2 gap-4 pt-4 text-xs sm:text-sm">
                 <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
-                  <span className="block font-bold text-slate-900">FIRST Robotics Team</span>
-                  <span className="text-slate-500">Regional Champions 2024-2026</span>
+                  <span className="block font-bold text-slate-900">PCM Stream</span>
+                  <span className="text-slate-500">Physics, Chemistry, Maths, Computer Science / Physical Ed.</span>
                 </div>
                 <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
-                  <span className="block font-bold text-slate-900">Biotech Genomics Lab</span>
-                  <span className="text-slate-500">PCR and Gel Electrophoresis</span>
+                  <span className="block font-bold text-slate-900">PCB Stream</span>
+                  <span className="text-slate-500">Physics, Chemistry, Biology, English Core, Physical Ed.</span>
                 </div>
               </div>
+              <ul className="space-y-2 pt-2 text-xs sm:text-sm text-slate-700">
+                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500" /> Experienced Senior Secondary faculty</li>
+                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500" /> Regular practical sessions & lab files</li>
+                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500" /> Doubt-clearing hours for hostelers and day scholars</li>
+              </ul>
             </div>
             <div className="rounded-xl overflow-hidden shadow-lg border border-slate-200">
-              <img src="/images/stem-lab.jpg" alt="Oakridge STEM Center" className="w-full h-80 object-cover" />
+              <img src="/images/stem-lab.jpg" alt="RBS Science Laboratories" className="w-full h-80 object-cover" />
             </div>
           </div>
         )}
 
-        {/* Tab Content 3: Arts */}
-        {activeTab === 'arts' && (
+        {/* Tab Content 3: Commerce & Arts */}
+        {activeTab === 'commerce' && (
           <div className="bg-white rounded-2xl p-8 sm:p-12 border border-slate-200 shadow-sm space-y-6">
             <div className="max-w-2xl space-y-3">
               <span className="text-xs uppercase font-bold tracking-wider text-gold-600 bg-gold-50 px-2.5 py-1 rounded-full">
-                Creativity & Expression
+                Commerce & Humanities Streams
               </span>
-              <h3 className="font-serif text-3xl font-bold text-slate-900">Visual & Performing Arts Conservatory</h3>
+              <h3 className="font-serif text-3xl font-bold text-slate-900">+2 Senior Secondary Commerce & Arts</h3>
               <p className="text-slate-600 text-sm leading-relaxed">
-                Featuring a 650-seat proscenium theater, black box studio, sound recording booth, and ceramics kiln studios. Our students stage two Broadway-caliber musicals annually and perform at Carnegie Hall.
+                Nurturing future chartered accountants, entrepreneurs, civil servants, and economists with a sound understanding of business principles, economics, and social structures.
               </p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-4">
               <div className="p-5 bg-slate-50 rounded-xl border border-slate-200">
-                <h4 className="font-bold text-slate-900 mb-1">Symphony Orchestra</h4>
-                <p className="text-xs text-slate-600">Classical strings, woodwinds, and percussion ensemble directed by Juilliard alumni.</p>
+                <h4 className="font-bold text-slate-900 mb-1">Accountancy & Business</h4>
+                <p className="text-xs text-slate-600">Financial accounting, company accounts, business organization, and entrepreneurship skills.</p>
               </div>
               <div className="p-5 bg-slate-50 rounded-xl border border-slate-200">
-                <h4 className="font-bold text-slate-900 mb-1">Theater & Dramatic Arts</h4>
-                <p className="text-xs text-slate-600">Full-scale theatrical production, stagecraft, lighting engineering, and costume design.</p>
+                <h4 className="font-bold text-slate-900 mb-1">Economics & Mathematics</h4>
+                <p className="text-xs text-slate-600">Micro & Macro Economics, Indian Economic Development, and applied statistics.</p>
               </div>
               <div className="p-5 bg-slate-50 rounded-xl border border-slate-200">
-                <h4 className="font-bold text-slate-900 mb-1">Studio Fine Arts</h4>
-                <p className="text-xs text-slate-600">Oil painting, darkroom photography, digital illustration, and ceramic sculptures.</p>
+                <h4 className="font-bold text-slate-900 mb-1">Humanities & Social Studies</h4>
+                <p className="text-xs text-slate-600">History, Political Science, Geography, and Language Arts preparing students for CUET and UPSC foundations.</p>
               </div>
             </div>
           </div>
         )}
 
-        {/* Tab Content 4: Athletics */}
-        {activeTab === 'athletics' && (
+        {/* Tab Content 4: Co-Curricular & Sports */}
+        {activeTab === 'co-curricular' && (
           <div className="bg-white rounded-2xl p-8 sm:p-12 border border-slate-200 shadow-sm space-y-6">
             <div className="max-w-2xl space-y-3">
               <span className="text-xs uppercase font-bold tracking-wider text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">
-                Physical Health & Leadership
+                Physical Education & Culture
               </span>
-              <h3 className="font-serif text-3xl font-bold text-slate-900">Championship Varsity Athletics</h3>
+              <h3 className="font-serif text-3xl font-bold text-slate-900">Co-Curricular, Sports & Sanskar</h3>
               <p className="text-slate-600 text-sm leading-relaxed">
-                With 18 varsity sports, an Olympic-regulation natatorium, all-weather turf stadium, and NCAA collegiate athletic placement advisors.
+                At RBSRPS, education extends beyond textbooks. We provide dedicated coaching in athletic sports, yoga, cultural arts, and value education.
               </p>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-              <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 font-semibold text-slate-800 text-sm">Soccer & Track</div>
-              <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 font-semibold text-slate-800 text-sm">Basketball & Volleyball</div>
-              <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 font-semibold text-slate-800 text-sm">Swimming & Water Polo</div>
-              <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 font-semibold text-slate-800 text-sm">Tennis & Rowing</div>
+              <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 font-semibold text-slate-800 text-sm">Cricket & Football</div>
+              <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 font-semibold text-slate-800 text-sm">Volleyball & Badminton</div>
+              <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 font-semibold text-slate-800 text-sm">Yoga & Morning PT</div>
+              <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 font-semibold text-slate-800 text-sm">Music, Drama & Debating</div>
             </div>
           </div>
         )}
@@ -198,7 +206,7 @@ export const AcademicsPage: React.FC = () => {
             to="/admissions"
             className="inline-flex items-center gap-2 bg-crest-700 hover:bg-crest-800 text-white font-semibold px-6 py-3 rounded-xl transition-all shadow-md"
           >
-            <span>Apply for the 2026 Academic Year</span>
+            <span>Apply for Admission at RBSRPS (Session 2026-2027)</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
@@ -206,3 +214,5 @@ export const AcademicsPage: React.FC = () => {
     </div>
   );
 };
+
+export default AcademicsPage;

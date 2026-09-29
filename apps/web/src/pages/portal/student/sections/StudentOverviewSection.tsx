@@ -86,7 +86,7 @@ export const StudentOverviewSection: React.FC<StudentOverviewSectionProps> = ({
                 Welcome back, {profile?.firstName || 'Liam'} {profile?.lastName || 'Vance'}
               </h1>
               <p className="text-xs sm:text-sm text-slate-300 mt-1">
-                Oakridge International Academy • Scholar Portal Academic Session 2026–2027
+                R.B.S. Residential Public School • Scholar Portal Academic Session 2026–2027
               </p>
             </div>
           </div>

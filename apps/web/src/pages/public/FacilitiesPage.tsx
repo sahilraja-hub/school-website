@@ -6,7 +6,6 @@ import {
   CardContent,
   Badge,
   Button,
-  Modal,
 } from '../../components/ui';
 import { SEO } from '../../components/common/SEO';
 import {
@@ -21,12 +20,16 @@ import {
   CheckCircle2,
   ArrowRight,
   Sparkles,
+  Bus,
+  Home,
+  Monitor,
+  Phone,
 } from 'lucide-react';
 
 interface FacilityItem {
   id: string;
   title: string;
-  category: 'Academics' | 'Athletics' | 'Arts' | 'Campus Life';
+  category: 'Academics' | 'Residential' | 'Sports' | 'Transport';
   image: string;
   description: string;
   features: string[];
@@ -36,51 +39,85 @@ interface FacilityItem {
 const facilityItems: FacilityItem[] = [
   {
     id: 'fac1',
-    title: 'University-Grade STEM & Bio-Chemical Labs',
+    title: 'Modern Science & Computer Laboratories',
     category: 'Academics',
     image: '/images/stem-lab.jpg',
-    description: 'Six fully equipped wet and dry research laboratories designed for collegiate genetics, physics simulations, robotics prototyping, and 3D additive manufacturing.',
-    features: ['CRISPR gene editing simulators', 'Class 100 laminar flow hoods', 'Industrial CNC & 3D printers', 'Spectrophotometers & Vernier sensors'],
-    specifications: '14,000 sq. ft. • 6 Research Suites • BSL-2 Certified',
+    description: 'Fully equipped practical laboratories for Physics, Chemistry, and Biology compliant with CBSE Senior Secondary standards, alongside a networked Computer Center with high-speed internet.',
+    features: [
+      'Individual apparatus sets for Physics & Chemistry practicals',
+      'Advanced optical microscopes & biological specimens',
+      'Modern computer workstations with software tools',
+      'Certified laboratory safety & emergency eyewash stations',
+    ],
+    specifications: 'Dedicated Physics, Chemistry, Biology & Computer Labs',
   },
   {
     id: 'fac2',
-    title: 'Alexander Media Library & Learning Commons',
+    title: 'Central School Library & Reading Room',
     category: 'Academics',
     image: '/images/library.jpg',
-    description: 'A two-story architectural centerpiece with soaring double-height timber ceilings, silent reading pods, digital archives, and over 45,000 catalogued volumes.',
-    features: ['Direct JSTOR & IEEE access', 'Collaborative video conference pods', 'Quiet contemplation mezzanine', 'Dedicated academic research librarians'],
-    specifications: '22,000 sq. ft. • 45,000+ Volumes • 350 Study Stations',
+    description: 'A serene learning sanctuary housing over 5,000 reference textbooks, NCERT guides, competitive exam materials for JEE/NEET, encyclopedias, children literature, and daily newspapers.',
+    features: [
+      'Comprehensive collection of NCERT & CBSE reference books',
+      'National dailies, science journals, and educational magazines',
+      'Quiet individual reading stations and study desks',
+      'Managed by qualified school librarian',
+    ],
+    specifications: '5,000+ Volumes • Reference & Reading Section',
   },
   {
     id: 'fac3',
-    title: 'Championship Athletics Stadium & Blue Track',
-    category: 'Athletics',
-    image: '/images/athletics.jpg',
-    description: 'Olympic-grade athletic complex featuring an all-weather 8-lane running track, FIFA-standard turf soccer stadium, stadium lighting, and 2,500-seat grandstand.',
-    features: ['Mondo Olympic synthetic track', 'Championship floodlighting', 'Full varsity locker pavilions', 'Integrated electronic timing systems'],
-    specifications: '2,500 Spectator Capacity • 8 Lanes • FIFA 2-Star Turf',
+    title: 'Separate Boys & Girls Residential Hostels',
+    category: 'Residential',
+    image: '/images/campus-hero.jpg',
+    description: 'Safe, comfortable, and well-managed residential boarding hostels with round-the-clock security, caring wardens, clean dining mess providing nutritious vegetarian meals, and guided evening study hours.',
+    features: [
+      'Dedicated hostel buildings with separate security for boys & girls',
+      'Hygienic dining hall serving fresh, nutritious balanced meals',
+      'Supervised evening study sessions with subject teachers',
+      'Regular medical checkups & 24/7 warden supervision',
+    ],
+    specifications: 'Residential Boarding • 24/7 Security & Care',
   },
   {
     id: 'fac4',
-    title: 'Historic Cambridge Quad & Founder’s Hall',
-    category: 'Campus Life',
+    title: 'Sports Grounds, Athletics & Martial Arts Arena',
+    category: 'Sports',
+    image: '/images/athletics.jpg',
+    description: 'Spacious outdoor playgrounds and sports courts dedicated to student physical fitness, team spirit, and athletic development under experienced physical education coaches.',
+    features: [
+      'Cricket pitch, football ground, and volleyball courts',
+      'Badminton arena, table tennis, and indoor chess/carrom',
+      'Yoga, physical training (PT), and morning exercise drills',
+      'Annual athletic sports meets and inter-house tournaments',
+    ],
+    specifications: 'Multi-Sport Playground • Professional Physical Training',
+  },
+  {
+    id: 'fac5',
+    title: 'Safe Bus & Transportation Fleet',
+    category: 'Transport',
     image: '/images/campus-hero.jpg',
-    description: 'The iconic Gothic and modern synthesis courtyard where daily convocations, outdoor recitals, and senior baccalaureate ceremonies unfold beneath century-old maples.',
-    features: ['Central clock tower carillon', 'High-speed campus-wide mesh Wi-Fi', 'Stone amphitheater steps', 'Eco-filtered reflection pond'],
-    specifications: '40 Acres Total Campus • Historic Landmark Status',
+    description: 'A fleet of well-maintained school buses providing safe and punctual pick-and-drop service for students covering Mahua town, Patepur, Kowahi, Jandaha, and surrounding villages across Vaishali district.',
+    features: [
+      'Well-experienced and verified drivers and bus attendants',
+      'Safety equipment, first-aid kits, and speed governors installed',
+      'Convenient designated pickup and drop-off points',
+      'Supervised boarding and de-boarding of primary students',
+    ],
+    specifications: 'Fleet Covering Mahua, Patepur & Vaishali',
   },
 ];
 
 export const FacilitiesPage: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<string>('ALL');
-  const [tourModalOpen, setTourModalOpen] = useState(false);
 
   const categories = [
     { id: 'ALL', label: 'All Campus Facilities' },
-    { id: 'Academics', label: 'Academic & Research Labs' },
-    { id: 'Athletics', label: 'Athletics & Recreation' },
-    { id: 'Campus Life', label: 'Student Life & Quad' },
+    { id: 'Academics', label: 'Labs & Smart Class' },
+    { id: 'Residential', label: 'Hostel & Boarding' },
+    { id: 'Sports', label: 'Sports & Playgrounds' },
+    { id: 'Transport', label: 'Bus Transportation' },
   ];
 
   const filteredFacilities = activeCategory === 'ALL'
@@ -90,16 +127,16 @@ export const FacilitiesPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8 text-left">
       <SEO
-        title="World-Class Campus & Learning Facilities"
-        description="Explore Oakridge International Academy's 40-acre campus. Featuring university-grade STEM labs, two-story media library, Olympic championship track, and historic quad."
-        keywords="Oakridge campus facilities, school library, science labs, athletic stadium, campus map"
+        title="Campus Infrastructure & Facilities — R.B.S Residential Public School"
+        description="Explore the infrastructure of R.B.S Residential Public School, Mahua, Vaishali: CBSE Science and Computer labs, Central Library, separate Boys and Girls residential hostels, sports fields, and bus transport."
+        keywords="RBS School facilities, hostel in Mahua, school bus Vaishali, RBSRPS campus, CBSE science lab Mahua"
       />
 
       <div className="max-w-7xl mx-auto space-y-12">
         {/* Breadcrumb Navigation */}
         <Breadcrumb
           items={[
-            { label: 'About Oakridge', href: '/about' },
+            { label: 'About Us', href: '/about' },
             { label: 'Campus & Facilities' },
           ]}
         />
@@ -108,30 +145,27 @@ export const FacilitiesPage: React.FC = () => {
         <div className="relative rounded-3xl overflow-hidden bg-crest-950 text-white p-8 sm:p-12 lg:p-16 border border-crest-900 shadow-2xl">
           <div className="relative z-10 space-y-4 max-w-3xl">
             <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="gold" size="sm">40-Acre Cambridge Campus</Badge>
+              <Badge variant="gold" size="sm">Mahua Campus, Vaishali</Badge>
               <Badge variant="outline" size="sm" className="text-crest-200 border-crest-700">
-                Eco-Sustainable LEED Gold
+                Residential & Day Boarding
               </Badge>
             </div>
             <h1 className="font-serif text-3xl sm:text-5xl font-bold text-white tracking-tight">
-              An Inspiring Architectural Sanctuary for Intellectual Growth
+              A Supportive, Secure & Stimulating Learning Environment
             </h1>
             <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-              Every square foot of Oakridge International Academy is deliberately crafted to stimulate curiosity, foster collaboration, and empower achievement. From state-of-the-art biological suites to sunlight-drenched reading lofts, our campus is designed to rival top collegiate institutions.
+              At R.B.S. Residential Public School, our campus infrastructure is designed to provide students with hands-on practical learning, disciplined residential living, athletic health, and safe daily transit.
             </p>
 
             <div className="pt-2 flex flex-wrap items-center gap-4">
-              <Button
-                variant="gold"
-                size="md"
-                onClick={() => setTourModalOpen(true)}
-                leftIcon={<Compass className="w-4 h-4" />}
-              >
-                Schedule Campus Walkthrough
-              </Button>
               <Link to="/contact">
+                <Button variant="gold" size="md" leftIcon={<Compass className="w-4 h-4" />}>
+                  Plan a Campus Walkthrough
+                </Button>
+              </Link>
+              <Link to="/admissions">
                 <Button variant="outline" size="md" className="text-slate-200 border-slate-700 hover:bg-crest-900">
-                  Campus Directions & Map
+                  Admissions Information
                 </Button>
               </Link>
             </div>
@@ -199,16 +233,14 @@ export const FacilitiesPage: React.FC = () => {
                 </div>
 
                 <div className="pt-4 flex items-center gap-3">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setTourModalOpen(true)}
-                  >
-                    View on Campus Map
-                  </Button>
+                  <Link to="/contact">
+                    <Button variant="outline" size="sm">
+                      Inquire About This Facility
+                    </Button>
+                  </Link>
                   <Link to="/admissions">
                     <Button variant="ghost" size="sm" rightIcon={<ArrowRight className="w-3.5 h-3.5" />}>
-                      Experience in Person
+                      Admissions Desk
                     </Button>
                   </Link>
                 </div>
@@ -217,15 +249,15 @@ export const FacilitiesPage: React.FC = () => {
           ))}
         </div>
 
-        {/* Campus Safety & Sustainability Callout */}
+        {/* Safety, Residential & Transport Callout */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-card space-y-2">
             <div className="w-10 h-10 rounded-xl bg-crest-100 text-crest-700 flex items-center justify-center">
               <Shield className="w-5 h-5" />
             </div>
-            <h4 className="font-serif text-base font-bold text-slate-900">24/7 Monitored Campus Perimeter</h4>
+            <h4 className="font-serif text-base font-bold text-slate-900">Safe Campus & CCTV Security</h4>
             <p className="text-xs text-slate-500 leading-relaxed">
-              Biometric access control, on-duty campus safety officers, and complete CCTV perimeter coverage ensuring an uncompromised environment.
+              24/7 monitored gate entry, high boundary walls, and active CCTV camera surveillance across academic blocks and hostel corridors.
             </p>
           </div>
 
@@ -233,9 +265,9 @@ export const FacilitiesPage: React.FC = () => {
             <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
               <Sparkles className="w-5 h-5" />
             </div>
-            <h4 className="font-serif text-base font-bold text-slate-900">LEED Gold Certified Sustainability</h4>
+            <h4 className="font-serif text-base font-bold text-slate-900">Digital Interactive Classrooms</h4>
             <p className="text-xs text-slate-500 leading-relaxed">
-              100% solar powered academic wing, rainwater harvesting for botanical gardens, and zero single-use plastics academy-wide.
+              Modern audio-visual smart classes equipped with digital boards to make complex scientific concepts and mathematics vivid and memorable.
             </p>
           </div>
 
@@ -243,40 +275,12 @@ export const FacilitiesPage: React.FC = () => {
             <div className="w-10 h-10 rounded-xl bg-gold-100 text-gold-700 flex items-center justify-center">
               <Clock className="w-5 h-5" />
             </div>
-            <h4 className="font-serif text-base font-bold text-slate-900">Health Clinic & Sports Medicine</h4>
+            <h4 className="font-serif text-base font-bold text-slate-900">Hostel Wardens & Health Care</h4>
             <p className="text-xs text-slate-500 leading-relaxed">
-              Full-time registered pediatric nurses, dedicated mental wellness suites, and athletic trainers on-site every school day.
+              Resident hostel wardens, first-aid medical supplies, on-call doctor availability, and strict health and hygiene standards in kitchen mess.
             </p>
           </div>
         </div>
-
-        {/* Schedule Tour Modal */}
-        <Modal
-          isOpen={tourModalOpen}
-          onClose={() => setTourModalOpen(false)}
-          title="Schedule an In-Person Campus Walkthrough"
-          description="Join our admissions team for an executive 60-minute tour of our academic, research, and athletic facilities."
-          footer={
-            <>
-              <Button variant="outline" size="sm" onClick={() => setTourModalOpen(false)}>Close</Button>
-              <Link to="/contact">
-                <Button variant="primary" size="sm">Book Tour via Admissions</Button>
-              </Link>
-            </>
-          }
-        >
-          <div className="space-y-4 text-xs text-slate-600">
-            <p className="leading-relaxed">
-              Tours depart Tuesday and Thursday mornings at 9:30 AM and 1:30 PM from the Founder’s Hall Reception Pavilion.
-            </p>
-            <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
-              <span className="font-bold text-slate-900 block">Required for Campus Entry:</span>
-              <p>• Government-issued photo identification</p>
-              <p>• Prior reservation confirmed by Admissions Office</p>
-              <p>• Visitor badge worn at all times while on grounds</p>
-            </div>
-          </div>
-        </Modal>
       </div>
     </div>
   );
